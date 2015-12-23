@@ -1,0 +1,143 @@
+\chapter{Conclusion and Future Work}
+
+\section{Discussion}
+\emph{TODO}
+
+\section{Future Work}
+Our ongoing efforts focus on the extensions and applications of our current methods as
+well as developing other sparsity-driven methods for shape modeling.
+
+\subsection{Shape Retrieval}
+In Chapter~5, we have articulated an informative shape region descriptor which incorporates spectral graph wavelet coefficients
+and contour-related statistics for improved discriminative power. This new descriptor is robust and near-isometry-invariant, and
+we have demonstrated its great performance in matching and retrieving interesting shape regions.
+
+We plan to employ our regional feature descriptor for whole shape retrieval from a database. Existing shape retrieval
+methods usually rely on the aggregation of local point features, such as shape context~\cite{Belongie2002} and
+heat kernel signature~\cite{Sun:2009:CGF}. Comparing with point features, our region features can better describe
+the contour shape and local-global geometry of interesting shape regions. In addition, the detected feature regions
+are much more intuitive for interpretation than point features.
+
+The general pipeline for feature-based shape retrieval is as follows:
+\begin{enumerate}
+\item Detect regional shape features from a training set of shapes. Each detected region is represented using our region descriptor.
+\item Learn a set of representative vector in the region descriptor space through clustering, forming a vocabulary of ``geometric words''.
+\item For each query or target shape, encoding its detected regional features against the vocabulary via some local feature aggregation method
+on manifold.
+\item Compute shape similarities by comparing the shape descriptions obtained in the above step.
+\end{enumerate}
+
+To effectively characterize a shape, only using the distribution of word frequency as in
+traditional bag-of-words method is not enough. We need to incorporate the spatial relations
+between features into our representation, and the most effective way to encode pairwise
+relation is through graph-based feature aggregation method, such as spatially sensitive
+bags of features (SS-BoF)~\cite{Bronstein2011}, bags of feature graphs (BoFG)~\cite{Hou2012a},
+and relevance diffusion~\cite{Furuya2015}.
+
+\subsection{Shape Editing}
+
+Classical Laplacian mesh editing~\cite{Botsch2008} can be written as a regularized least square
+problem. Taking the $x$-coordinate for example, soft constraint Laplacian mesh editing
+constructs the new coordinate function by solving the following optimization problem
+\begin{equation}
+\min_\mathbf{x'} \sum_{j\in C} (x'_j - c_j)^2 + \gamma\|L\mathbf{x'}-L\mathbf{x}\|_2^2,
+\end{equation}
+where $L$ denotes Laplacian operator, $C$ represents the set of handle vertices, $c_j$ denotes the
+coordinate of the handle vertex indexed at $j$, and $\mathbf{x'}$ and $\mathbf{x}$ represent the
+original and deformed coordinates, respectively. This formulation ensures that the deformed shape
+will preserve the second-order differential geometric information of the original shape while
+conforming to the constraints of new handle positions.
+
+Let function $\mathbf{f}=\mathbf{x'}-\mathbf{x}$ and denote the values of $\mathbf{f}$ at
+handle vertices as $d_j = c_j - x_j, j\in C$. The optimization problem can be rewritten as
+\begin{equation}
+\label{eq:laplace-editing}
+\min_\mathbf{f} \sum_{j\in C} (f_j - d_j)^2 + \gamma \mathbf{f}^T L^2 \mathbf{f}.
+\end{equation}
+
+Expanding $\mathbf{f}$ w.r.t. the Laplacian eigenbasis $\mathbf{\Phi}=\{\mathbf{\phi_k}\}$
+as $\mathbf{f}=\sum_k a_k \mathbf{\phi_k}$, Eq.~\ref{eq:laplace-editing} changes to
+\begin{equation}
+\label{eq:Laplace-editing2}
+\min_\mathbf{f} \sum_{j\in C} (f_j - d_j)^2 + \gamma \sum_k \lambda_k^2 a_k^2,
+\end{equation}
+where $\{\lambda_k\}$ denote the Laplacian eigenvalues.
+
+Analyzing Eq.~\ref{eq:Laplace-editing2}, we can see that the formulation of Laplace
+editing penalizing high frequency components (corresponding to larger
+$\lambda_k$)~\cite{Rustamov:2009:ICMS}.
+
+Replacing the bi-Laplacian in Eq.~\ref{eq:laplace-editing} with a spectral graph wavelet kernel
+$W$ affords flexible design choices regarding the dominating frequencies. Suppose
+$W=\mathbf{\Phi}g(t\Lambda)\mathbf{\Phi^T}$, where $g(\cdot)$ is the spectral domain generator
+function. Instead of preserving the differential or Laplacian coordinates, we may choose
+to preserve wavelet coefficients of different scales after deformation. The spectral expansion
+of the optimization problem then becomes
+\begin{equation}
+\label{eq:sgw-editing}
+\min_\mathbf{f} \sum_{j\in C} (f_j - d_j)^2 + \gamma \sum_k g(t\lambda_k) a_k^2.
+\end{equation}
+
+Clearly, changing the generator function $g(\cdot)$ or the scale parameter $t$ will
+influence the contribution of components of different frequencies in the final reconstruction.
+
+\subsection{Sparse Representation Learning}
+Our current research focuses on reconstructive sparse models with predefined dictionaries
+composed of analytical functions such as wavelets. Nevertheless, sparse representations have
+also great potential for pattern recognition, as most meaningful high-dimensional
+signals probably reside in some low-dimensional subspace which can be better revealed by proper
+sparse models.
+
+To construct a highly discriminative sparse models, predefined dictionaries are usually not
+sufficiently expressive. To improve the sparsity and discriminative power, a dictionary learned from
+the data set is much preferred. Given training signals $\{y_i\}_{i=1}^N$, a dictionary that
+minimize the overall coefficient sparsity of the training signals can be formulated as follows:
+\begin{equation}
+\label{eq:dictionary-learning}
+\hat{D}=\arg\min_D\sum_{i=1}^N \min_{x_i}\{\|Dx_i - y_i\|_2^2 + \lambda\|x_i\|_1\}.
+\end{equation}
+The dictionary learning can be handled by algorithms such as K-SVD~\cite{Aharon2006}.
+
+After the dictionary $D$ is learned, for an input signal $y$, a sparse coefficient
+representation $\hat{x}$ can be easily computed with respect $D$ using
+common $l_1$ formulation:
+\begin{equation}
+\hat{x} = \arg\min_{x} \{\|Dx - y\|_2^2 + \lambda\|x\|_1\}.
+\end{equation}
+
+For shape signals, we cannot directly apply the dictionary learning formulation in
+Eq.~\ref{eq:laplace-editing}, since different models generally have vastly different
+graph structures and cannot be easily corresponded. Nevertheless, we can design feature
+descriptors as a proxy instead of processing shape signals directly. A highly discriminative
+sparse model in the descriptor space has great potential in classification and retrieval of
+shape features or whole shapes.
+
+\section{Conclusion}
+In this dissertation, we have documented our recent research results and ongoing research
+on shape modeling and analysis based on spectral harmonic representations and
+sparsity-driven techniques. Our proposed methods demonstrate competitive performance
+and great potential of sparse and redundant representations in the domain of shape analysis
+and geometry processing. Our specific contributions include:
+
+\begin{itemize}
+\item We present an innovative approach to 3D mesh compression
+by incorporating redundant spectral graph wavelets in dictionary design and using
+greedy pursuits to find compressed coefficient approximation.
+
+\item By formulating surface inpainting as a sparse signal recovery problem,
+we propose a novel variational approach for surface inpainting, integrating data fidelity
+constraints on the shape domain with coefficient sparsity constraints on the
+transformed domain.
+
+\item We propose a novel informative shape descriptor that combines SGW coefficients and
+contour-based statistics for better characterization of feature shape regions.
+
+\item We develop a generalized feature detection framework, which can integrate different
+types of regional descriptors and facilitate widespread applications including partial matching and
+model recognition.
+
+\end{itemize}
+
+Our future works will focus on three directions: (1) Extensions and applications of
+our SGW-based representations; (2) Innovative dictionary design with more versatile
+shape basis; (3) Discriminative sparse models based on learned dictionary for shape analysis.

@@ -1,0 +1,63 @@
+Spectral representations based on the eigenfunctions of mesh Laplacian matrix
+have been adopted for many shape modeling applications.
+The Laplacian eigenfunctions form an orthonormal and complete basis,
+enabling Fourier-like space-frequency analysis on meshes. In addition,
+the Laplacian eigenfunctions encode substantial topological and geometric
+information of the original mesh and have widespread applications in shape analysis.
+
+In this proposal, we aim to extend traditional spectral mesh processing
+by incorporating spectral graph wavelets (SGWs) and sparsity-seeking methods. Spectral graph
+wavelets are defined with the eigenfunctions of graph Laplacian, with scaling
+implemented in the spectral domain. Unlike Laplacian eigenbasis which are
+localized in frequency but have global support in space, the SGWs are localized
+in both space and frequency domain, thus are more suitable for representing
+local geometry. In recent years, sparsity has become an important concept in
+signal processing applications. By providing a rich, often redundant, dictionary
+of elementary vectors and forcing certain sparsity-constraints, a signal usually
+can be decomposed into or well approximated by the linear combination of very
+few vectors, giving rise to a sparse coefficient representation that is not only
+more concise but also, in many cases, more precise than the original representation.
+
+
+Conventional spectral mesh compression employs the eigenfunctions of
+mesh Laplacian as shape bases, which are highly inefficient
+in representing local geometry. To ameliorate, we advocate an
+innovative approach to 3D mesh compression using spectral graph
+wavelets as dictionary to encode mesh geometry. The spectral graph wavelets are locally
+defined at individual vertices and can better capture local shape
+information than Laplacian eigenbasis. The multi-scale
+spectral graph wavelets form a redundant dictionary as shape basis,
+so we formulate the compression of 3D shape as a sparse
+approximation problem that can be readily handled by greedy pursuit algorithms.
+
+Surface inpainting refers to the completion or recovery of missing shape geometry
+based on the shape information that is currently available. We devise a new surface
+inpainting algorithm founded upon the theory and techniques of sparse signal recovery.
+Instead of estimating the missing geometry directly, our novel method is to
+find this low-dimensional representation which describes the entire
+original shape. More specifically, we find that, for many shapes, the
+vertex coordinate function can be well approximated by a very sparse coefficient
+representation with respect to the dictionary comprising its
+Laplacian eigenbasis, and it is then possible to recover this sparse
+representation from partial measurements of the original shape.
+Taking advantage of the sparsity cue, we advocate a novel
+variational approach for surface inpainting, integrating data
+fidelity constraints on the shape domain with coefficient sparsity
+constraints on the transformed domain. Because of the powerful
+properties of Laplacian eigenbases, the inpainting results of our
+method tend to be globally coherent with the remaining shape.
+
+Informative and discriminative feature descriptors are vital in
+qualitative and quantitative shape analysis for a large variety of
+graphics applications. We advocate novel strategies to define generalized,
+user-specified features on shapes. Our new region descriptors
+are primarily built upon the powerful spectral graph wavelets that
+are both multi-scale and multi-level in nature, consisting of both local (differential) and
+global (integral) information. We also develop a generalized feature detection framework
+to facilitate a host of graphics applications, including partial shape matching
+and model recognition.
+
+Through various experiments, we demonstrate the competitive performance of our proposed methods and the
+great potential of redundant spectral basis and sparsity-based methods for shape modeling and analysis.
+Moreover, we also outline a few new research directions, including shape retrieval, mesh editing, and
+sparse representation learning, which lead towards our future plans. 

@@ -98,7 +98,7 @@ Sparsity-Driven Algorithms for Shape Modeling and Analysis}
 \vspace*{1\baselineskip}
 \centerline{The Graduate School}
 \vspace*{2\baselineskip}
-\centerline{Ming Zhong}
+\centerline{\bf{Ming Zhong}}
 \vspace*{2\baselineskip}
 \centerline{We, the dissertation committee for the above candidate for the}
 \vspace*{1\baselineskip}
@@ -109,14 +109,15 @@ Sparsity-Driven Algorithms for Shape Modeling and Analysis}
 \centerline{\bf{Hong Qin - Dissertation Advisor}}
 \centerline{\bf{Professor, Department of Computer Science}}
 \vspace*{2\baselineskip}
-\centerline{\bf{Name - Chairperson of Defense}}
-\centerline{\bf{Include title and department}}
+\centerline{\bf{Joseph Mitchell - Chairperson of Defense}}
+\centerline{\bf{Professor, Department of Applied Mathematics and Statistics}}
 \vspace*{2\baselineskip}
-\centerline{\bf{Type the remaining committee members using the above format. Type each member's}}
-\centerline{\bf{name, title and department. Always make sure the signature page is kept to one page in}}
-\centerline{\bf{length.}}
-\vspace*{1\baselineskip}
-\centerline{\bf{Type the outside member's name last. Include discipline and affiliation.}}
+\centerline{\bf{Xianfeng David Gu}}
+\centerline{\bf{Associate Professor, Department of Computer Science}}
+\vspace*{2\baselineskip}
+\centerline{\bf{Xin Li}}
+\centerline{\bf{Associate Professor, School of Electrical Engineering \& Computer Science}}
+\centerline{\bf{Louisiana State University}}
 \vspace*{2\baselineskip}
 \centerline{This dissertation is accepted by the Graduate School}
 \vspace*{3\baselineskip}
@@ -147,71 +148,68 @@ Algorithms for Shape Modeling and Analysis}}
 
 With the advent of ever more advanced and affordable 3D data acquisition
 technologies, digitalized 3D shapes have become ubiquitous in our daily life
-and occupied important roles in numerous fields and applications.
-Although it is more straightforward to represent shape geometry directly
-in the spatial domain, there is a growing body of literature dedicated to Fourier
-domain shape modeling based on graph spectral basis. The Laplacian eigenfunctions of
-manifold Laplacian form an orthonormal basis of the shape function space,
-enabling Fourier-like space-frequency analysis on manifold. In addition,
-the Laplacian eigenfunctions encode substantial intrinsic topological and geometric
+and occupied important roles in numerous fields and applications. Although
+it is straightforward to represent shape geometry directly in the spatial
+domain, there is a growing body of literature dedicated to Fourier domain
+shape modeling based on graph spectral basis. The Laplacian eigenfunctions
+of manifold Laplacian form an orthonormal basis of the shape function space,
+enabling Fourier-like space-frequency analysis on manifold. In addition, the
+Laplacian eigenfunctions encode substantial intrinsic topological and geometric
 information of the mesh and have widespread applications in shape analysis.
 
 In this dissertation, we aim to extend traditional spectral mesh processing
-by incorporating spectral graph wavelets (SGWs) and sparsity-seeking algorithms.
-Spectral graph wavelets are defined with the eigenfunctions of graph
-Laplacian, with scaling implemented in the spectral domain. Unlike
+by incorporating spectral graph wavelets (SGWs) and sparsity-seeking
+algorithms. Spectral graph wavelets are defined with the eigenfunctions of
+graph Laplacian, with scaling implemented in the spectral domain. Unlike
 Laplacian eigenbasis which are localized in frequency but have global support
-in space, the SGWs are localized in both space and frequency domain, thus
-are more suitable for representing local geometry. In recent years, sparsity
-has become an important concept in signal processing applications. By providing
-a rich, often redundant, dictionary of elementary vectors and forcing certain
-sparsity-constraints, a signal usually can be decomposed into or well approximated
-by the linear combination of very few vectors, giving rise to a sparse coefficient
-representation that is not only more concise but also, in many cases, more precise
-than the original representation.
+in space, the SGWs are localized in both space and frequency domain, thus are
+more suitable for representing local geometry. In recent years, sparsity has
+become an important concept in signal processing applications. By providing a
+rich, often redundant, dictionary of elementary vectors and forcing certain
+sparsity-constraints, a signal usually can be decomposed into or well
+approximated by the linear combination of very few vectors, giving rise to a
+sparse coefficient representation that is not only more concise but also, in
+many cases, more precise than the original representation.
 
-Conventional spectral mesh compression employs the eigenfunctions of
-mesh Laplacian as shape bases, which are highly inefficient
-in representing local geometry. To ameliorate, we advocate an
-innovative approach to 3D mesh compression using spectral graph
-wavelets as dictionary to encode mesh geometry. The spectral graph wavelets are locally
-defined at individual vertices and can better capture local shape
-information than Laplacian eigenbasis. The multi-scale
-spectral graph wavelets form a redundant dictionary as shape basis,
-so we formulate the compression of 3D shape as a sparse
-approximation problem that can be readily handled by greedy pursuit algorithms.
+Conventional spectral mesh compression employs the eigenfunctions of mesh
+Laplacian as shape bases, which are highly inefficient in representing local
+geometry. To ameliorate, we advocate an innovative approach to 3D mesh
+compression using spectral graph wavelets as dictionary to encode mesh geometry.
+The spectral graph wavelets are locally defined at individual vertices and can
+better capture local shape information than Laplacian eigenbasis. The
+multi-scale spectral graph wavelets form a redundant dictionary as shape basis,
+so we formulate the compression of 3D shape as a sparse approximation problem
+that can be readily handled by greedy pursuit algorithms.
 
-Surface inpainting refers to the completion or recovery of missing shape geometry
-based on the shape information that is currently available. We devise a new surface
-inpainting algorithm founded upon the theory and techniques of sparse signal recovery.
-Instead of estimating the missing geometry directly, our novel method is to
-find this low-dimensional representation which describes the entire
-original shape. More specifically, we find that, for many shapes, the
-vertex coordinate function can be well approximated by a very sparse coefficient
-representation with respect to the dictionary comprising its
-Laplacian eigenbasis, and it is then possible to recover this sparse
-representation from partial measurements of the original shape.
-Taking advantage of the sparsity cue, we advocate a novel
-variational approach for surface inpainting, integrating data
-fidelity constraints on the shape domain with coefficient sparsity
-constraints on the transformed domain. Because of the powerful
-properties of Laplacian eigenbases, the inpainting results of our
-method tend to be globally coherent with the remaining shape.
+Surface inpainting refers to the completion or recovery of missing shape
+geometry based on the shape information that is currently available. We
+devise a new surface inpainting algorithm founded upon the theory and
+techniques of sparse signal recovery. Instead of estimating the missing
+geometry directly, our novel method is to find this low-dimensional
+representation which describes the entire original shape. More specifically,
+we find that, for many shapes, the vertex coordinate function can be well
+approximated by a very sparse coefficient representation with respect to the
+dictionary comprising its Laplacian eigenbasis, and it is then possible to
+recover this sparse representation from partial measurements of the original
+shape. Taking advantage of the sparsity cue, we advocate a novel variational
+approach for surface inpainting, integrating data fidelity constraints on the
+shape domain with coefficient sparsity constraints on the transformed domain.
+Because of the powerful properties of Laplacian eigenbasis, the inpainting
+results of our method tend to be globally coherent with the remaining shape.
 
-Informative and discriminative feature descriptors are vital in
-qualitative and quantitative shape analysis for a large variety of
-graphics applications. We advocate novel strategies to define generalized,
-user-specified features on shapes. Our new region descriptors
-are primarily built upon the the coefficients of spectral graph wavelets
-that are both multi-scale and multi-level in nature, consisting of both
-local and global information. Based on our generalized feature descriptor,
-we developed a user-specified feature detection framework and a tensor-based
-feature matching algorithm.
+Informative and discriminative feature descriptors are vital in qualitative and
+quantitative shape analysis for a large variety of graphics applications. We
+advocate novel strategies to define generalized, user-specified features on
+shapes. Our new region descriptors are primarily built upon the the
+coefficients of spectral graph wavelets that are both multi-scale and
+multi-level in nature, consisting of both local and global information. Based
+on our novel spectral feature descriptor, we developed a user-specified feature
+detection framework and a tensor-based shape matching algorithm.
 
 Through various experiments, we demonstrate the competitive performance of our
-proposed methods and the great potential of redundant spectral basis and sparsity-driven
-methods for shape modeling. We conclude this dissertation
-by discussing some remaining challenges and outline some new research directions.
+proposed methods and the great potential of redundant spectral basis and
+sparsity-driven methods for shape modeling. We conclude this dissertation by
+discussing some remaining challenges and new research directions.
 
 \tableofcontents
 
@@ -246,7 +244,7 @@ by discussing some remaining challenges and outline some new research directions
 \item \textbf{Ming Zhong} and Hong Qin. ``Sparse approximation of 3D shapes via spectral graph wavelets.'' \emph{The Visual Computer}, 30(6-8): 751-761, 2014.
 \item \textbf{Ming Zhong}. ``Harmonic Shape Analysis: From Fourier to Wavelets.'' \emph{Technical Report, Stony Brook University}, 2012.
 \item Tingbo Hou, Xiaohua Hou, \textbf{Ming Zhong}, and Hong Qin. ``Bag-of-feature-graphs: A new paradigm for non-rigid shape retrieval.'' In \emph{Pattern Recognition (ICPR), 2012 21st International Conference on}, pp. 1513-1516. IEEE, 2012.
-\item \textbf{Ming Zhong}, Tingbo Hou, and Qin Hong. ``A hierarchical approach to high-quality partial shape registration.'' In \emph{Pattern Recognition (ICPR), 2012 21st International Conference on}, pp. 113-116. IEEE, 2012.
+\item \textbf{Ming Zhong}, Tingbo Hou, and Hong Qin. ``A hierarchical approach to high-quality partial shape registration.'' In \emph{Pattern Recognition (ICPR), 2012 21st International Conference on}, pp. 113-116. IEEE, 2012.
 \item Tingbo Hou, \textbf{Ming Zhong}, and Hong Qin. ``Diffusion-driven high-order matching of partial deformable shapes.'' In \emph{Pattern Recognition (ICPR), 2012 21st International Conference on}, pp. 137-140. IEEE, 2012.
 \end{enumerate}
 
@@ -265,8 +263,11 @@ by discussing some remaining challenges and outline some new research directions
 \graphicspath{{figures/}}
 \include{chap-background}
 \include{chap-approximation}
+\graphicspath{{fig-inpainting/}}
 \include{chap-inpainting}
+\graphicspath{{fig-feature/}}
 \include{chap-feature}
+\graphicspath{{figures/}}
 \include{chap-matching}
 \include{chap-conclusion}
 

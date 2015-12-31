@@ -8,8 +8,6 @@ initiative to explore the challenging problem of sparse approximation
 of discrete 3D shapes for compressive shape representation.
 
 \section{Introduction}
-\label{sec:approx:intro}
-
 Conventional Fourier analysis decomposes a signal into mutually
 independent components with the multiscale and orthogonal Fourier
 bases. Compression is achieved by discarding certain number of
@@ -607,7 +605,6 @@ overhead ratio becomes smaller for larger meshes, since $log_2\alpha
 n$ increases slower than $n$.
 
 \subsection{Mesh Partitioning}
-\label{seq:partition}
 
 The most time-consuming part of S-OMP is to compute the maximum inner
 product between the residual and available atoms, which costs $O(mn)$
@@ -859,11 +856,11 @@ compression method employing three different dictionaries: (1) S-MP
 with the MHB-only dictionary; (2) S-OMP with the SGW-only dictionary;
 (3) S-OMP with the SGW+MHB dictionary.
 
-\begin{table}[th] 
+\begin{table}[th]
 \centering
 \begin{tabular}{ |c|c|c|c|c| }
 \hline
-Model (\#vertices) & Ratio & Error & Error Decrease & Timing (s) \\ 
+Model (\#vertices) & Ratio & Error & Error Decrease & Timing (s) \\
 \hline
 \multirow{2}{*}{Cow (4,315)} & 20\% & 1.91e-3 & 18.0\% & 3.4 \\
                              & 40\% & 1.12e-3 & 27.5\% & 10.5 \\

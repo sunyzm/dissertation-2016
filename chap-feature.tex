@@ -2,243 +2,266 @@
 
 \section{Introduction}
 
-Studies in feature abstraction and analysis have been gaining momentum because
-they can assist numerous downstream graphics tasks and applications such as shape
-recognition, segmentation, analysis, understanding, etc~\cite{Bronstein:2011:PAMI,Kin-ChungAu:2012,Song:2014:MSV}.
-Influenced by the newly-arisen concept of high-level representations
-in computer vision, which are based on object-wise components, now
-much more attention has been directed towards region-wise feature
-analysis in computer graphics. In this chapter, we advocate a general,
-user-specified type of features, which expand the conceptual boundary
-of conventional features, as well as a novel graph-wavelet-inspired
-multi-scale and multi-level descriptor, and they jointly enable our
-generalized feature detection framework that can further facilitate
-various practical applications.
+Studies in feature abstraction and analysis have been
+gaining momentum because they can assist numerous downstream graphics
+tasks and applications such as shape recognition, segmentation,
+analysis, understanding, etc
+~\cite{Bronstein2011,Kin-ChungAu:2012,Song:2014:MSV}. Influenced
+by the newly-arisen concept of high-level representations in computer
+vision, which are based on object-wise components, now much more
+attention has been directed towards region-wise feature analysis in
+computer graphics. In this work, we advocate a new region-based and
+user-specified type of feature as well as a novel
+graph-wavelet-inspired multi-scale and multi-level descriptor, and they
+jointly enable our feature detection framework that can further
+facilitate various practical applications.
 
-Conventional feature descriptors are constructed primarily by
-considering the discontinuities of certain differential attributes at
-different orders (e.g., the second-order attribute like surface
-curvature) that naturally afford their discriminative power in
-characterizing point features, line/curve features, small patch-based
-features with regular boundaries, etc. Such conventional types of
-feature descriptions have facilitated point/patch-based recognition,
-point-wise correspondence, and curvature-based saliency detection with
-great success. Nonetheless, the technical challenge
-results from the increasing demand for shape analysis of multi-scale
-neighboring information on one single model and region-wise
-co-analysis across an entire shape database (e.g., modeling by
-example~\cite{Funkhouser:2004}, model
-composition~\cite{Kreavoy:2007} and key component
-analysis~\cite{Sipiran:2012}) and the aforementioned features appear
-to be inadequate to certain extent. Furthermore, in many
-real-world settings, shape data may be degraded by acquisition
-imperfections and noises, necessitating the use of region descriptors
-which tend to be much more robust. Consequently, it calls for a
-region-wise, perceptual and flexible type of feature description and
-detection.
+Conventional feature descriptors are usually constructed by considering
+the discontinuities of certain differential attributes at different
+orders (e.g., the second-order attribute like surface curvature) that
+naturally afford their discriminative power in characterizing point
+features, line/curve features, small patch-based features with regular
+boundaries, etc. Such descriptions have facilitated point/patch-based
+recognition, point-wise correspondence, and curvature-based saliency
+detection with great success. However, for more complex applications
+such as modeling by example~\cite{Funkhouser:2004}, model
+composition~\cite{Kreavoy:2007}, and key component
+analysis~\cite{Sipiran:2012}, the aforementioned conventional features
+are usually too localized to capture the multi-scale neighboring
+information, and it is desirable to have a flexible, region-wise feature
+description. Furthermore, in many real-world settings, shape data may be
+degraded due to acquisition imperfections and noises, necessitating the
+use of region descriptors which tend to be much more robust.
 
-Existing works related to region-wise analysis
-include partial matching, shape correspondence, saliency extraction,
-etc. Boundaries of the regions in question are usually confined to
-regular but non-adaptive
-shapes~\cite{Kazhdan:2003,Mortara:03,Gatzke:2005,Kokkinos:2012},
-thus neighboring and in-between geometry information may not be
-totally incorporated. Furthermore, the main trend of measurements
-include distributions of various kinds of point descriptors over the
-entire region~\cite{Osada:2002,Ben-Chen:2008,Liu:2006} and the
-global analysis of the indexed region based on spectral
-decomposition~\cite{Hu2009,Lavoue:2012}. Some regional
-quantitative measures are usually not sufficient enough to solely
-characterize the member regions, for which post-processing like
-geometric hashing~\cite{Yehezkel:1988} or random sample
-consensus~\cite{Fischler:1981} is needed. Nevertheless, these
-settings are not hierarchical enough to characterize the entire
-focal region. And the works considering multi-scale
-analysis~\cite{Rustamov2011,Sun:2009:CGF} of the model
-surface, in spite of their great descriptive power, have not yet
-been employed to construct regional descriptions. These insights
-inspire us to propose a more comprehensive, intrinsic, and stable type
-of shape description that can encode any region of interest with high
-discriminative power and efficiency.
+Existing works related to region-wise analysis include partial matching,
+shape correspondence, saliency extraction, etc. Boundaries of the regions
+in question are usually confined to regular but non-adaptive
+shapes~\cite{Kazhdan:2003,Mortara:03,Gatzke:2005,Kokkinos:2012}, thus
+neighboring and in-between geometry information may not be fully captured.
+As for region description, trending measures include the distributions of
+various types of point
+descriptors~\cite{Osada:2002,Ben-Chen:2008,Liu:2006} and the global
+analysis of the regions based on spectral
+decomposition~\cite{Hu2009,Lavoue:2012}. Some regional measures are
+not discriminative enough to solely characterize the regions in question,
+for which post-processing like geometric
+hashing~\cite{Yehezkel:1988} or random sample
+consensus~\cite{Fischler:1981} is required. Nevertheless, these settings
+are not hierarchical enough to characterize the focal regions. On the
+other hand, multi-scale shape analysis
+methods~\cite{Rustamov2011,Sun:2009:CGF}, in spite of their great
+descriptive power, have not yet been employed to construct regional
+descriptions. These insights inspire us to propose a more comprehensive
+and stable type of shape description that can encode the region of
+interest with high discriminative power and efficiency.
 
 
 \begin{figure}[!to]
 \begin{center}
-\includegraphics[width=0.8\linewidth]{8_flow_chart}
+\includegraphics[width=1\linewidth]{Fig_1}
 \end{center}
-\caption{The pipeline of our approach.}
+\caption[Pipeline of our generalized feature detection framework.]
+{Pipeline of our feature detection and description framework.}
 \label{pipeline}
 \end{figure}
 
-In this chapter, we propose a generalized feature via user
-specification, introduce an informative descriptor, and then present a
-general feature detection framework to facilitate a host of graphics
-applications. Our generalized feature extends the definition of conventional features to a region-wise manner in an
-user-specified way (as highlighted in Fig.~\ref{pipeline}). To
-sufficiently encode user-specified feature regions, we proactively
-seek an informative regional descriptor constructed in a multi-scale
-and multi-level way. Our descriptor takes advantage of the bi-harmonic
-distance field and the SGWs. The stability and robustness of
-bi-harmonic distance field guarantee the technically-sound foundation
-for the whole descriptor. SGWs naturally accommodate shape's local and
-global geometry with a multi-scale solution, and such solution is
-consistent across multiple levels. We devise a new statistical method
-based on the decomposition coefficients of the shape signal, and this
-enables the joint analysis of the underlying geometry together with
-certain shape signals. In order to comprehensively characterize the
-feature region, we also introduce the contour-centered geometric
-statistics into our descriptor. These theoretical
-breakthroughs enable our generalized feature detection framework as
+In this chapter, we propose a local-to-global shape feature via user
+specification, introduce an informative region descriptor, and then
+present a shape feature detection framework to facilitate a host of
+graphics applications. The proposed shape feature extends the
+definition of conventional features to a region-wise manner in a
+user-specified way (as highlighted in Fig.~\ref{pipeline}). To encode
+user-specified features, we proactively seek an informative regional
+descriptor constructed in a multi-scale and multi-level way. Our
+descriptor takes advantage of the bi-harmonic distance field and the
+SGWs. The stability and robustness of bi-harmonic distance field
+guarantee the technically-sound foundation for the whole descriptor.
+SGWs naturally accommodate local and global geometry with a
+multi-scale solution, and such solution is consistent across multiple
+levels. We devise a new statistical method based on the decomposition
+coefficients of the shape signal, enabling the joint analysis of the
+underlying geometry together with different shape signals. In order
+to comprehensively characterize the shape features, we also
+incorporate the contour-centered geometric statistics into our
+descriptor. All of these enable our feature detection framework as
 shown in Fig.~\ref{pipeline}. We quantify each model's regions of
 interest around central points (or point samples) according to the
 user-specified feature scope on the query model. Then descriptors are
-constructed on interest regions across different models, and it may be
-noted that this procedure is equivalent to a (general) feature
-transformation process that migrates each model into its corresponding
-feature space. After the region-wise feature space is constructed,
-various analytical tasks can be employed.
-
-The primary contributions of this work can be summarized as follows:
+constructed on candidate regions across different models, which is
+equivalent to transform each region into the high-dimensional feature
+space. After the region-wise feature space is constructed, various
+analytical tasks can be performed. The primary contributions of this
+work can be summarized as follows:
 
 \begin{itemize}
+\item We propose to define a generalized shape feature type via user
+    specification, which is geometry-aware and is the organic coupling
+    of local and global description. Also, it is a fundamental tool
+    that can help unite different types of graphics applications.
 
-\item We make the first attempt to define a general
-    feature type via user specification, which is geometry-aware,
-    user-friendly, versatile and is the organic coupling of local and
-    global description. Also, it is a fundamental tool with
-    mathematical rigor that can help unite different types of graphics
-    applications.
+\item Our region-based descriptor is primarily built upon the SGWs
+    that are both multi-scale and multi-level in nature, elegantly
+    integrating both local (differential) and global (integral)
+    information. We also introduce the contour-centered geometric
+    statistics to enhance the descriptor's discriminative power.
 
-\item Our informative region descriptor is primarily built upon the
-  powerful SGWs that are both multi-scale and multi-level in nature,
- elegantly integrating both local (differential) and
-    global (integral) information. We also introduce the
-    contour-centered geometric statistics to enhance the descriptor's
-    discriminative power.
+\item We develop a feature detection framework, which can integrate
+    different types of state-of-the-art region descriptors and further
+    facilitate widespread graphics applications including partial
+    matching, coarse-to-fine recognition, model recognition, etc.
 
-\item We develop a generalized feature detection framework, which can
-  integrate different types of state-of-the-art regional descriptors
-  and further facilitate widespread and newly-arisen graphics
-  applications including partial matching, noisy feature recognition,
-  model recognition, etc.
 \end{itemize}
 
-\section{Background of Region Analysis}
+\section{Related Work and Background Review}
+\label{sec:RW}
+
+This section will briefly review prior research related to region
+analysis and the latest progresses on SGWs.
 
 \textbf{Region-wise Description and Detection.} We first review how
 current methods define boundaries for given regions. Broadly speaking,
 they characterize a local neighborhood around a central point in two
-ways. The first is based on Euclidean distance, such
-as spheres~\cite{Kazhdan:2003}, blowing bubbles~\cite{Mortara:03},
-rings~\cite{Gatzke:2005}, shape context~\cite{Kokkinos:2012} or
-priori decompositions~\cite{Gal2006,Itskovich2011}. The second is
-to use geodesic distance like geodesic fans~\cite{Zelinka:2004} and
-spiral pathway~\cite{Lavoue:2011}. The shapes of region boundaries
-defined by the above methods are mostly restricted to regular formats,
-and such nonadaptive neighborhoods can not precisely
-reflect the local geometrical or topological
-distortions. Region-wise descriptors can be roughly divided into two
-categories: point-based and region-based methods.
-Point-based methods provide the quantitative measure
-by organizing single-valued point signatures into certain kinds of
-distributions. In this manner, various kinds of point descriptors
-have been incorporated in, e.g., the shape index
+ways. The first is based on Euclidean distance, such as
+spheres~\cite{Kazhdan:2003}, blowing bubbles~\cite{Mortara:03},
+rings~\cite{Gatzke:2005}, shape context~\cite{Kokkinos:2012} or priori
+decompositions~\cite{Gal2006,Itskovich2011}. The second is to use
+geodesic distance like geodesic fans~\cite{Zelinka:2004} and spiral
+pathway~\cite{Lavoue:2011}. The shapes of region boundaries defined by
+the above methods are mostly restricted to regular formats, and such
+nonadaptive neighborhoods cannot precisely reflect the local
+geometrical or topological distortions. Region-wise descriptors can be
+roughly divided into two categories: point-based and region-based
+methods. Point-based methods provide the quantitative measure by
+organizing single-valued point signatures into certain kinds of
+distributions. Various kinds of point descriptors have been
+incorporated in this manner, e.g., the shape index
 (SI)~\cite{Toldo:2009}, shape diameter function
 (SDF)~\cite{Shapira:2010}, heat kernel signature
 (HKS)~\cite{Bronstein:2013}, Zernike
 moments~\cite{Maximo:2011:RRI:2027471}, etc. Region-based methods
-analyze the entire region through spectral
+analyze the entire focal region through spectral
 decomposition~\cite{Hu2009,JiangZZ:13}, which can robustly depict the
-intrinsic geometry information. However, due to the instability of
-local Laplacian decomposition, these methods usually fail to properly
-handle small and complex regions.
-
+intrinsic geometry. However, due to the instability of local Laplacian
+decomposition, these methods usually cannot well handle small and
+complex regions.
 
 \textbf{Region-based Partial Matching and Correspondence.} In
 literature, region analysis has been discussed mainly in the research
-of partial matching problems. Several main categories of techniques
-have been carried out concerning partial matching.
-Skeletal-graph-based approaches such as~\cite{Biasotti:2006} couple
-geometry and structure in a single skeletal descriptor based on the
-theory of Reeb graph. The main drawback is that sub-parts cannot be
-recognized automatically. Multi-criterion optimization
+of partial matching problems, and several categories of techniques
+have been employed. Skeletal-graph-based approaches such
+as~\cite{Biasotti:2006} couple geometry and structure in a single
+skeletal descriptor based on the theory of Reeb graph. The main
+drawback is that sub-parts cannot be recognized automatically.
+Multi-criterion optimization
 approaches~\cite{Bronstein:2008,Castellani:2008,Lavoue:2011} try to
-match subparts by balancing between significance and similarity
-criteria. This type of methods require the knowledge of correspondence
-between shapes, otherwise, it can only be solved by alternating
-between correspondence and part area, which is time-consuming.
-Bag-of-words (BoWs) technique is
-adopted~\cite{Zaharescu2009,Kokkinos:2012} to represent a shape or
-a subpart as a collection of local feature signatures quantized in
-some vocabularies of ``geometric words''. If the geometric vocabulary
-is sufficient and the shapes have significant common parts, it is
-possible to compare partially-similar shapes, otherwise, these methods
-oftentimes fail to function properly.  Furthermore,
-improper additions of the spatial information and imprecise binning
-process oftentimes inevitably lead to the average-off effect of the
-geometric information to certain extent. The concept of
-non-point-wise correspondence was first proposed
+match subparts by striking balance between significance and
+similarity criteria. This type of methods require the knowledge of
+correspondence between shapes, otherwise, it can only be solved by
+alternating between correspondence and part area, which is
+time-consuming. Bag-of-words (BoWs) technique has been
+adopted~\cite{Zaharescu2009,Bronstein:2010:CVPR} to represent a shape or a
+subpart as a collection of local feature signatures quantized in some
+vocabularies of ``geometric words''. If the geometric vocabulary is
+sufficient and the shapes have significant common parts, it is
+possible to compare partially-similar shapes, otherwise, these
+methods oftentimes fail to function properly. Furthermore, improper
+additions of the spatial information and imprecise binning process
+may lead to the averaging-off effects of geometric information. The
+concept of non-point-wise correspondence was first proposed
 in~\cite{Bronstein:2013} by using region-wise local descriptors and
 optimizing over the integration domain upon which the integral
 descriptors of the two parts match. This method can exactly match
 fragments to entire shapes, however, since it utilizes the absolute
-value in calculation like integration, it can not
-deal with the partially similar correspondence.
-Overall, many of the above approaches rely heavily on
-exact or meaningful shape decomposition process as conducted
-in \cite{Itskovich2011} and \cite{Lavoue:2012}, which is computationally
-expensive and significantly influences the final correspondence
-results. Also, in order to achieve meaningful results, many
-approaches utilize time-consuming post-processing like
-in~\cite{Gal2006} and~\cite{Itskovich2011}. All of these
-demonstrate that it requires effective, user-friendly, and generalized
-region detection techniques to help speed up and improve the precision
-of the partial matching and correspondence processes.
+values in calculation like integration, it cannot deal with the
+partially similar correspondence. Besides, many of the above
+approaches rely heavily on exact or meaningful shape decomposition
+process as in~\cite{Itskovich2011,Lavoue:2012}, which is
+computationally expensive and significantly influences the final
+correspondence results. Also, in order to achieve meaningful results,
+many approaches utilize time-consuming post-processing like
+in~\cite{Gal2006} and~\cite{Itskovich2011}. So it requires more
+effective and generalized region detection techniques to help speed
+up and improve the precision of the partial matching and
+correspondence processes.
 
-\section{General Shape Feature Definition}
+\begin{figure*}
+\begin{center}
+\includegraphics[width=0.68\textwidth]{Fig_2}
+\end{center}
+\caption[Illustration of the steps of our feature detection framework.]
+  {The functional pipeline of our feature detection framework.
+  (a)-(c) show the user's inputs in the specification process, red
+  arrows in (a) and (b) denote the specified point of interest and
+  contour scope, respectively. The bottom row shows the specified
+  shape feature (e) and analogous feature regions (d) (we only
+  display three cases here).}
+\label{specification}
+\end{figure*}
+
+\textbf{Spectral Graph Wavelets.} Wavelet, which can localize a given
+function both in space and in scale, is a powerful analytical tool in
+signal processing~\cite{Mallat2008}. Unlike Fourier transform which
+are globally defined, wavelet analysis is able to perform localized
+multi-resolution analysis. Classical wavelets are constructed by
+translating and scaling a mother wavelet in Euclidean space. However,
+transplanting wavelets to graphs (specifically, triangular meshes) is
+not straightforward due in part to the fact that it is unclear how to
+apply the scaling operation on a signal that is defined on the mesh
+vertices, so early studies using wavelet mostly relied on the
+parameterization~\cite{Werghi:2002,Liu:2007}. One way to construct
+wavelets on graph structures is using a diffusion operator and its
+dyadic powers to obtain multi-scale wavelet and scaling
+functions~\cite{Coifman2006,Hou2013}. Another approach to define
+graph wavelets is by expanding graph functions with the eigen-system
+of the graph Laplacian matrix and performing scaling in the frequency
+domain~\cite{Hammond2011,Hou2012}, giving rise to the spectral
+graph wavelet transform (SGWT). More recently, Kim et
+al.~\cite{Kim:2012,Kim:2014} introduced a wavelet-based multi-scale
+descriptor for the analysis of cortical surface signals using the SGWT
+and Li et al.~\cite{Li:2013} proposed a SGWT-based descriptor and
+utilized the intrinsic spatial pyramid matching (ISPM) for global
+shape retrieval. Though these researches discover the potentials of
+SGWs, they all concentrate on global shape analysis based on point
+signatures, ignoring the SGWs' power in integrating the
+local-to-global/in-between geometrical and topological information.
+These inspire us to combine SGWs and bi-harmonic distance field to
+enable the multi-scale and multi-level description of the region of
+interests.
+
+\section{Local-to-global Shape Feature Definition}
 \label{sec:GF}
 
-\begin{figure}
-\begin{center}
-\includegraphics[width=0.68\textwidth]{17_functionality}
-\end{center}
-\caption{The functional pipeline of our generalized feature detection
-  framework. (a)-(c) show the user's inputs in the
-  specification process, red arrows in (a) and (b) denote the
-  specified point of interest and contour scope, respectively. The bottom
-  row shows the analogous regions, and we only display three in the interest
-  of space.}
-\label{specification}
-\end{figure}
-
 In this section, we introduce the definition process of the proposed
-\emph{general features}, which intend to generalize the definition of
-conventional features to a more user-friendly and
-comprehensive level, and model partial shapes in a regional fashion.
-The general feature is extracted based on the bi-harmonic distance
-field~\cite{Lipman:2010}, which is robust, parameter-free, versatile,
-and widely used in geometry processing.  Among these attractive
-properties, the consecutive depicting power inspires us to incorporate
-it for embracing the multi-scale regional information that is required
-for subsequent analysis. In addition, the cross-sections of contours
-in such a distance field naturally form boundaries for user-specified
-feature regions, thus avoiding the shape decomposition process.
+novel shape feature, which generalizes conventional features (e.g.,
+point, line, or patch features) to a local-to-global level via user
+specification. Our shape feature is extracted via the bi-harmonic
+distance field~\cite{Lipman:2010}, which is robust, globally
+``shape-aware'', parameter-free, and widely used in geometry
+processing. Among these attractive properties, the consecutive
+depicting power inspires us to incorporate it for integrating
+multi-scale regional information that is required for subsequent
+analysis. In addition, the cross-sections of contours in the
+bi-harmonic distance field naturally form boundaries for
+user-specified features, thus avoiding the shape decomposition
+process.
 
-A general feature is a user-specified partial region
-  with two parameters: the point of interest and the contour scope,
-  which can be obtained using a simple user-interactive process. The
-  point of interest can be picked directly on the mesh, as shown in
-  Fig.~\ref{specification}(a), or can be automatically initialized
-  as the extreme point of a function defined on the surface.  Then
-the next step is to specify the scope of the general feature with the
-interest point as the relative center. We should first introduce the
-metric with which we set the scope, namely, the bi-harmonic distance
-field. Let us consider a 3D mesh represented as a graph $M = (V;E)$
-with vertices $V$ and edges $E$, where $V = \{v_1,v_2,...,v_n\}$ and
-$n$ is the number of the vertices. A vector-valued function $f \colon
+Our shape feature is a user-specified partial region with two
+parameters: the point of interest and the contour scope, both of
+which can be determined using a simple user-interactive process. The
+point of interest is the relative center of the feature, it can either
+be picked directly on the mesh, as shown in
+Fig.~\ref{specification}(a), or be automatically initialized as the
+extreme point of a function defined on the surface. In order to specify
+the contour scope of the point of interest, we should first introduce
+the metric with which we set the scope, namely, the bi-harmonic
+distance field.
+
+Let us consider a 3D mesh represented as a graph $M = (V;E)$ with
+vertices $V$ and edges $E$, where $V = \{v_1,v_2,...,v_n\}$ and $n$ is
+the number of the vertices. A vector-valued function $f \colon
 \textbf{V} \rightarrow \mathbb{R}^q $ defined on $V$ can be
 represented as an $n \times q$ matrix, where the $i$-th row represents
-the function value at $v_i$, we denote it as $f(i)$.  According
+the function value at $v_i$, we denote it as $f(i)$. According
 to~\cite{Lipman:2010}, the bi-harmonic distance between vertex $v_i$
 and $v_j$ can be expressed as
 \begin{equation}
@@ -247,47 +270,50 @@ D_{bh}(i,j)^2=\sum_{k=1}^{m}\frac{(\chi_k(i)-\chi_k(j))^2}{\lambda_k^2},
 \end{equation}
 where $\{\lambda_k\}$ and $\{\chi_k(\cdot)\}$ are, respectively, the
 first $m$ non-zero eigenvalues and the corresponding eigenfunctions of
-the Laplacian-Beltrami operator with ``cotangent formula"
+the Laplacian-Beltrami operator with ``cotangent formula''
 discretization~\cite{Meyer2003}.
 
-For each vertex, Eq.~(\ref{eq:bd}) defines a
-  diffusion field around it. We compute the diffusion field of the
-specified interest point (denoted as $v_s$) and then construct a set
-of equal-distance contours (Fig.~\ref{specification}(b)) across the
-entire model with contour points located on the edges of the mesh
-model. These contours can well characterize the shape structure and
-reflect the changes locally around the central point and globally with
-respect to the entire model. In order to make the
-setting of parameters more stable, we normalize the original models
-using a unit box. Then the total number of the contours distributed
-in the diffusion field can be set empirically to the integer nearest
-to $max(D_{bh}(s,\cdot))/0.05$, which is dense enough to depict the
-diffusion field. Then the user can choose one of the contours to set
-the scope of general feature (as shown in
-Fig.~\ref{specification}(b)) and denote it as $S_{s}$.
-Fig.~\ref{specification}(c) illustrates the general feature defined
-with the red boundary.
+For each vertex, Eq.~(\ref{eq:bd}) defines a diffusion field around
+it. We compute the diffusion field of the specified interest point
+(denoted as $v_s$) and then construct a set of contours
+(Fig.~\ref{specification}(b)) across the entire model with contour
+points located on the edges of the mesh model. These contours can very
+well reflect the changes locally around the central point and
+characterize the corresponding global structures, and these will be
+discussed later. In order to make the setting of parameters more
+stable, we normalize the original models using a unit box. Then the
+total number of the contours distributed in the diffusion field can be
+set empirically to the integer nearest to $max(D_{bh}(s,\cdot))/0.05$,
+which is dense enough to depict the diffusion field. Then the user can
+choose one of the contours to set the scope of the feature (as shown
+in Fig.~\ref{specification}(b)) and denote it as $S_{s}$.
+Fig.~\ref{specification}(c) illustrates the feature defined with the
+red boundary.
 
-General features can be located anywhere and be spatially varying in
-scale according to the specific application. They integrate the
-local and global geometry, which affords their great potential in
-bridging differential and integral geometry information, thus giving
-rise to more powerful shape analysis.
-
+Our shape features can be located anywhere and vary spatially in scale
+depending on specific applications. They integrate the local and global
+geometry, which affords their great potential in bridging differential
+and integral geometry information.
 
 \section{Multi-level And Multi-scale Shape Description}
 \label{sec:Des}
 
-Our novel descriptor primarily exploits the SGWs and the metric statistics.
-In this section, we shall introduce the SGWs-related description and the
-contour-based statistics before the complete descriptor could be constructed.
+Our novel descriptor primarily exploits the SGWs and the metric
+statistics. This section introduces the SGWs-related description and
+the contour-based statistics before the complete descriptor can be
+constructed.
 
 \subsection{SGW-based Description}
 
-As mentioned in previous chapters,  SGW is determined by the generating
-kernel $g \colon \mathbb{R} \rightarrow \mathbb{R}$ in the spectral domain.
-SGWs can be viewed as bivariate kernel functions expanded on the manifold
-harmonic basis:
+SGWT is introduced in~\cite{Hammond2011} for wavelet analysis
+on graphs. The central idea is to define the required scaling in the
+Fourier domain instead of the spatial domain. SGWT is determined by
+the generating kernel $g \colon \mathbb{R} \rightarrow \mathbb{R}$. To
+act as a band-pass filter, the kernel $g$ should satisfy $g(0) = 0$
+and $\lim_{x \rightarrow \infty} g(x) = 0$. The SGWs are then
+expressed as bivariate kernel functions
+expanded on the manifold harmonic basis, which are formed by the
+aforementioned Laplacian-Beltrami eigenfunctions on mesh models.
 \begin{equation}
 \label{eq:SGW}
 \Psi_{t}(i,j)=\sum_{k=0}^{n-1}g(t\lambda_k) \chi_k(i)\chi_k(j),
@@ -299,18 +325,32 @@ scale parameter. The $i$-th row of $\Psi_{t}(\cdot,\cdot)$
 \psi_{t,i}(\cdot) = \Psi_{t}(i,\cdot)=\sum_{k=0}^{n-1}g(t\lambda_k) \chi_k(i)\chi_k(\cdot),
 \end{equation}
 is the spectral wavelet spatially-localized at $v_i$, and in the
-frequency domain, localized at scale $t$. The values of wavelets are
-attenuated and oscillating on the mesh, and wavelets with a larger
-scale have a wider oscillating window. Here we should emphasize that we
-choose to utilize the geometric mesh Laplacian instead of the
-combinatorial Laplacian as originally applied in \cite{Hammond2011}
-to afford geometry-aware description of the mesh.
+frequency domain, localized at scale $t$. Fig.~\ref{SGW} shows the
+SGWs of different scales located on one index point on the wolf model.
+It may be noted that, the values of wavelets are attenuated and
+oscillating on the mesh, and wavelets with a larger scale have a wider
+oscillating window. Here it should emphasized that we choose to
+utilize the geometric mesh Laplacian instead of the combinatorial
+Laplacian as originally applied in~\cite{Hammond2011} to afford much
+more precise description of the mesh geometry.
 
-SGWs can well represent the high frequency and low frequency geometric
-information around a vertex. Suppose we compute the spectral wavelets
-at $J$ different scales $\{t_1,t_2,...,t_J\}$, and we adopt the same
-formulation of generating kernel functions used in~\cite{Hammond2011},
-given by
+\begin{figure}[!to]
+\begin{center}
+\includegraphics[width=0.9\linewidth]{Fig_3}
+\end{center}
+\caption[Spectral graph wavelets on the wolf model.]
+  {Spectral Graph Wavelets centered at one vertex on the wolf
+  model. From left to right are wavelets from high frequency to low
+  frequency with scale 1, 3 and 5.}
+\label{SGW}
+\end{figure}
+
+It has been proved that SGWs can well represent the high frequency
+and low frequency geometric information around the index
+point~\cite{Hammond2011}.  Suppose we compute the spectral wavelets
+at $J$ different scales $\{t_1,t_2,...,t_J\}$, and adopt the same
+formulation of generating kernel functions used
+in~\cite{Hammond2011}, given by
 \begin{equation}
 g(x)=\left\{
 \begin{array}{lcl}
@@ -322,9 +362,9 @@ x^2                &      & {if\  x<1}\\
 and the $J$ scales are selected to be logarithmically equally spaced
 between the minimum scale $t_J = 2/\lambda_{max}$ and the maximum
 scale $t_1=40/\lambda_{max}$, where $\lambda_{max}$ is the upper bound
-of the Laplacian eigenvalues. The set of $t_1$ and $t_J$ guarantees
-that $g(t_1 x)$ has power-law decay for $x>\lambda_{min}$ and $g(t_J
-x)$ has monotonic polynomial behavior for $x<\lambda_{max}$.
+of the Laplacian eigenvalues. The settings of $t_1$ and $t_J$
+guarantee that $g(t_1 x)$ has power-law decay for $x>\lambda_{min}$
+and $g(t_J x)$ has monotonic polynomial behavior for $x<\lambda_{max}$.
 
 Using the above formulations, we can easily get the wavelet
 coefficients of a given function on a specific vertex $v_i$ as
@@ -334,57 +374,59 @@ W_f(t,i) = \langle \psi_{t,i},f \rangle = \sum_{l=0}^{n-1}g(t\lambda_l)\hat{f}(l
 \end{equation}
 where
 \begin{equation}
-  \hat{f}(l) = \langle \chi_l,f \rangle = \sum_{i=0}^{n-1} \chi_l(i)f(i).
+  \hat{f}(l) = \langle \chi_l,f \rangle = \sum_{i=0}^{n-1} \chi_l(i)f(i),
 \end{equation}
-
-Here, the signal function $f$ can be any kind of
-surface signal depending on applications. For example, mean curvature
-is a good choice for the recognition of repetitive features within certain
-models, the detection of similar features among models with different poses,
-and other common detection tasks. And for noisy feature recognition,
-the HKS is more favorable thanks to its robustness to noise.
-And we will show different settings of $f$ later in this chapter.
-The coefficients $W_f$ obtained from the transformation is the inner
-product of the signal function and the corresponding wavelet at scale
-$t$ and location $i$. It is a representation of the signal for that
-scale, that is to say, it describes the original signal in certain
-frequency with respect to the local geometry and topology. Repeating
-this process for $J$ scales (as shown in Fig.~\ref{wmd}(a)-(d) with 4
-scales), the set of coefficients obtained comprises our multi-level
-descriptor.
+and
+\begin{equation}
+  f(i) = \sum_{l=0}^{n-1} \hat{f}(l) \chi_l(i).
+\end{equation}
+Here, the signal function $f$ can be any kind of surface signal
+depending on applications. For example, mean curvature,
+characterizing detailed distortions, is a good choice for the
+recognition of repetitive features within certain models, the
+detection of similar features among models with different poses, etc.
+For coarse-to-fine recognition, the HKS is more favorable thanks to
+its robustness to noise. Different settings of $f$ will be shown
+later for different applications. The coefficients $W_f$
+obtained from the transformation is the inner product of the signal
+function and the corresponding wavelet at scale $t$ and location $i$.
+It is a representation of the signal for that scale, that is to say,
+it describes the original signal in certain frequency with respect to
+the local geometry and topology. Repeating this process for $J$
+scales (as shown in Fig.~\ref{wmd}(a)-(d) with 4 scales), the set of
+coefficients obtained comprises our multi-level descriptor.
 
 \begin{figure}[!to]
 \begin{center}
-\includegraphics[width=0.8\linewidth]{5_WMD}
+\includegraphics[width=0.9\linewidth]{Fig_4}
 \end{center}
-\caption{Statistics on signal's wavelet decomposition
-  coefficients ($W_f(\cdot,t)$). (a)-(d) list $t$ from small ($t_1$)
-  to large ($t_4$) value, which correspond to the decomposed signals
-  varying from high to low frequency. (e) illustrates the composition of
-  statistics based on $W_f$ within one general feature.}
+\caption[Statistics on wavelet decomposition coefficients.]
+  {Statistics on signal's wavelet decomposition coefficients
+  ($W_f(\cdot,t)$). (a)-(d) list $t$ from small ($t_1$) to large
+  ($t_4$) value, corresponding to the decomposed signals varying from
+  high to low frequencies. (e) illustrates the composition of
+  statistics based on $W_f$ within one feature region.}
 \label{wmd}
 \end{figure}
 
-
-Instead of using $W_f$ as descriptor directly as in~\cite{Li:2013} and
-other harmonic analysis research, we incorporate it into our
-descriptor by taking advantage of the consecutive depicting power of
-the bi-harmonic distance field. In order to comprehensively describe
-the geometric information contained within the specified general
-feature, we subdivide the feature region into thinner bands with more
-contours as implemented in Section~\ref{sec:GF}, just as shown in
-Fig.~\ref{specification}(c)-(e). The number of dense
-contours may be set automatically as the integer nearest to
-$S_{s}/0.025$, and such dense contours are verified to be able to
-elaborately depict and organize the inner geometrical information of
-the general feature. Fig.~\ref{wmd}(e) illustrates the setup of our
-SGW-based statistical bands based on $W_f$, where different layers
-convey multi-level (from high to low frequency) information and
-different bands (denoted in yellow and green) in-between contours
-encode multi-scale information. By stretching the 'matrix-like'
-statistic (as in Fig.~\ref{wmd}(e)) into a high dimensional vector, we
-obtain the descriptor of $v_s$, denoted as $D_s$, which is then given
-by
+Instead of using $W_f$ directly as the descriptor like
+in~\cite{Li:2013} and other harmonic analysis researches, we
+incorporate it into our descriptor by taking advantage of the
+consecutive depicting power of the bi-harmonic distance field. In
+order to comprehensively describe the geometric information contained
+within the feature, we subdivide the feature region into thinner bands
+with more contours as implemented in Section~\ref{sec:GF}, just as
+shown in Fig.~\ref{specification}(c)-(e). The number of dense contours
+may be set automatically as the integer nearest to $S_{s}/0.025$, and
+such dense contours have been verified to be able to elaborately
+depict and organize the inner geometrical information of the feature.
+Fig.~\ref{wmd}(e) illustrates the setup of our SGW-based statistical
+bands based on $W_f$, where different layers convey multi-level (from
+high to low frequency) information and different bands (denoted in
+yellow and green) in-between contours encode multi-scale information.
+By stretching the ``matrix-like" statistic (as in Fig.~\ref{wmd}(e))
+into a high dimensional vector, we obtain the descriptor of $v_s$,
+denoted as $D_s$, given by
 \begin{equation}
 \label{eq:Des}
 \hspace{-1.2mm}
@@ -394,8 +436,9 @@ D_s=[\underline{W_{t_1}^{b_1},...\ ,W_{t_1}^{b_L}},\\
 \underline{W_{t_J}^{b_1},...\ ,W_{t_J}^{b_L}}],
 \end{equation}
 where $W_{t_i}^{b_j}$ denotes the statistic of $W_f$ with scale $t_i$
-on the $j$-th band, and $L$ is the number of contours. Here $W_{t_i}^{b_j}$
-can be expressed as the 1-norm of $W_f(t_i, \cdot)$ over the $j$-th band
+on the $j$-th band, and $L$ is the number of contours. Here
+$W_{t_i}^{b_j}$ can be expressed as the 1-norm of $W_f(t_i, \cdot)$
+over the $j$-th band
 \begin{equation}
 \label{eq:WMD_sta}
 W_{t_i}^{b_j} = \sum_{p \in b_j}| W_f(t_i,p)|,
@@ -403,38 +446,39 @@ W_{t_i}^{b_j} = \sum_{p \in b_j}| W_f(t_i,p)|,
 where $p$ is the vertex index, $p \in b_j$ denotes $p$ is a vertex
 located on the $j$-th band.
 
-In Fig.~\ref{wmd}, we observe that information
-contained in $W_f$ of different time scales corresponds to
-multi-level information, ranging from fine to coarse, and the
-statistics on the bands convey the near-to-far multi-scale
-knowledge. These information collectively makes use of SGWs' power
-in integrating geometric information. In addition, we notice that
-descriptors based on $W_f$ are scale-invariant if SGWs are normalized.
+In Fig.~\ref{wmd}, we observe that information contained in $W_f$ of
+different time scales corresponds to the fine-to-coarse multi-level
+information, and the statistics on the bands convey the near-to-far
+multi-scale knowledge. These collectively make use of SGWs' power in
+integrating geometric information. In addition, we notice that
+descriptors based on $W_f$ are scale-invariant as long as SGWs are
+normalized.
 
 \subsection{Contour-based Multi-scale Statistics}
 
 \begin{figure}[!to]
 \begin{center}
-\includegraphics[width=0.75\linewidth]{2_shapecontext}
+\includegraphics[width=0.8\linewidth]{Fig_5}
 \end{center}
-\caption{Contour-based distance distribution. The zoomed-in part shows
-  the distances under consideration when performing
+\caption[Contour-based distance distribution.]
+  {Contour-based distance distribution. The zoomed-in part
+  shows the distances under current consideration when performing
   statistical calculation.}
 \label{Descriptor}
 \end{figure}
 
-The contours of generalized features encode rich
-  information of local-to-global geometric variation. So we further
-introduce the perimeters of contours and contour points' distance
-distribution to help characterize the focal region's shape in an
-orderly and quantitative manner.
+The contours of bi-harmonic distance field encode rich information of
+local-to-global geometric variation. So we further introduce the
+perimeters of contours and the distance distribution of contour points
+to help characterize the focal region's shape in an orderly and
+quantitative manner.
 
-For a general feature and its corresponding contours,
-we first calculate contours' perimeters and concatenate them as $\{
-p^{c_1},p^{c_2},...,p^{c_L} \}$, where $c_i$ denotes the index of
+For a specified feature and its corresponding contours, we first
+calculate contours' perimeters and concatenate them as
+$\{p^{c_1},p^{c_2},...,p^{c_L} \}$, where $c_i$ denotes the index of
 the $i$-th contour. Then, for each contour, we compute the Euclidean
-distances between the contour points and their barycenter (as shown
-in Fig.~\ref{Descriptor}), and further evaluate the probability
+distances between the contour points and their barycenter (as shown in
+Fig.~\ref{Descriptor}), and further evaluate the probability
 distribution of the distances. We denote the distance-related
 statistics as $\{ds^{c_1},ds^{c_2},...,ds^{c_L} \}$. Here, $ds^{c_i}$
 is a vector stacking up the probability distribution of the distances
@@ -447,19 +491,19 @@ its stack pattern is
 \end{equation}
 where $num(b_j)$ is the number of points with distance values falling
 in the $j$-th bin and $num(c_i)$ is the number of points on the $i$-th
-contour. For multiple contours with the same value, distances of
-the multiple contours should be considered as a whole.
+contour. For multiple contours with the same value, they should be
+considered as a whole when performing statistical calculation.
 
-These two measurements help describe the shape of the bi-harmonic distance
-field completely and identify the details of shape's distortion.
-And the purpose of introducing the distance distribution
-is to distinguish between different contours with the same perimeters.
+These two measurements help describe the shape of the bi-harmonic
+distance field completely and identify the details of shape's
+distortion. The purpose of introducing the distance distribution is
+to distinguish between different contours with the same perimeters.
 
 \subsection{Informative Region-based Descriptor}
 
-We have introduced the separate parts of our descriptor.
-Integrate them together, our final informative hi-dimensional
-descriptor has the form
+So far, the separate parts of our descriptor have all been introduced.
+Now, it sets the stage for us to integrate them together to form our
+final informative hi-dimensional descriptor as
 \begin{equation}
 \label{eq:desFinal}
 \begin{aligned}
@@ -469,98 +513,97 @@ descriptor has the form
   (ds^{c_1},...\ ,ds^{c_L})],
 \end{aligned}
 \end{equation}
-where $\omega_s$ and $\omega_p$ are weights for the purpose of adjusting
-the contributions of the three parts in the descriptor. The settings
-of these weights will be detailed in Section~\ref{sec:Exp}.
+where $\omega_s$ and $\omega_p$ are weights to adjust the
+contributions of the three parts in the descriptor. The settings of
+these weights will be detailed in Section~\ref{sec:Exp}.
 
 Our descriptor integrates the attractive properties of both SGWs and
-contour-based measurements. From the viewpoint of
-feature mapping, SGWs establish a powerful foundation for
-hierarchical representation of the geometrical and topological
-details. Our design of the region-based description encodes the
-general feature in the aspects of both "breadth" and "depth", paving
-the way for our generalized feature detection framework.
+contour-based measurements. From the viewpoint of feature mapping,
+SGWs establish a powerful foundation for hierarchical representation
+of the geometrical and topological details. Our design of the
+regional description encodes the shape feature in the aspects of both
+``breadth'' and ``depth'', paving the way for our feature detection
+framework.
 
-
-\section{General Feature Detection Framework}
+\section{Feature Detection Framework}
 \label{sec:Framework}
 
-Using the same way of defining feature regions around
-candidate points and formulating their corresponding description,
-descriptors concerning relative regions on the same model or other
-models in the database can be easily computed for analytical
-purposes.
+Using the same way to define feature regions around candidate points
+and formulate the corresponding descriptions, descriptors concerning
+candidate regions on the same model or different models in the
+database can be easily computed for analytical purposes.
 
 \subsection{Constructing Descriptors over Shapes}
 
 To construct descriptors on candidate regions on one or more models,
-the central points and regional scopes should also be determined
-first. As for the central points, we implement the
-farthest-point-sampling strategy~\cite{Moenning:2003} to uniformly
-extract points on the mesh model (as shown in Fig.~\ref{Sampling}).
-This strategy ensures not only the uniform
-distribution of the candidate points, but also the inclusion of the
-end points, which are interesting alternatives for user's selection.
-However, we want to mention that the sampling process is optional,
-and users could either pick the desired sampling methods or simply
-use all the vertices as candidates according to specific
-applications.
+the central points and contour scopes should also be determined first.
+As for the central points, we implement the farthest-point-sampling
+strategy~\cite{Moenning:2003} to uniformly extract points on the mesh
+model (as shown in Fig.~\ref{Sampling}). This strategy ensures not
+only the uniform distribution of the candidate points, but also the
+inclusion of the end points, which are interesting alternatives for
+user's selection. However, we want to mention that the sampling
+process is optional, and users could either pick the desired sampling
+methods or simply use all the vertices as candidates according to
+specific applications.
 
 Then the construction of descriptors across versatile shapes is based
-on the knowledge of the general feature defined. That is, candidate
+on the knowledge of the shape feature defined. That is, candidate
 regions are determined automatically according to the contour scope of
-the general feature. Suppose that $v_{s}$ and $v_{i}$ are respectively
-the interest point and one of the candidate points.
-Then the scope of $v_{i}$ is set as
+the shape feature specified. Suppose that $v_{s}$ and $v_{i}$ are
+respectively the interest point and one of the candidate points. Then
+the scope of $v_{i}$ is set as
 $S_{s}*max(D_{bh}(i,\cdot))/max(D_{bh}(s,\cdot))$ and this can help
-ensure the robustness of our method for deformable models. With
-the region scope determined, the construction of the corresponding
-descriptor is conducted in the same way as the general feature (in
+ensure the robustness of our method for deformable models.  With the
+region scope determined, the construction of the corresponding
+descriptor is conducted in the same way as the specified feature (in
 Section~\ref{sec:Des}), which is detailed in
 Algorithm~\ref{alg:Framwork}.
 
-
 \begin{figure}[!to]
 \begin{center}
-\includegraphics[width=0.9\linewidth]{1_sampling}
+\includegraphics[width=0.9\linewidth]{Fig_6}
 \end{center}
-\caption{Sampling results on horse and santa model using the
-  farthest-point-sampling strategy and only part of the sampling
-  points are shown in the interest of visual clarity.}
+\caption[Point sampling on the horse and Santa models.]
+  {Sampling results on horse and Santa models using the
+  farthest-point-sampling strategy. Only part of the sampling points
+  are shown for visual clarity.}
 \label{Sampling}
 \end{figure}
 
-With each candidate region equipped with a high-dimensional descriptor,
-we can compare the region similarity in the descriptor space. We
-find that both $L1$ and $L2$ norms are discriminative enough to measure
-the distance between any two descriptors, representing the corresponding
-regions. As alternatives, the covariance distance and $\chi{2}$ distance
-are also found to be good choices for comparing the distributions'
-similarities.
+With each candidate region equipped with a high-dimensional
+descriptor, our key task is to analyze the similarity in the
+descriptor space. We shall first introduce the proper measurements
+for this new space. It has been found that both $L1$ and $L2$ norms
+are discriminative enough to measure the distance between any two
+descriptors, representing the corresponding regions. As alternatives,
+the covariance distance and $\chi{2}$ distance are also tested to be
+good choices for comparing the distributions' similarities.
 
 \subsection{Feature Detection and Framework Properties}
 
-Here, we detail the effectiveness of our feature
-detection framework together with several of its attractive
-properties and more results will be shown in Section~\ref{sec:Exp}.
-We shall first emphasize that high sampling rates always lead to dense
-distribution of the candidate points, thus several neighboring points
-may have similar diffusion regions, and this will lead to multiple
-detected results that are in the vicinity of each other. Therefore we
-empirically reject candidate regions that have more than $50\%$
-overlaying with the afore-ranked regions.  This strategy can ensure
-the uniqueness of the detected features as well as the broader
-coverage of all relevant feature regions, and also make our approach
-robust to different sampling processes.
+Here, we detail the effectiveness of our feature detection framework
+together with several of its attractive properties and more results
+will be shown in Section~\ref{sec:Exp}. It shall first be emphasized
+that high sampling rates always lead to dense distribution of the
+candidate points, thus several neighboring points may have similar
+diffusion regions, and this will lead to multiple detected results
+that are in the vicinity of each other. Therefore we empirically
+reject candidate regions that have more than $50\%$ overlaying with
+the afore-ranked regions. This strategy can ensure the uniqueness of
+the detected features as well as the broader coverage of all relevant
+feature regions, and also make our approach robust to different
+sampling processes.
 
 \begin{figure}[!to]
 %\begin{center}
-\includegraphics[width=0.85\linewidth]{19_scales}
+\includegraphics[width=0.85\linewidth]{Fig_7}
 %\end{center}
-\caption{Detection of general features with different scales. The first
-row shows the specified general features and the second row shows the
-detected results within the bear model. Yellow points on query models
-denote the specified points of interest.}
+\caption[Detection of repetitive features with different scales.]
+  {Detection of repetitive features with different scales. The
+  first row shows the specified features and the second row shows the
+  detected results within the bear model. Yellow points on query
+  models denote the specified points of interest.}
 \label{scales}
 \end{figure}
 
@@ -570,7 +613,7 @@ denote the specified points of interest.}
 \label{alg:Framwork}
 \begin{algorithmic}[1]
 \REQUIRE User-specified interest point $v_{s}$ and contour index $n_{s}$;
-\ENSURE  Descriptors of the specified general feature ($D_{s}$) and all
+\ENSURE  Descriptors of the specified feature ($D_{s}$) and all
          the other candidate regions ($\{D_{i}\}$);
 \STATE Conduct the eigen-decomposition on all models;
 \STATE Compute the $W_f$ of each point using Eq.~(\ref{eq:WMD});
@@ -579,55 +622,53 @@ denote the specified points of interest.}
 \STATE With user's specification of the contour number ($n_{s}$), compute the corresponding value as $S_{s}$;
 \STATE For any candidate point $v_{i}$, compute its bi-harmonic distance $D_{bh}\{s,\cdot\}$,
        and set its region scope as $S_{s}*max(D_{bh}\{i,\cdot\})/max(D_{bh}\{s,\cdot\})$;
-\STATE Reconstruct $S_{s}/0.025$ contours on the general feature and all the candidate feature regions;
+\STATE Reconstruct $S_{s}/0.025$ contours on the specified feature and all the candidate feature regions;
 \STATE Compute the SGWs-based and contour-related measurements using Eq.~(\ref{eq:desFinal});
 \STATE Return $D_s$ and $\{D_{i}\}$.
 \end{algorithmic}
 \end{algorithm}
 
-We first show a simple general feature detection result within the
-bear model as displayed in Fig.~\ref{scales} (here, mean curvature is
-chosen as the signal function). The top row shows the
-general features specified with different scales and the second row
-shows the detected results. We can observe that the
-detected similar feature regions are affected by the specification
-of the feature scope (the selected contour indices here are 2, 3,
-and 6, respectively). Though small-scale query leads to rather
-trivial outcomes, the most similar parts are still among the
-top-ranked results. Furthermore, it is obvious that
-larger scales can lead to more accurate results thanks to added
-information. And from these three cases we realize that, the
-analogous feature regions defined (proportional to the general
-feature) and the informative descriptors companied jointly ensure that
-the repetitive feature regions can be detected exactly.
+We first show a simple feature detection result within the bear model
+as displayed in Fig.~\ref{scales} (here, mean curvature is chosen as
+the signal function). The top row shows the features specified with
+different scales and the second row shows the detected results. It can
+be observed that the detected similar feature regions are affected by
+the specification of the feature scope (the selected contour indices
+here are 2, 3, and 6, respectively). Though small-scale query leads to
+rather trivial outcomes, the most similar parts are still among the
+top-ranked results. Furthermore, it is obvious that larger scales can
+lead to more accurate results thanks to added information. The
+analogous feature regions defined (proportional to the specified
+feature) and the corresponding descriptors jointly ensure the accuracy
+of the detection of the repetitive feature regions.
 
-Our general feature with its description possesses many attractive
+Our shape feature and its description possess many attractive
 properties like being concise to store, fast to compute, and efficient
-to match, etc. Here, we discuss two desirable properties that can
-facilitate various applications.
+to match, etc. Here, we demonstrate two more desirable properties that
+can facilitate various practical tasks.
 
 \textbf{Isometry-invariance.} We verify the property of
-isometry-invariance of our general feature through tests carried on
-three categories of models in different poses. These models are
-chosen from the SCAPE and TOSCA database. As visualized in
-Fig.~\ref{pose-human}, we deliberately select general features on the
-human arm containing the elbow, dog leg with elbow and finger with
-knuckle to validate the property. The models in
-Fig.~\ref{pose-human}(b) are the deformed ones showing the top-2
-most similar feature regions detected on each of them (red and orange
-highlight the first and second one, respectively). We show the top-2
-detected results since our approach is capable of identifying similar
-regions, but distinguishing between symmetric parts is beyond the
-technical scope of this work. The
-retrieved results empirically prove that our region-based descriptor
-is isometry-invariant, which is inherited from the
-properties of graph wavelets and bi-harmonic distance field.
+isometry-invariance through tests carried on three categories of
+models in different poses. These models are chosen from the SCAPE and
+TOSCA databases. As visualized in Fig.~\ref{pose-human}, we
+deliberately specify features on the human arm containing the elbow,
+dog leg with elbow and finger with knuckle to validate the property.
+The models in Fig.~\ref{pose-human}(b) are the deformed ones showing
+the top-2 most similar feature regions detected on each of them (red
+and orange highlight the first and second one, respectively). The
+top-2 detected results are shown here since our approach is capable
+of identifying similar regions, but distinguishing between symmetric
+parts is beyond the technical scope of this work. The retrieved
+results empirically prove that our region-based descriptor is
+isometry-invariant, which is inherited from the properties of graph
+wavelets and bi-harmonic distance field.
 
 \begin{figure}[!to]
 %\begin{center}
-\includegraphics[width=1\linewidth]{11_poses}
+\includegraphics[width=1\linewidth]{Fig_8}
 %\end{center}
-\caption{Illustration of isometry-invariance. (a) Query. (b) Detected
+\caption[Illustration of the isometry-invariance property.]
+  {Illustration of isometry-invariance. (a) Query. (b) Detected
   results on deformed models with red and orange denoting the top-2
   similar regions.}
 \label{pose-human}
@@ -635,79 +676,39 @@ properties of graph wavelets and bi-harmonic distance field.
 
 \textbf{Robustness to Noise.} We add 0.5 (of the mesh's mean edge
 length) noise to the query models as shown in Fig.~\ref{noise}(a) and
-set the signal as Heat Kernel Signature (HKS).  We selectively enlarge
-the SGWs-related part of our descriptor to combat noise.
-Then the specifications of general features are
-implemented on these noisy models and Fig.~\ref{noise}(b) shows the
-queries. From the detection results displayed in
-Fig.~\ref{noise}(c), we can observe that even with such large noise
-level, our approach can still recognize the intrinsic geometric
-characteristics of the feature regions and identify the corresponding
-features, including the ball shape on the elk model and the bended
-handle of the kettle model from the shape database, thanks to the
-robustness and stability of bi-harmonic distance field and HKS. The
-robustness of our approach is of great significance in practical
-applications as we will demonstrate in Section~\ref{sec:Exp}.
+set the signal as HKS. We selectively enlarge the SGWs-related part
+of our descriptor to combat noise. The features are specified on these
+noisy models as shown in Fig.~\ref{noise}(b). From the detection
+results displayed in Fig.~\ref{noise}(c), it can be observed that even
+with large noise, our approach can still recognize the intrinsic
+geometric characteristics of the features and identify the
+corresponding similar features, including the ball shape on the elk
+model and the bended handle of the kettle model from the shape
+database, thanks to the robustness and stability of bi-harmonic
+distance field and HKS. The robustness of our approach is of great
+significance in practical applications as will be demonstrated in
+Section~\ref{sec:Exp}.
 
 \section{Experimental Results and Discussions}
 \label{sec:Exp}
 
-In this section, we demonstrate the performance of our approach by
-conducting experiments in various aspects. Using the cusparse and
-cublas libraries in CUDA helps reduce the computational time for wavelet transform
-significantly. For instance, for the SHREC 2007 partial retrieval
-dataset, in which the average model size is 18K
-vertices, the whole process of constructing descriptors on one model
-takes an average of 0.38 minutes, and the whole database costs 114
-minutes with $20\%$ sampling rate for each model. More timing
-details concerning versatile models are shown in Table~\ref{table:time}.
-
-\subsection{Parameter Evaluation and Signal Selection}
-
-There are several parameters in our approach.
-Fortunately, most of them can be set automatically or
-empirically set as constants and the rest can be tuned accordingly
-based on specific applications' needs.
-
-
 \begin{figure}[!to]
 %\begin{center}
-\includegraphics[width=0.95\linewidth]{12_noise}
+\includegraphics[width=0.95\linewidth]{Fig_9}
 %\end{center}
-\caption{Coarse-to-fine recognition on elk and kettle model with 0.5 (mean edge
-  length) noise. (a) Noisy model. (b) Specified features. (c) Recognized regions.}
+\caption[Coarse-to-fine recognition on elk and kettle models.]
+  {Coarse-to-fine recognition on elk and kettle models with 0.5
+  (mean edge length) noise. (a) Noisy model. (b) Specified features.
+  (c) Recognized regions.}
 \label{noise}
 \end{figure}
 
-
-\textbf{Parameters in the Construction of Descriptors.} For the
-SGWs-related part of the descriptor, we calculate the bi-harmonic
-distance and graph wavelets using the first 300 eigenvalues of each
-model, which only need to be computed once. The number of graph
-wavelets' time scales is set to be 5, which can well represent the
-frequency information. And we empirically set the number of the bins
-in distance distribution to be 10, and it is tested to be sufficient
-to characterize the structure feature of any region.
-The weights $\omega_s$ and $\omega_p$ are set to automatically
-balance the three parts that comprise the whole descriptor. For the
-application of noisy feature recognition, we selectly enlarge the
-weight of the SGWs-related part ($\omega_s$) to combat noises.
-
-\textbf{Sampling Rate.} The setting of sampling rate depends on the
-application. Even when the sampling rate is decreased
-to $5\%$, our sampling strategy can still ensure that the endpoints are
-among the samples. It should be noted that if the application requires
-high-precision detection, all the vertices of the model should be
-taken into consideration. For the general feature detection framework,
-the sampling rate of $20\%$ can meet almost all the needs in
-our experiments.
-
 \begin{table}
 \centering
-\caption{Time Performance for Constructing Descriptors}
+\caption{Run Time for Constructing Descriptors}
   \label{table:time}
   \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{p{0.18\textwidth}p{0.18\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.12\textwidth}}
+\begin{tabular}{p{0.09\textwidth}p{0.09\textwidth}p{0.06\textwidth}p{0.06\textwidth}p{0.06\textwidth}}
 \hline
 \multirow{2}{*}{Model} &
 \multirow{2}{*}{$\sharp$ vertices} &
@@ -715,146 +716,190 @@ our experiments.
 \cline{3-5}
 &\multicolumn{1}{c}{} & Eigen &  $W_f$ & Total\\
 \hline
-Dinosaur  & 14K & 0.17 & 0.14 & 0.33 \\
+Dinosaur   & 14K & 0.17 & 0.14 & 0.33 \\
 Dog       & 26K & 0.30 & 0.35 & 0.69 \\
 Armadillo & 34K & 0.38 & 0.48 & 0.97 \\
 Santa     & 75K & 0.93 & 1.23 & 2.32\\
-Dragon    & 430K & 5.51 & 8.16 & 14.15\\
+Dragon & 430K & 5.51 & 8.16 & 14.15\\
 \hline
 \end{tabular}
 \end{table}
 
-\textbf{Signal Selection.} The signal function defined on the vertices
-of the model influences SGW-related statistics directly. So signal
-selection is among the key problems that should be considered. In
-principle, the selection depends on specific applications as analyzed
-in Section~\ref{sec:Des}. Furthermore, Some applications require the
-signal to be intrinsic, then signals like Gaussian curvature, thickness,
-etc. are expected to perform better.
+In this section, we demonstrate the performance of our approach via
+experiments in various aspects. All the experiments were conducted on
+a 3.5GHz Intel(R) Core(TM) i7 computer with 16GB memory. We used the
+cusparse and cublas libraries in CUDA to help reduce the computational
+time for wavelet transform significantly. For instance, for the SHREC
+2007 partial retrieval dataset, in which the average model size is 18K
+vertices, the whole process of constructing descriptors on one model
+takes an average of 0.38 minutes, and the whole database costs 114
+minutes with $20\%$ sampling rate for each model. More timing details
+concerning versatile models are shown in Table~\ref{table:time}.
 
-\subsection{Repetitive Feature Detection}
+\subsection{Parameter Evaluation}
 
-Repetitive feature detection is of great importance
-to applications, such as self-symmetry detection~\cite{Gal2006} and
-non-local processing propagation~\cite{Maximo:2011:RRI:2027471}. As
-shown in Fig.~\ref{detect_self}, we randomly select some regions of
-interest to be the general features as illustrated in
-Fig.~\ref{detect_self} (in red).  The specified general features
+There are several parameters in our approach, most of them can be set
+automatically or empirically set as constants. Two parameters, the
+sampling rate and the signal function, could be tuned according to
+specific applications' requirements for better results.
+
+\textbf{Parameters in the Construction of Descriptors.} For the
+SGWs-related part of the descriptor, we calculate bi-harmonic
+distances and graph wavelets using the first 300 eigenvalues of each
+model, and they only need to be computed once. The number of graph
+wavelets' time scales is set to be 5, which can well represent the
+frequency information. We empirically set the number of the bins in
+distance distribution to be 10, and it has been tested to be
+sufficient to characterize the structure features. The weights
+$\omega_s$ and $\omega_p$ are automatically set (based on the mean
+scale of each part) to balance the three parts that comprise the
+descriptor. Fig.~\ref{ws} demonstrates the function of graph
+wavelets by comparing the retrieval results with $ws = 0$ and
+$w_s \neq 0$ on SHREC database and the corresponding constructed
+database (note that each model is added with 0.5 mean-edge-length
+noise as shown in Fig.~\ref{ws}(a)). The relevant number is the
+number of retrieved models that contain partial regions that match
+the query region (here, ant head and plane tail). It clearly shows
+that graph wavelets holds the power to characterize the focus regions
+discriminatively and robustly. Therefore, we selectively enlarge the
+weight of SGWs-related part ($w_s$) to combat the disadvantages of
+the other parts in specific applications.
+
+\begin{figure}[!to]
+%\begin{center}
+\includegraphics[width=0.9\linewidth]{Fig_10}
+%\end{center}
+\caption[Retrieval results on the SHREC database.] 
+    {Retrieval results (on the SHREC database) with $ws = 0$ (red line)
+    and $w_s \neq 0$ (blue line), and dash lines show the results on
+    noisy models.}
+\label{ws}
+\end{figure}
+
+\textbf{Sampling Rate.} The setting of sampling rate depends on
+specific applications. Even when the sampling rate is decreased to
+$5\%$, our sampling strategy still ensure the inclusion of endpoints.
+It should be noted that if the application requires high-precision
+detection, all the vertices of the model could be taken into
+consideration. For the feature detection framework, the sampling rate
+of $20\%$ can meet almost all the needs in our experiments.
+
+\textbf{Signal Selection.} The signal function influences SGW-related
+statistics directly. Therefore, signal selection is among the key
+problems that should be considered. In principle, the selection
+depends on specific applications as analyzed in Section~\ref{sec:Des}.
+Furthermore, some applications require the signal to be intrinsic, for
+which signals like Gaussian curvature, thickness, etc. are expected to
+perform better.
+
+\subsection{Repetitive Feature Detection within Certain Model}
+
+Repetitive feature detection is of great importance to applications,
+such as self-symmetry detection~\cite{Gal2006} and non-local
+processing propagation~\cite{Maximo:2011:RRI:2027471}. We randomly
+select some regions of interest to be the shape features as
+illustrated in Fig.~\ref{detect_self} (in red). The specified features
 show that our diffusion-manner demarcation can well cover the interest
-region of any kind of shape if only the interest point and scope are
-chosen properly. The detection results show that our
-descriptor can exactly locate the repetitive feature regions within
-the dragon model even with large deformations and can effectively
-distinguish between the lumpy local shape of dinosaur's tail from its
-cylinder-like legs. This very well demonstrates that our
-SGW-centered descriptor can comprehensively depict the local details
-as well as multi-scale geometric distortions.
+regions of any kind of shapes if only the interest points and scopes
+are chosen properly. The detection results show that our descriptor
+can reliably locate the repetitive feature regions within the dragon
+model even with large deformations, and it can effectively distinguish
+between the lumpy local shape of dinosaur's tail from its cylinder-like
+legs, etc. It very well demonstrates that our SGW-centered descriptor
+can depict the local details and reflect multi-scale geometric
+distortions thanks to its gradational construction.
 
 \begin{figure}[!to]
 \begin{center}
-\includegraphics[width=0.9\linewidth]{10_detection_self_1}
+\includegraphics[width=0.9\linewidth]{Fig_11}
 \end{center}
-\caption{Repetitive feature detection within the same
-    model. Red denotes the query of feature region and blue denotes
-    some detected results.}
+\caption[Repetitive feature detection within one model.]
+  {Repetitive feature detection within one model. Red
+  denotes query feature and blue denotes some detected
+  results.}
 \label{detect_self}
 \end{figure}
 
-\subsection{General Feature Detection in Database}
-Then we evaluate the performance of our general feature detection
-framework on the SHREC 2007 watertight retrieval benchmark, which
-contains 20 categories and each consists of 20 meshes. In order to
-demonstrate that our framework is not confined to the
-segmentation-based regions like four-legs, we test three kinds of
-manufactured models and each of the query model is unique without
-any transformed equivalent in the dataset.
+\subsection{Feature Detection in Database}
 
-We deliberately specify general features on kettle, glasses, and chair
-as shown in Fig.~\ref{detect_database_1}(a). The slab
-of the chair is a vivid example and existing methods based on
-segmentation cannot achieve such trans-boundary shapes. It can be seen
-that the top-4 similar parts in Fig.~\ref{detect_database_1}(b) resemble
-the query region very well, which validates that our descriptor based
-on the continuously distributed contours can characterize the entire
-circled region thoroughly. We can also observe that our feature detection
-in the database has the ability to correctly identify the most similar
-parts with equal-proportional scales thanks to the stable characteristic
-of bi-harmonic distance. And by examing how many models in the database
-contain the similar shapes such as kettle base, eyeglasses or slab of
-chair, our framework can facilitate co-analysis across models and can
-also enable search-based shape modeling.
+The performance of our feature detection framework is evaluated on
+the SHREC 2007 watertight retrieval benchmark, which contains 20
+categories and each consists of 20 meshes. In order to demonstrate
+that our framework is not restricted to the segmentation-based regions
+like four-legs, we test three kinds of artificial models and each of
+the query model is unique without any transformed equivalent in the
+dataset.
+
+We deliberately specify features on kettle, glasses, and chair as
+shown in Fig.~\ref{detect_database_1}(a). The slab of the chair is a
+vivid example, and the existing methods based on segmentation cannot
+achieve such trans-boundary shapes. It's obvious that the top-4
+similar parts in Fig.~\ref{detect_database_1}(b) resemble the query
+region very well, which validates that our descriptor based on the
+continuously distributed contours could characterize the focal region
+thoroughly. The feature detection process has the ability to correctly
+identify the most similar parts with equal-proportional scales thanks
+to the stable characteristic of bi-harmonic distance. By examing which
+models in the database contain the similar shapes such as kettle base,
+eyeglasses or slab of chair, our framework can facilitate co-analysis
+across models and enable search-based shape modeling.
 
 
 \begin{figure}[!to]
-\centering
-\includegraphics[width=0.95\linewidth]{9_detection_database_1}
-\caption{General feature detection in database of
-    SHREC'07 watertight retrieval database.}
+%\begin{center}
+\includegraphics[width=0.95\linewidth]{Fig_12}
+%\end{center}
+\caption[Feature detection on the SHREC 2007 watertight retrieval
+  database.]
+  {Feature detection on the SHREC 2007 watertight retrieval
+  database.}
 \label{detect_database_1}
 \end{figure}
-
 
 \subsection{Comparisons and Discussion}
 \label{sec:App}
 
-Due to the unique technical strategy of our
-user-specified feature description and detection, there is no
-existing work that is directly comparable with our method. From the
-applications' perspective, partial matching appears to be the most
-relevant one. Therefore we first compare our approach
-with four popular existing methods in partial matching or shape
-retrieval based on region description. These methods can well
+Due to the unique technical strategy of our feature description and
+detection, there is no existing work that is directly comparable with
+ours. From the perspective of applications, partial matching appears
+to be the most relevant one. Therefore, we first compare our approach
+with five popular existing methods in partial matching or shape
+retrieval based on region description. These methods can all properly
 fit into our framework and make effective comparisons. They are
-
 \begin{itemize}
 \item D2 Shape Distribution (D2): statistics of distances between any
-  random pair of points on the region~\cite{Osada:2002}.
-\item Conformal Factors (CF): statistics of conformal geometric
-  factors of points on the region~\cite{Ben-Chen:2008}.
-  \item Zernike Moments based signature (ZM): local
-    shape signature based on transformation of Zernike
-    Moments~\cite{Maximo:2011:RRI:2027471}.
+      random pair of points on the region~\cite{Osada:2002}.
+\item Conformal Factors (CF): statistics of conformal geometric factors
+      of points on the region~\cite{Ben-Chen:2008}.
+\item Zernike Moments based signature (ZM): local shape signature based
+      on transformation of Zernike Moments~\cite{Maximo:2011:RRI:2027471}.
 \item Local SDF Signature (SDF): statistics of points' Shape Diameter
-  Function~\cite{Shapira:2010}.
-\item Patch Spectral Geometric Features (PS): normalized spectra of
-  patch spectrum decomposition~\cite{Hu2009}.
+      Function~\cite{Shapira:2010}.
+\item Patch Spectral Geometric Features (PS): normalized spectra of patch
+      spectrum decomposition~\cite{Hu2009}.
 \end{itemize}
-The above methods induce the direct geometric measurement (D2),
-intrinsic curvature-related measurement (CF), heightmap-based
-measurement (ZM), volume-based measurement (SDF), and spectral-analysis
-measurement (PS), respectively.
+The above methods induce the direct geometric measurement (D2), intrinsic
+curvature-related measurement (CF), heightmap-based measurement (ZM),
+volume-based measurement (SDF), and spectral-analysis measurement (PS),
+respectively.
 
-\begin{figure}[!tbh]
-\centering
-\includegraphics[width=1\linewidth]{14_recall-precision}
-\caption{Precision plots of different detection methods. (a)-(c) show
-  results with queries as ant head, plane tail and human leg. (d)
-  shows the average P-R graph on SHREC watertight database.}
+\begin{figure}[!to]
+\includegraphics[width=1\linewidth]{Fig_13}
+\caption[Precision plots of different detection methods.]
+    {Precision plots of different detection methods. (a)-(c) show
+    results of different queries. (d) shows the average P-R graph on SHREC
+    watertight database.}
 \label{PR}
 \end{figure}
 
-We conduct comparison tests on SHREC 2007 watertight database as well
-as the McGill database that contains 255 objects divided into ten
-classes and the intra-class variations consist of non-rigid transforms
-applied to models. By setting proper parameters in the above five
-methods, effective results are achieved. Fig.~\ref{PR} shows the
-detection results of all methods concerned. (a)-(c) are the detection
-results with the queries of ant head, plane tail, and human leg,
-respectively. The relevant number means the number of retrieved models
-that indeed contain partial regions that match the query region. In the
-SHREC database, every category contains 20 different models, so we
-obtain the top 20 results of ant head and 40 for human leg, since left
-and right legs of human are documented separately (we call it the
-multiple-region case). (d) shows the average PR graph based on all
-queries without multiple regions.
-
 \begin{table}
 \centering
-\caption{Precisions of Different Detection Methods}
+\caption[Precisions of different detection methods.]
+ {Precisions of different detection methods.}
   \label{table:precision}
   \renewcommand{\arraystretch}{1.3}
-\begin{tabular}{>{\centering\arraybackslash}p{0.15\textwidth} | >{\centering\arraybackslash}p{0.1\textwidth}  >{\centering\arraybackslash}p{0.1\textwidth} | >{\centering\arraybackslash}p{0.1\textwidth}>{\centering\arraybackslash}p{0.1\textwidth} | >{\centering\arraybackslash}p{0.1\textwidth}>{\centering\arraybackslash}p{0.1\textwidth}}
-\hline
+\begin{tabular}{p{0.07\textwidth}|p{0.04\textwidth} p{0.04\textwidth}|p{0.04\textwidth}p{0.04\textwidth}|p{0.04\textwidth}p{0.04\textwidth}}
+\hline %\hline
 \multirow{2}{*}{Method} &
 \multicolumn{2}{c|}{Ant Head} &
 \multicolumn{2}{c|}{Plane Tail} &
@@ -865,149 +910,184 @@ queries without multiple regions.
 Ideal & 100\% & 66.7\% & 100\% & 66.7\%  & 100\% & 66.7\% \\
 D2 & 26.7\% & 30.0\% & 26.7\% & 23.3\%  & 40.0\% & 41.7\% \\
 CF & 33.3\% & 30.0\% & 53.3\% & 56.7\%  & 46.7\% & 48.3\% \\
-ZM & 46.7\% & 43.3\% & 53.3\% & 53.3\%  & 46.7\% & 50.0\% \\
-SDF & 53.3\% & 56.7\% & 46.7\% & 50.0\% & 50.0\% & 58.3\% \\
-PS & 86.6\% & 60.0\% & 46.7\% & 43.3\%  & 73.3\% & 60.0\% \\
-\textbf{Ours} & \textbf{93.3\%} & \textbf{63.3\%} & \textbf{80.0\%} & \textbf{60.0\%}  & \textbf{83.3\%} & \textbf{63.3\%}\\
+ZM & 53.3\% & 43.3\% & 53.3\% & 53.3\%  & 46.7\% & 50.0\% \\
+SDF & 46.7\% & 56.7\% & 46.7\% & 50.0\% & 50.0\% & 58.3\% \\
+PS & 80.0\% & 60.0\% & 46.7\% & 43.3\%  & 73.3\% & 60.0\% \\
+\textbf{Ours} & \textbf{93.3\%} & \textbf{63.3\%} & \textbf{80.0\%} & \textbf{60.0\%}  & \textbf{86.7\%} & \textbf{63.3\%}\\
 \hline
 \end{tabular}
 \end{table}
 
-
 \begin{figure*}
 \begin{center}
-\includegraphics[width=1\linewidth]{16_comparison}
+\includegraphics[width=0.95\linewidth]{Fig_14}
 \end{center}
-\caption{Comparison of different detection methods for partial matching.
-The queries are ant head, human leg, and plane tail.}
+\caption[Comparisons of different detection methods for partial matching.]
+ {Comparisons of different detection methods for partial
+  matching. The queries are ant head, human leg, and plane tail.}
 \label{comparison}
 \end{figure*}
 
-Table~\ref{table:precision}
-details the precision of different detection methods. The precision is
-computed as the ratio of relevant number to the retrieved number (the
-second line shows the retrieved number for each query). From
-Table~\ref{table:precision} and Fig.~\ref{comparison}, we can observe
-that each method has its own strength in describing some specific
-shape of models. D2 is excellent in describing regular shapes like
-spheres because the histogram statistics sometimes have the averaging
-effect on the spatial information and the ant head with two tentacles
-makes it difficult for D2 to depict. CF, while integrating the
-gaussian-curvature knowledge, performs well in characterizing
-highly-curved region as the plane tails. ZM is
-suitable for depicting small patches, as for large feature regions
-it works better in detecting highly curved ones. SDF introduces the
-volume-based information and the region's area ratio knowledge, so it
-performs well for cylinder-like shape, but not for local complex
-shapes. And PS performs very well in most cases except for the
-relatively small and complex structure like plane tails due to the
-instability of regional Laplacian decomposition. In comparison, our
+We conduct comparison tests on SHREC 2007 watertight database as well
+as the McGill database that contains 255 objects divided into ten
+classes and the intra-class variations consist of non-rigid transforms
+applied to models. By setting proper parameters in the above methods,
+effective results are achieved. Fig.~\ref{PR} shows the detection
+results of all methods concerned. (a)-(c) are the detection results
+with the queries of ant head, plane tail, and human leg.  In the SHREC
+database, every category contains 20 different models, so we retrieve
+the top 20 results of ant head and 40 for human leg, since left and
+right legs of human are documented separately (we call it the
+multiple-region case). (d) shows the average PR graph based on all
+queries without multiple regions.
+
+Table~\ref{table:precision} details the precisions of different
+detection methods. The precision is computed as the ratio of relevant
+number to the retrieved number (the second line shows the retrieved
+number for each query).  Table~\ref{table:precision} and
+Fig.~\ref{comparison} collectively show that each method has its own
+strength in describing some specific kind of shape. D2 is excellent
+in describing regular shapes, such as spheres, because the histogram
+statistics sometimes have the averaging effect on the spatial
+information, and the ant head with two tentacles makes it difficult
+for D2 to depict. CF, which integrates the gaussian-curvature
+knowledge, performs well in characterizing highly-curved region such as
+the plane tails. ZM is suitable for depicting small patches, as for
+large feature regions it works better in detecting highly curved ones.
+SDF takes into account the volume-based information and the region's
+area ratio knowledge, so it performs well for cylinder-like shape, but
+not for local complex shapes. PS performs very well in most cases except
+for the relatively small and complex structure like plane tails due to
+the instability of regional Laplacian decomposition. In contrast, our
 method performs stably with high precision in detecting various types
-of feature regions across different models thanks to our hierarchical
-description.
+of feature regions across different models.
+
+Moreover, we conduct the comparison with two most related works that
+cannot fit into our feature detection framework, namely,
+Gal's~\cite{Gal2006} and Itskovich's works~\cite{Itskovich2011}.
+Since these two works obtain the feature regions by decomposition
+process and clustering of the pre-divided patches, there inevitably
+exist over-segmentation phenomenon as shown in the zoomed-in part of
+Fig.~\ref{Gal}. In comparison, our method can flexibly specify the
+interesting feature region and exactly detect the similar regions with
+the proper scales.
 
 \subsection{Applications}
 
-\textbf{Partial Matching and Restoration.}
-We analyze the combined models from SHREC 2007's partial retrieval dataset,
-which comprise the SHREC 2007's watertight dataset and a query set of 30 models.
-Each combined model is obtained by merging or removing several subparts of
-models belonging to the watertight dataset. Existing algorithms
-concerning partial matching consider the retrieval of the query
-set models as a big challenge. Our general feature
-detection framework provides a powerful tool to restore the combined
-models, thus can effectively aid the matching and recognition.
-As the three cases shown in Fig.~\ref{partial-query}, choosing proper
-interest points (yellow points in (a)) and contour scope could give rise
-to the diffusion region that could cover large scale of the searched model.
-After completing the detecting process in the watertight database, the
-original model can be recognized as shown in (b), and (c) shows another
-two detected models containing the top-ranked similar regions. Moreover,
-if conventional point-wise correspondence is required to obtain for
-downstream tasks, we can further achieve this goal easily. Since our
-general feature is defined in a diffusion manner, after the similar
-region is matched, the exact point matching can be obtained by shrinking
-the diffusion region back to the central point, thus helping the
-conventional point-based correspondence and other complex
+Our feature detection framework enjoys plenty of desirable properties
+as demonstrated in Section~\ref{sec:Framework}. They can further
+facilitate a host of applications as will be shown and analyzed.
+
+\textbf{Partial Matching and Restoration.} We analyze the combined
+models from SHREC 2007's partial retrieval dataset, which comprises
+the SHREC 2007's watertight dataset and a query set of 30 models.
+Each combined model is obtained by merging or removing several
+subparts of models belonging to the watertight dataset. Existing
+algorithms concerning partial matching consider the retrieval of the
+query set models as a big challenge.  We demonstrate that our
+framework provides a powerful tool to restore the combined models,
+thus can effectively aid the matching and recognition. As the three
+cases shown in Fig.~\ref{partial-query}, choosing proper interest
+points (yellow points in (a)) and contour scopes could give rise to
+diffusion regions that cover large scale of the searched models.
+After completing the detecting process in the watertight database,
+the original model can be recognized as shown in (b), and (c) shows
+another two detected models containing the top-ranked similar feature
+regions. Moreover, if conventional point-wise correspondence is
+required for downstream tasks, we can further achieve this goal
+easily. Since our feature is defined in a diffusion manner, after the
+similar region is matched, the exact point matching can be obtained
+by shrinking the diffusion region back to its source point, thus
+helping the conventional point-based correspondence and other complex
 partial matching tasks.
 
-\begin{figure}[!tbh]
-\centering
-\includegraphics[width=0.8\linewidth]{18_partial}
-\caption{Partial detection on the SHREC's partial query dataset. (a) Combined models with the specified feature regions in red. (b) Restored models.
-(c) Another two models containing the top-ranked similar feature regions.}
-\label{partial-query}
+\begin{figure}[!to]
+\includegraphics[width=0.98\linewidth]{Fig_15}
+\caption[Comparisons of detecting complex feature regions.]
+  {Comparison on detection of complex feature regions. Figure
+  $(a)$ and $(b)$ are cited from the corresponding works. On each
+  model, the flower inside the yellow circle is the query region.}
+\label{Gal}
 \end{figure}
 
 \textbf{Model Recognition.} Another immediate application is model
 recognition based on key components as suggested
-in \cite{Sipiran:2012}. Our user-specified general feature description
-is much more powerful and does not need the complex process of finding
-key components as in~\cite{Sipiran:2012}.
-Fig.~\ref{recognition}(a) shows the query models, we selectively
-specify three and four feature regions that we consider to be essential
-for characterizing the armadillo and horse model. The
-whole shape similarity is computed as the sum of the distances between the
-specified parts of the query model and the corresponding parts of the
-target model. It is apparent that specifying more parts can achieve more
-precise results. The ranked retrieval results in Fig.~\ref{recognition}(b)
-show that our method can exactly recognize the relevant models from the
-database even when the models are somewhat incomplete (like the first
-recognized armadillo model).
+in~\cite{Sipiran:2012}. The feature detection framework is much more
+powerful and does not need the complex process of finding key
+components as in~\cite{Sipiran:2012}.  Fig.~\ref{recognition}(a) shows
+the query models, on which we selectively specify three or four
+features that are considered to be essential for characterizing the
+armadillo and horse model. The whole shape similarity is computed as
+the sum of the distances between the specified feature regions of the
+query model and the corresponding regions of the target model.
+Apparently, specifying more feature regions can achieve more precise
+results. The ranked retrieval results in Fig.~\ref{recognition}(b)
+show that our method can correctly retrieve the relevant models from
+the database even when the models are somewhat incomplete (like the
+first recognized armadillo model).
 
-\begin{figure}[!tbh]
-\centering
-\includegraphics[width=1\linewidth]{20_recognition}
-\caption{Model recognition by identifying multiple components of
-  interest. (a) Query models with 3 and 4 specified parts.
-  (b) Top-3 recognized models.}
-\label{recognition}
+\begin{figure}[!to]
+\includegraphics[width=0.95\linewidth]{Fig_16}
+\caption[Partial shape matching and restoration.]
+ {Partial matching and restoration on the SHREC's partial query
+  dataset. (a) Combined models with query regions in red. (b) Restored
+  models.  (c) Another two models containing the top-ranked similar
+  feature regions.}
+\label{partial-query}
 \end{figure}
 
-\textbf{Other Potential Applications.} Many more practical
-applications could definitely benefit from the attractive properties
-of our approach. For example, thanks to the robustness demonstrated
-in Section~\ref{sec:Framework}, our framework can serve as the
-foundation for applications such as search-based modeling/synthesis and
-part replacement/reuse that frequently rely upon the
-conventional denoising/filtering processes in the necessary
+\textbf{Other Potential Applications.} Many more practical applications
+could potentially benefit from the attractive properties of our
+approach. For example, thanks to the robustness demonstrated in
+Section~\ref{sec:Framework}, our framework can serve as the foundation
+for search-based modeling and coarse-to-fine part replacement that
+frequently relies upon the conventional denoising processes in the
 pre-processing stage. The reliability demonstrated in the test of
-repetitive feature detection shows that our detection results
-potentially could help with the recognition of repeated patterns,
+repetitive feature detection shows that our detection results could
+potentially help with the recognition of repeated patterns,
 cut-and-paste editing, and self-symmetry detection.
 
-\textbf{Limitation.}
-Our general feature detection framework is built upon bi-harmonic distance field,
-and the boundaries of features in the approach are defined using the
-contours, which may not depict general regions confined by arbitrary
-curved boundaries. Another limitation is that our approach may have
-difficulties in dealing with model defects, such as the existence of
-big holes or missing large organic parts. And these will be the
-topics for our future research.
+\textbf{Limitation.} Our feature detection framework is built upon
+bi-harmonic distance field, and the boundaries of features in the
+approach are defined using the contours, which may not depict regions
+confined by arbitrary curved boundaries. Another limitation is that
+our approach may have difficulties in dealing with model defects, such
+as the existence of big holes or missing large organic parts. These
+will be the topics for our future research.
 
 
 \section{Chapter Summary}
 \label{sec:Con}
 
-In this chapter, we have detailed the description and detection of
-generalized features on any 3D geometric models, which essentially are
-the organic coupling of local (differential) and global (integral)
-geometric attributes. The multi-scale and multi-level descriptor based
-on SGWs has exhibited its potential in depicting any user-specified,
-generalized feature and distinguishing among descriptor vectors in the
-corresponding shape descriptor space. Furthermore, our novel
-descriptor is possessed of many desirable properties
-which can facilitate a host of graphics applications, as showcased in
-our comprehensive experiments. Extensive quantitative and qualitative
-comparisons with other state-of-the-arts have demonstrated certain key
-advantages of our method in terms of flexibility, reliability,
-robustness, and versatility.
+In this chapter, we have detailed the description and detection of our
+proposed generalized local-to-global features on 3D geometric models,
+which organically couple both local (differential) and global
+(integral) geometric attributes. The multi-scale and multi-level
+descriptor based on SGWs has exhibited its potential in depicting any
+user-specified feature region and distinguishing among descriptor
+vectors in the corresponding region-wise descriptor space.
+Furthermore, our novel descriptor is comprising many desirable
+properties which can facilitate a host of graphics applications, as
+showcased in our comprehensive experiments. Extensive comparisons with
+other state-of-the-art techniques/methods have demonstrated certain
+key advantages of our method in terms of geometry-awareness,
+reliability, robustness, etc.
+
+\begin{figure}[!to]
+\begin{center}
+\includegraphics[width=1\linewidth]{Fig_17}
+\end{center}
+\caption[Model recognition by identifying multiple components.]
+ {Model recognition by identifying multiple components of
+ interest. (a) Query models with 3 or 4 specified features.
+  (b) Top three recognized models.}
+\label{recognition}
+\end{figure}
 
 Our future work will try to make the interface's functionality more
 flexible and intuitive, allowing users to sketch the boundary of any
-intended feature region. And we plan to incorporate
-more powerful analytical tools into our descriptor space for various
-kinds of analysis. We also intend to broaden the application scope of
-the proposed generalized features to support feature-centric non-rigid
-registration, structure-driven co-segmentation and high-fidelity model
-production via cut-and-paste of available models in shape repositories. 
+intended feature region. We plan to incorporate more powerful
+analytical tools into our descriptor space for various kinds of
+analysis. We also intend to broaden the application scope of the
+proposed shape features to support feature-centric registration,
+structure-driven co-segmentation, and high-fidelity model production. 

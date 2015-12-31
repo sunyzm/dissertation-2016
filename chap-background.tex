@@ -246,34 +246,34 @@ orthogonal and symmetric.
 
 Another method to construct graph and mainfold wavelets is
 through diffusion~\cite{Coifman2006, Hou2013}.
-In sharp contrast to the aforementioned subdivision wavelets, the diffusion 
-wavelets adopt a bottom-up philosophy starting from the fine input data. 
-The \emph{Diffusion wavelets} ~\cite{Coifman2006} use a diffusion operator 
+In sharp contrast to the aforementioned subdivision wavelets, the diffusion
+wavelets adopt a bottom-up philosophy starting from the fine input data.
+The \emph{Diffusion wavelets} ~\cite{Coifman2006} use a diffusion operator
 and its powers to expand the nested subspaces, where scaling functions and
 wavelet functions are obtained by orthogonalization and rank-revealing
 compression. This diffusion-driven methodology naturally dilates the
 functions associated with the underlying heat diffusion process, which solely
-depends on manifold geometry. It allows flexible construction directly from data. 
-However, the constructed scaling and wavelet functions are not locally-supported, 
-which limits the functionality of space localization. In fact, it is impossible 
-to construct wavelets that are simultaneously fully orthogonal, locally supported, 
-and symmetric \cite{Lounsbery:1997:TOG}. As an improvement, the biorthogonal 
-diffusion wavelets (BDW) \cite{Maggioni:2005:SPIE} were introduced, relieving the 
-excessively-strict orthogonality property of scaling functions. 
-In \cite{Mahadevan2005}, diffusion wavelets were adopted to approximate 
-scalar-valued functions based on analyzing the structure and topology of the 
-state space. Rustamov \cite{Rustamov:2009:ICMS} studies the relation between 
-mesh editing and diffusion wavelets by introducing the generalized linear 
+depends on manifold geometry. It allows flexible construction directly from data.
+However, the constructed scaling and wavelet functions are not locally-supported,
+which limits the functionality of space localization. In fact, it is impossible
+to construct wavelets that are simultaneously fully orthogonal, locally supported,
+and symmetric \cite{Lounsbery:1997:TOG}. As an improvement, the biorthogonal
+diffusion wavelets (BDW) \cite{Maggioni:2005:SPIE} were introduced, relieving the
+excessively-strict orthogonality property of scaling functions.
+In \cite{Mahadevan2005}, diffusion wavelets were adopted to approximate
+scalar-valued functions based on analyzing the structure and topology of the
+state space. Rustamov \cite{Rustamov:2009:ICMS} studies the relation between
+mesh editing and diffusion wavelets by introducing the generalized linear
 editing (GLE). However, neither the DW nor the BDW have achieved localization
 in both manifold and frequency domain.
 
-In \cite{Hou:2012:TVCG} an admissible diffusion wavelets (ADW) on meshed surfaces and point clouds is proposed.
+In \cite{Hou2013}, an admissible diffusion wavelets (ADW) on meshed surfaces and point clouds is proposed.
 The ADW are constructed in a bottom-up manner that starts from a local operator in a high frequency,
 and dilates by its dyadic powers to low frequencies. By relieving the orthogonality and enforcing normalization,
 the wavelets are locally-supported and admissible.
 
 \subsection{Spectral Graph Wavelet}
-The primary reason that classical wavelet transforms cannot be directly adapted to graph or manifold is 
+The primary reason that classical wavelet transforms cannot be directly adapted to graph or manifold is
 that for a mother function $\psi(x)$ defined on a manifold,
 there is no obvious definition for $\psi(sx)$. One approach to solve this problem is appealing to the Fourier domain,
 with the help of aforementioned manifold harmonics. Although scaling cannot be explicitly expressed on manifold domain,
@@ -707,6 +707,4 @@ and the separate sub-signals can be reconstructed as $\hat{\mathbf{y}}_1=\mathbf
 
 \end{itemize}
 
-\section{Shape Correspondence and Feature Description}
-\emph{TODO.}
 

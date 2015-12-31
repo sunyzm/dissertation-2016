@@ -73,7 +73,8 @@ where $\otimes_{d}$ denotes the tensor product in $d$ dimension. We call $T$ the
 \begin{figure}
 \centering
 \includegraphics[width=0.7\linewidth]{cluster}\\
-\caption{Matching hierarchy. Extracted features are clustered into sub-graphs.}
+\caption[Matching hierarchy.]
+{Matching hierarchy. Extracted features are clustered into sub-graphs.}
 \label{fig:cluster}
 \end{figure}
 
@@ -95,7 +96,8 @@ large deformation  (Fig.~\ref{fig:deform}).
 \begin{figure}
 \centering
 \includegraphics[width=0.9\linewidth]{scale_new}
-\caption{Matching deforming shapes with scale changes.}
+\caption[Matching deforming shapes with scale changes.]
+{Matching deforming shapes with scale changes.}
 \label{fig:scale}
 \end{figure}
 
@@ -103,7 +105,8 @@ large deformation  (Fig.~\ref{fig:deform}).
 \centering
 \includegraphics[width=0.45\linewidth]{noise1a}
 \includegraphics[width=0.45\linewidth]{noise2a}\\
-\caption{Matching with noise (\emph{Left}) and topology changes (\emph{Right}).}
+\caption[Matching with noise and topology changes.]
+{Matching with noise (\emph{Left}) and topology changes (\emph{Right}).}
 \label{fig:noise}
 \end{figure}
 
@@ -150,7 +153,8 @@ The rationale of our approach is that distinguishing elements that are distant f
 \hspace{10pt}
   \includegraphics[width=0.2\linewidth]{comp4}\\
 (a)\hspace{0.21\linewidth}(b)\hspace{0.21\linewidth}(c)\hspace{0.21\linewidth}(d)
-  \caption{Major steps of our hierarchical registration algorithm. The blue shape is the source and the red one is the target. We use a three level hierarchy in this example. (a) Initial feature correspondences; (b) Coarse registration result (Third level); (c) Expanded feature correspondences (Third level); (d) Final registration result.}
+  \caption[Steps of hierarchical registration algorithm.]
+  {Major steps of our hierarchical registration algorithm. The blue shape is the source and the red one is the target. We use a three level hierarchy in this example. (a) Initial feature correspondences; (b) Coarse registration result (Third level); (c) Expanded feature correspondences (Third level); (d) Final registration result.}
 \label{fig:components}
 \end{figure}
 
@@ -187,7 +191,8 @@ The correspondence propagation continues until all vertices in $S_k$ have been m
 score(s_i,t_j)=\exp(-\|{\HKC}_S(s_i)-{\HKC}_T(t_j)\|_2).
 \end{equation}
 
-We then select from $R_l$ some vertex pairs as new features and insert them into the feature set. These new added feature pairs should be both reliable (having great matching score) and not in the $\delta$-neighborhood of any existing feature points. The expanded feature set $C_l$ enables a more discriminative HKC in the next level. We carry on this process from the coarsest level to the finest level until we obtain the final registration set $R_0$ between the original meshes $S_0$ and $T_0$. Figure \ref{fig:components} shows the major steps of our algorithm.
+We then select from $R_l$ some vertex pairs as new features and insert them into the feature set. These new added feature pairs should be both reliable (having great matching score) and not in the $\delta$-neighborhood of any existing feature points. The expanded feature set $C_l$ enables a more discriminative HKC in the next level. We carry on this process from the coarsest level to the finest level until we obtain the final registration set $R_0$ between the original meshes $S_0$ and $T_0$. 
+Fig.~\ref{fig:components} shows the major steps of our algorithm.
 
 \begin{figure}\centering
   \includegraphics[width=0.45\linewidth]{face_cmp}
@@ -197,7 +202,8 @@ We then select from $R_l$ some vertex pairs as new features and insert them into
   \includegraphics[width=0.45\linewidth]{cat_cmp}
   ~
   \includegraphics[width=0.45\linewidth]{man_cmp}
-\caption{Some registration results by our multi-resolution method (\emph{Left}) and the single-resolution method \cite{Hou:2011:TVCG} (\emph{Right}). Large colored dots represent matched features.}
+\caption[Registration results using multi-resolution method.]
+ {Some registration results using our multi-resolution method (\emph{Left}) and the single-resolution method \cite{Hou:2011:TVCG} (\emph{Right}). Large colored dots represent matched features.}
 \label{fig:results}
 \end{figure}
 
@@ -225,7 +231,7 @@ BoW vector (V$\times$1)\\
 \includegraphics[width=0.3\linewidth]{bofgm_3}
 \dots\\
 BoFG matrices ($|$F$|$$\times$$|$F$|$)
-\caption{Representations of a give shape.}
+\caption{Different representations of a given shape.}
 \label{fig:represent}
 \end{figure}
 
@@ -262,7 +268,8 @@ The matrix set $\textbf{G}(M)=\{G_1,\dots,G_V\}$ comprises a BoFG representation
 \begin{figure}
 \centering
 \includegraphics[width=0.9\linewidth]{eigen}
-\caption{Some non-rigid shapes and their BoFG descriptors.}
+\caption[Nonrigid shapes and their BoFG descriptors.]
+{Some non-rigid shapes and their BoFG descriptors.}
 \label{fig:eigen}
 \end{figure}
 
@@ -274,4 +281,4 @@ d(M_1,M_2)=\sum_{i=1}^{V}\|S_i(M_1)-S_i(M_2) \|_2.
 The above distance is based on one-scale heat kernels, which can be easily extended to multi-scale by averaging distances of heat kernels at different values of $t$.
 
 \section{Chapter Summary}
-\emph{TODO.}
+\emph{TODO.} 

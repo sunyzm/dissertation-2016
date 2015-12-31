@@ -3,11 +3,12 @@
 Most of the existing works on sparse approximation are focusing mainly
 on the regular domain of 2D images, while approximating/compressing
 signals defined over graphs or manifolds are much less investigated
-due to the irregularity of underlying domains. This chapter takes an
-initiative to explore the challenging problem of sparse approximation
-of discrete 3D shapes for compressive shape representation.
+due to the irregularity of underlying domains. In this chapter, we
+takes an initiative to explore the challenging problem of sparse
+approximation of discrete 3D shapes for compressive shape representation.
 
 \section{Introduction}
+
 Conventional Fourier analysis decomposes a signal into mutually
 independent components with the multiscale and orthogonal Fourier
 bases. Compression is achieved by discarding certain number of
@@ -48,6 +49,7 @@ dictionaries, as well as other powerful sparse approximation
 algorithms, can all be migrated into our system with very little extra
 workload. So we are expecting further computational improvement in
 compression performance in the near future.
+
 
 \section{Background}
 
@@ -141,11 +143,13 @@ function $\mathbf{f}:V\to\mathbb{R}^c$ defined on $V$ can be
 represented as an $n\times c$ matrix, where the $i$-th row represents
 the function value at $v_i$.
 
-The Laplace matrix of mesh $M$ can be defined by the result of applying it to a function
-$\mathbf{f}$ defined on $V$:
+The Laplace matrix of mesh $M$ can be defined by the result of applying it to
+a function $\mathbf{f}$ defined on $V$:
+
 \begin{equation}
   (L\mathbf{f})_i=\frac{1}{a_i}\sum_{j\in N(i)} w_{ij}(\mathbf{f}_i-\mathbf{f}_j),
 \end{equation}
+
 where $N(i)$ denotes the index set of the 1-ring neighbors of $v_i$,
 and $a_i$ are the masses associated with each vertex and $w_{ij}$
 represents the weight of each edge.
@@ -898,8 +902,8 @@ mesh. Table~\ref{tab:stat} documents the compression errors and timing
 of S-OMP with SGW+MHB dictionaries, and compares the errors with the
 MHB coefficient truncation method.
 
-From the experimental results, we see that, with a properly chosen
-dictionary, simultaneous sparse approximation can generate
+From the experimental results, we see that, with a properly
+chosen dictionary, simultaneous sparse approximation can generate
 higher-fidelity mesh compression than the MHB truncation method at the
 same compression ratio. The SGW functions are a viable choice for
 efficient mesh approximation, but the performance of a SGW-only

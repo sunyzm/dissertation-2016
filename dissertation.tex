@@ -18,6 +18,7 @@
 \usepackage{pb-diagram}
 \usepackage{pbox}
 \usepackage{subcaption}
+\usepackage{setspace}
 \usepackage{tabularx}
 \usepackage{times}
 \usepackage{tree-dvips}
@@ -148,17 +149,13 @@ Algorithms for Shape Modeling and Analysis}}
 
 With the advent of ever more advanced and affordable 3D data acquisition
 technologies, digitalized 3D shapes have become ubiquitous in our daily life
-and occupied important roles in numerous fields and applications. Although
-it is straightforward to represent shape geometry directly in the spatial
-domain, there is a growing body of literature dedicated to Fourier domain
-shape modeling based on graph spectral basis. The Laplacian eigenfunctions
-of manifold Laplacian form an orthonormal basis of the shape function space,
-enabling Fourier-like space-frequency analysis on manifold. In addition, the
-Laplacian eigenfunctions encode substantial intrinsic topological and geometric
-information of the mesh and have widespread applications in shape analysis.
+and played important roles in numerous fields and applications. In recent
+years, there is a growing trend towards spectral methods for shape analysis
+and processing based on the eigenvalues and eigenfunctions of Laplacian operator,
+thanks to the many nice properties of spectral graph basis. 
 
 In this dissertation, we aim to extend traditional spectral mesh processing
-by incorporating spectral graph wavelets (SGWs) and sparsity-seeking
+by incorporating spectral graph wavelets and sparsity-seeking
 algorithms. Spectral graph wavelets are defined with the eigenfunctions of
 graph Laplacian, with scaling implemented in the spectral domain. Unlike
 Laplacian eigenbasis which are localized in frequency but have global support
@@ -200,16 +197,20 @@ results of our method tend to be globally coherent with the remaining shape.
 Informative and discriminative feature descriptors are vital in qualitative and
 quantitative shape analysis for a large variety of graphics applications. We
 advocate novel strategies to define generalized, user-specified features on
-shapes. Our new region descriptors are primarily built upon the the
-coefficients of spectral graph wavelets that are both multi-scale and
-multi-level in nature, consisting of both local and global information. Based
-on our novel spectral feature descriptor, we developed a user-specified feature
+shapes. Our new region descriptors are primarily built upon the coefficients of
+spectral graph wavelets that are both multi-scale and multi-level in nature,
+consisting of both local and global information. Based on our novel spectral
+feature descriptor, we developed a user-specified feature
 detection framework and a tensor-based shape matching algorithm.
 
 Through various experiments, we demonstrate the competitive performance of our
 proposed methods and the great potential of redundant spectral basis and
 sparsity-driven methods for shape modeling. We conclude this dissertation by
 discussing some remaining challenges and new research directions.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% end of abstract %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\onehalfspacing
 
 \tableofcontents
 
@@ -222,11 +223,6 @@ discussing some remaining challenges and new research directions.
 \phantomsection
 \addcontentsline{toc}{chapter}{\listtablename}
 \listoftables
-
-
-%\centerline{\bf{List of Abbreviations}}
-%\vspace*{4\baselineskip}
-%Include this list if applicable.
 
 %\centerline{\bf{Acknowledgements}}
 \chapter*{Acknowledgements}

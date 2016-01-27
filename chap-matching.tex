@@ -191,7 +191,7 @@ The correspondence propagation continues until all vertices in $S_k$ have been m
 score(s_i,t_j)=\exp(-\|{\HKC}_S(s_i)-{\HKC}_T(t_j)\|_2).
 \end{equation}
 
-We then select from $R_l$ some vertex pairs as new features and insert them into the feature set. These new added feature pairs should be both reliable (having great matching score) and not in the $\delta$-neighborhood of any existing feature points. The expanded feature set $C_l$ enables a more discriminative HKC in the next level. We carry on this process from the coarsest level to the finest level until we obtain the final registration set $R_0$ between the original meshes $S_0$ and $T_0$. 
+We then select from $R_l$ some vertex pairs as new features and insert them into the feature set. These new added feature pairs should be both reliable (having great matching score) and not in the $\delta$-neighborhood of any existing feature points. The expanded feature set $C_l$ enables a more discriminative HKC in the next level. We carry on this process from the coarsest level to the finest level until we obtain the final registration set $R_0$ between the original meshes $S_0$ and $T_0$.
 Fig.~\ref{fig:components} shows the major steps of our algorithm.
 
 \begin{figure}\centering
@@ -221,43 +221,52 @@ containing important information of the shape.
 \begin{figure}
 \centering
 \includegraphics[width=0.9\linewidth]{bowm}\\
-BoW vector (V$\times$1)\\
+BoW vector ($V \times 1$)\\
 \includegraphics[width=0.35\linewidth]{gorilla}
 \hspace{20pt}
 \includegraphics[width=0.38\linewidth]{ssbowm}\\
-\hspace{30pt} Shape \hspace{46pt} SS-BoW matrix (V$\times$V)\\
+\hspace{30pt} Shape \hspace{46pt} SS-BoW matrix ($V \times V$)\\
 \includegraphics[width=0.3\linewidth]{bofgm_1}
 \includegraphics[width=0.3\linewidth]{bofgm_2}
 \includegraphics[width=0.3\linewidth]{bofgm_3}
 \dots\\
-BoFG matrices ($|$F$|$$\times$$|$F$|$)
+BoFG matrices ($|F| \times |F| \times V$)
 \caption{Different representations of a given shape.}
 \label{fig:represent}
 \end{figure}
 
-We first revisit the shape google originally introduced in \cite{Ovsjanikov:2009}. It utilize a HKS-based BoW. The HKS descriptor $K(x)$ is a vector of HKS sampled at different values of $t$. Let $\textbf{W}=\{W_1,\dots,W_V\}$ be a vocabulary of geometric words with size $V$. The words $\{W_i\}$ are representative HKS vectors in the descriptor space clustered by the k-means algorithm. For each point $x$, the shape google computes its word distribution $\Theta(x)=[\theta_1(x),\dots,\theta_V(x)]^T$. The similarity of $x$ and word $W_i$ is given by
+We first revisit the `Shape Google' method originally introduced in \cite{Ovsjanikov:2009}. It utilizes a HKS-based BoW. 
+The HKS descriptor $K(x)$ is a vector of HKS sampled at different values of $t$. Let $\textbf{W}=\{W_1,\dots,W_V\}$ be a 
+vocabulary of geometric words with size $V$. The words $\{W_i\}$ are representative HKS vectors in the descriptor space 
+clustered by the k-means algorithm. For each point $x$, the shape google computes its word distribution 
+$\Theta(x)=[\theta_1(x),\dots,\theta_V(x)]^T$. The similarity of $x$ and word $W_i$ is given by
 
 \begin{equation}\label{eq:similar}
 \theta_i(x)=c(x)e^{-\frac{\|K(x)-W_i\|^2}{2\sigma^2}},
 \end{equation}
-where $\sigma$ is a parameter, and $c(x)$ is a constant for normalization. The BoW descriptor of a surface $M$ is computed by integrating word similarities over the entire shape
+
+where $\sigma$ is a parameter, and $c(x)$ is the normalization factor selected such that $\|\theta(x)\|_1 = 1$. 
+The BoW descriptor of a surface $M$ is computed by integrating word similarities over the entire shape
 
 \begin{equation}
 f(M)=\int_M\Theta(x)d\mu(x),
 \end{equation}
-where $\mu(x)$ denotes the surface area of $x$. As shown in Fig.~\ref{fig:represent}, the BoW descriptor is a V$\times$1 vector that measures the frequencies of words appearing on the shape. The shape google also introduced a SS-BoW descriptor, given by
+
+where $\mu(x)$ denotes the surface area of $x$. As shown in Fig.~\ref{fig:represent}, 
+the BoW descriptor is a V$\times$1 vector that measures the frequencies of words appearing 
+on the shape. The shape google also introduced a SS-BoW descriptor, given by
 
 \begin{equation}
 F(M)=\int_{M\times M}\Theta(x)\Theta^T(y)h_t(x,y)d\mu(x)d\mu(y).
 \end{equation}
 
-As shown in Fig.~\ref{fig:represent}, it is a V$\times$V matrix that measures frequencies of word pairs. Assume the time complexity for computing a HKS descriptor is O(D). For a shape with N points, the time complexity of BoW is O(ND), and SS-BoW is O(N$^2$D) which is quadratic to N.
+As shown in Fig.~\ref{fig:represent}, it is a V$\times$V matrix that measures frequencies of word pairs. Assume the time complexity for computing a HKS descriptor is O(D). For a shape with N points, the time complexity of BoW is O(ND), and SS-BoW is O($N^2 D$) which is quadratic to N.
 
-According to the Informative Theorem in \cite{Sun:2009:CGF}, the HKS contains all the information of heat kernels. Thus, the SS-BoW has no more geometry information than the BoW before integration. For the ease of comparison, the shape google highly suppresses the geometry information by computing the frequencies of words or word-pairs on the shape. It ends up with concise descriptors for comparison, yet completely loses spatial information. Besides, the shape-google algorithms are time-consuming, since they are working on all the points in the data. The BoW needs computing HKS values of all points, while the SS-BoW needs computing all point-to-point heat kernels. Assume the time complexity for computing a HKS descriptor is O(D). For a shape with N points, the time complexity of BoW is O(ND), and SS-BoW is O(N$^2$D) which is quadratic to N.
+According to the Informative Theorem in \cite{Sun:2009:CGF}, the HKS contains all the information of heat kernels. Thus, the SS-BoW has no more geometry information than the BoW before integration. For the ease of comparison, the shape google highly suppresses the geometry information by computing the frequencies of words or word-pairs on the shape. It ends up with concise descriptors for comparison, yet completely loses spatial information. Besides, the shape-google algorithms are time-consuming, since they are working on all the points in the data. The BoW needs computing HKS values of all points, while the SS-BoW needs computing all point-to-point heat kernels. Assume the time complexity for computing a HKS descriptor is O(D). For a shape with N points, the time complexity of BoW is O(ND), and SS-BoW is O($N^2 D$) which is quadratic to N.
 
 To reduce the complexity of the shape google, one needs to reduce the number of points involved in representing the shape. A straightforward solution is to select feature points, which keep most information of the shape geometry. Because of the multi-scale property, HKS features contain geometry information ranging from points in small scales to the entire shape in large scales. However, one concern is that a reduced number of points may not be sufficient to faithfully represent the shape. Therefore, instead of counting word frequencies, we construct graphs on detected features, giving rise to a bag-of-feature-graphs (BoFG) paradigm. The graphs encode spatial relations between features, which contain much more geometry information in representing the shape.
 
-We adopt weighted heat kernel matrices to capture global structures of graphs. Specifically, for a shape $M$ with feature set $F$, only points $x\in F$ are involved in computing word distributions $\Theta(x)$, which reduces much computation. Features are vector-quantized by a fuzzy classification, which assigns $\theta_i(x)$ portion of similarity to word $W_i$ in the distribution of feature $x$. The distribution $\Theta(x)$ is computed by Eq.~(\ref{eq:similar}) with $\sigma$ set as a quarter of the average distance of words in the vocabulary. This fuzzy classification reduces ambiguities in graph comparison, and also avoids misclassification in a hard quantization. For a geometric word $W_i$, we construct a matrix $G_i$, whose entry $G_i(x,y)$ with $(x,y)\in F\times F$ is computed by,
+We adopt weighted heat kernel matrices to capture global structures of graphs. Specifically, for a shape $M$ with feature set $F$, only points $x\in F$ are involved in computing word distributions $\Theta(x)$, which reduces much computation. Features are vector-quantized by a fuzzy classification, which assigns $\theta_i(x)$ portion of similarity to word $W_i$ in the distribution of feature $x$. The distribution $\Theta(x)$ is computed by Eq.~(\ref{eq:similar}) with $\sigma$ set as $\frac{1}{4}$ of the average distance of words in the vocabulary. This fuzzy classification reduces ambiguities in graph comparison, and also avoids misclassification in a hard quantization. For a geometric word $W_i$, we construct a matrix $G_i$, whose entry $G_i(x,y)$ with $(x,y)\in F\times F$ is computed by,
 \begin{equation}
 G_i(x,y)=\theta_i(x)\theta_i(y)h_t(x,y).
 \end{equation}

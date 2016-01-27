@@ -318,7 +318,7 @@ aforementioned Laplacian-Beltrami eigenfunctions on mesh models.
 \label{eq:SGW}
 \Psi_{t}(i,j)=\sum_{k=0}^{n-1}g(t\lambda_k) \chi_k(i)\chi_k(j),
 \end{equation}
-where $g$ is the real-valued SGWs generating kernel and $t$ is the
+where $g$ is the real-valued wavelet generating kernel and $t$ is the
 scale parameter. The $i$-th row of $\Psi_{t}(\cdot,\cdot)$
 \begin{equation}
 \label{eq:SGW_vert}
@@ -329,10 +329,10 @@ frequency domain, localized at scale $t$. Fig.~\ref{SGW} shows the
 SGWs of different scales located on one index point on the wolf model.
 It may be noted that, the values of wavelets are attenuated and
 oscillating on the mesh, and wavelets with a larger scale have a wider
-oscillating window. Here it should emphasized that we choose to
-utilize the geometric mesh Laplacian instead of the combinatorial
-Laplacian as originally applied in~\cite{Hammond2011} to afford much
-more precise description of the mesh geometry.
+oscillating window than those with smaller scales. Here it should be emphasized
+that we choose to use the geometric mesh Laplacian instead of the combinatorial
+Laplacian as originally applied in~\cite{Hammond2011} for more precise description
+of the mesh geometry.
 
 \begin{figure}[!to]
 \begin{center}
@@ -769,7 +769,7 @@ the other parts in specific applications.
 %\begin{center}
 \includegraphics[width=0.9\linewidth]{Fig_10}
 %\end{center}
-\caption[Retrieval results on the SHREC database.] 
+\caption[Retrieval results on the SHREC database.]
     {Retrieval results (on the SHREC database) with $ws = 0$ (red line)
     and $w_s \neq 0$ (blue line), and dash lines show the results on
     noisy models.}
@@ -1047,17 +1047,8 @@ repetitive feature detection shows that our detection results could
 potentially help with the recognition of repeated patterns,
 cut-and-paste editing, and self-symmetry detection.
 
-\textbf{Limitation.} Our feature detection framework is built upon
-bi-harmonic distance field, and the boundaries of features in the
-approach are defined using the contours, which may not depict regions
-confined by arbitrary curved boundaries. Another limitation is that
-our approach may have difficulties in dealing with model defects, such
-as the existence of big holes or missing large organic parts. These
-will be the topics for our future research.
-
-
 \section{Chapter Summary}
-\label{sec:Con}
+\label{sec:feature:sum}
 
 In this chapter, we have detailed the description and detection of our
 proposed generalized local-to-global features on 3D geometric models,
@@ -1084,10 +1075,9 @@ reliability, robustness, etc.
 \label{recognition}
 \end{figure}
 
-Our future work will try to make the interface's functionality more
-flexible and intuitive, allowing users to sketch the boundary of any
-intended feature region. We plan to incorporate more powerful
-analytical tools into our descriptor space for various kinds of
-analysis. We also intend to broaden the application scope of the
-proposed shape features to support feature-centric registration,
-structure-driven co-segmentation, and high-fidelity model production. 
+One of our future work is to make the universal interface and functionality 
+more flexible and intuitive, allowing users to sketch the boundary of any
+intended feature region. We also plan to to incorporate more powerful
+analytical tools into the descriptor space for improved performance. 
+Finally, we intend to broaden the application scope of the proposed shape features to support feature-centric registration, structure-driven co-segmentation 
+and high-fidelity model production. 

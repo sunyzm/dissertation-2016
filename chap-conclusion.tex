@@ -1,40 +1,53 @@
 \chapter{Conclusion and Future Work}
 
-\section{Discussion}
-\emph{TODO}
+\section{Conclusion}
+This dissertation presents our research work on shape modeling and 
+analysis based on spectral representations and sparsity-driven algorithms. 
+Our proposed methods provide solutions to a wide range of shape modeling 
+problems with competitive performance, demonstrating the great potential
+of spectral methods and sparse representations in the mesh domain.
+
+We present an innovative approach to 3D mesh compression
+by incorporating redundant spectral graph wavelets in dictionary design and using
+greedy pursuits to find compressed coefficient approximation.
+
+By formulating surface inpainting as a sparse signal recovery problem,
+we propose a novel variational approach for surface inpainting, integrating data fidelity
+constraints on the shape domain with coefficient sparsity constraints on the
+transformed domain.
+
+We propose a novel informative shape descriptor that combines SGW coefficients and
+contour-based statistics for better characterization of feature shape regions. Based on
+this descriptor, we develop a generalized feature detection framework, which can integrate different
+types of regional descriptors to facilitate widespread applications including partial matching and
+model recognition.
+
+We develop an effective feature-driven articulated shape correspondence
+algorithms. For coarse matching, we adopt
+tensor-based high-order graph matching to maximizes the
+geometric compatibility between features tuples, and for dense matching,
+we present a hierarchical shape registration algorithm, generating
+correspondence in multiples levels in a coarse-to-fine manner.
+
+We develop effective feature-driven articulated shape
+correspondence and retrieval algorithms based on 
+isometry-invariant spectral representations. For coarse 
+matching, we adopt tensor-based high-order graph matching to 
+maximizes the geometric compatibility between features tuples, 
+and for dense matching, we present a hierarchical shape 
+registration algorithm, generating correspondence in multiples 
+levels in a coarse-to-fine manner. Using the Bag-of-Feature-Graph (BoFG) 
+descriptor for shape retrieval, we significantly reduce the number of 
+pointed required for computing distributions in comparisons with 
+more traditional Bag-of-Features descriptors. 
 
 \section{Future Work}
-Our ongoing efforts focus on the extensions and applications of our current methods as
-well as developing other sparsity-driven methods for shape modeling.
 
-\subsection{Shape Retrieval}
-In Chapter~5, we have articulated an informative shape region descriptor which incorporates spectral graph wavelet coefficients
-and contour-related statistics for improved discriminative power. This new descriptor is robust and near-isometry-invariant, and
-we have demonstrated its great performance in matching and retrieving interesting shape regions.
+There are many possible extensions and improvements related to our current research 
+work in spectral representations and sparse modeling. Here we introduce some 
+potential topics. 
 
-We plan to employ our regional feature descriptor for whole shape retrieval from a database. Existing shape retrieval
-methods usually rely on the aggregation of local point features, such as shape context~\cite{Belongie2002} and
-heat kernel signature~\cite{Sun:2009:CGF}. Comparing with point features, our region features can better describe
-the contour shape and local-global geometry of interesting shape regions. In addition, the detected feature regions
-are much more intuitive for interpretation than point features.
-
-The general pipeline for feature-based shape retrieval is as follows:
-\begin{enumerate}
-\item Detect regional shape features from a training set of shapes. Each detected region is represented using our region descriptor.
-\item Learn a set of representative vector in the region descriptor space through clustering, forming a vocabulary of ``geometric words''.
-\item For each query or target shape, encoding its detected regional features against the vocabulary via some local feature aggregation method
-on manifold.
-\item Compute shape similarities by comparing the shape descriptions obtained in the above step.
-\end{enumerate}
-
-To effectively characterize a shape, only using the distribution of word frequency as in
-traditional bag-of-words method is not enough. We need to incorporate the spatial relations
-between features into our representation, and the most effective way to encode pairwise
-relation is through graph-based feature aggregation method, such as spatially sensitive
-bags of features (SS-BoF)~\cite{Bronstein2011}, bags of feature graphs (BoFG)~\cite{Hou2012a},
-and relevance diffusion~\cite{Furuya2015}.
-
-\subsection{Shape Editing}
+\subsection*{Shape Editing}
 
 Classical Laplacian mesh editing~\cite{Botsch2008} can be written as a regularized least square
 problem. Taking the $x$-coordinate for example, soft constraint Laplacian mesh editing
@@ -81,7 +94,7 @@ of the optimization problem then becomes
 Clearly, changing the generator function $g(\cdot)$ or the scale parameter $t$ will
 influence the contribution of components of different frequencies in the final reconstruction.
 
-\subsection{Sparse Representation Learning}
+\subsection*{Sparse Representation Learning}
 Our current research focuses on reconstructive sparse models with predefined dictionaries
 composed of analytical functions such as wavelets. Nevertheless, sparse representations have
 also great potential for pattern recognition, as most meaningful high-dimensional
@@ -112,32 +125,5 @@ descriptors as a proxy instead of processing shape signals directly. A highly di
 sparse model in the descriptor space has great potential in classification and retrieval of
 shape features or whole shapes.
 
-\section{Conclusion}
-In this dissertation, we have documented our recent research results and ongoing research
-on shape modeling and analysis based on spectral harmonic representations and
-sparsity-driven techniques. Our proposed methods demonstrate competitive performance
-and great potential of sparse and redundant representations in the domain of shape analysis
-and geometry processing. Our specific contributions include:
+\subsection*{General Graph Signal Analysis}
 
-\begin{itemize}
-\item We present an innovative approach to 3D mesh compression
-by incorporating redundant spectral graph wavelets in dictionary design and using
-greedy pursuits to find compressed coefficient approximation.
-
-\item By formulating surface inpainting as a sparse signal recovery problem,
-we propose a novel variational approach for surface inpainting, integrating data fidelity
-constraints on the shape domain with coefficient sparsity constraints on the
-transformed domain.
-
-\item We propose a novel informative shape descriptor that combines SGW coefficients and
-contour-based statistics for better characterization of feature shape regions.
-
-\item We develop a generalized feature detection framework, which can integrate different
-types of regional descriptors and facilitate widespread applications including partial matching and
-model recognition.
-
-\end{itemize}
-
-Our future works will focus on three directions: (1) Extensions and applications of
-our SGW-based representations; (2) Innovative dictionary design with more versatile
-shape basis; (3) Discriminative sparse models based on learned dictionary for shape analysis.

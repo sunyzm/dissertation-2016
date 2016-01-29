@@ -1,8 +1,9 @@
 \chapter{Background Review}
-In this chapter, we first briefly review harmonic analysis in the manifold and mesh domain,
-including the theories and applications of manifold harmonic basis and spectral graph wavelets.
-Then we give an overview of the concept of sparse representation as well as related
-computational methods and applications.
+In this chapter, we first briefly review spectral analysis in the
+manifold and mesh domain, including the theories and applications of
+Laplacian eigenstructures and spectral graph wavelets.
+Then we give an overview of the concept of sparse representation as
+well as related computational methods and applications in signal processing.
 
 \section{Laplacian and Graph Fourier Transform}
 Fourier transform is the most fundamental tool for time-frequency (or space-frequency)
@@ -89,6 +90,23 @@ the shape and they are invariant under isometric deformations up to a change in
 sign \cite{Rustamov:2007:LEF,Sun:2009:CGF}.
 
 \subsection*{Discrete Settings}
+
+In order to effectively encode 3D geometric data and facilitate different
+shape analysis and processing tasks, many different shape representations have
+been developed, including point clouds, polygon meshes, spline surfaces,
+voxels, etc. Choosing the most appropriate representation generally depends on the
+specific data source and geometric task at hand，but of all these representations,
+polygon meshes, especially triangle meshes, are perhaps the most widely used.
+Thanks to the conceptual simplicity, triangle meshes are flexible, versatile,
+and highly efficient for batch processing and rendering.
+
+In principle, a triangle mesh $\mathbb{M}$ can be viewed as the geometric
+embedding of a graph structure $G$ into $\mathbb{R}^3$. In another word,
+$\mathbb{M}$ can be decomposed into the topological component, namely the
+underlying graph structure $G$, and the geometric component, i.e., the
+vertex coordinate function $\mathbf{P}$ which maps each vertex $v_i$ of
+the graph to a position in the 3D Euclidean space $p_i\in\mathbb{R}^3$.
+
 Consider a manifold $\mathcal{M}$ approximated by triangular mesh $M$, with vertex
 set $V:=\{p_i, i=1,\ldots,N\}$, edge set $E$, and face set $F$. $|V|=N$ is the size
 of $M$. In addition, we define $N(i)=\{j|(p_i,p_j)\in E\}$ and $d_i=|N(i)|$. $N(i)$
@@ -125,7 +143,7 @@ is uniformly distributed.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.4\linewidth]{cot_weight}
+  \includegraphics[width=0.5\linewidth]{cot_weight}
   \caption[Angles in cotangent weights]{Angles in cotangent weights (courtesy of \cite{Sorkine:EG:2005}).}
 \label{fig:cotweights}
 \end{figure}
@@ -194,11 +212,11 @@ where the inner-product is the $A$-induced scalar product
 \end{equation}
 
 \section{Kernels and Spectral Graph Wavelets}
-Wavelet is a powerful analytical tool in signal processing~\cite{Mallat2008}.
-Intuitively speaking, a wavelet is a wave-like pulse in time (or space). By scaling and translating a single mother wavelets,
-we may obtain a family of wavelet functions. Just like that in Fourier analysis a function $f$ can be decomposed into a series
-of component harmonics, in wavelet analysis $f$ is represented by a family of component wavelets.
-But there are some fundamental differences between the Fourier and wavelet analysis:
+Wavelet is a powerful analytical tool in signal processing. Intuitively speaking, a
+wavelet is a wave-like pulse in time (or space). By scaling and translating a single mother wavelets,
+we may obtain a family of wavelet functions. Just like that in Fourier analysis a function $f$ can
+be decomposed into a series of component harmonics, in wavelet analysis $f$ is represented by a family
+of component wavelets. But there are some fundamental differences between the Fourier and wavelet analysis:
 
 \begin{itemize}
 \item In Fourier analysis, each component harmonic is globally defined in space/time. In wavelet analysis, the component wavelet are all locally defined at different locations.
@@ -272,7 +290,27 @@ The ADW are constructed in a bottom-up manner that starts from a local operator 
 and dilates by its dyadic powers to low frequencies. By relieving the orthogonality and enforcing normalization,
 the wavelets are locally-supported and admissible.
 
-\subsection{Spectral Graph Wavelet}
+It is attractive to be able to define wavelet transform directly on 3D
+shapes without the need of parameterization. Various schemes of
+manifold wavelets have been proposed via different
+approaches~\cite{Antoine2010189}. Diffusion wavelets, introduced by
+Maggioni and Coifman~\cite{Coifman2006}, use diffusion as a
+scaling tool to achieve multiscale analysis. Wavelet and scaling
+functions are constructed by repeatedly applying a diffusion operator
+$T$ on the graph or manifold space. After applying dyadic powers of
+$T$ at each scale, a localized orthogonalization procedure is
+performed to yield nested approximation spaces, and then wavelets are
+produced by locally orthogonalizing vectors spanning the difference of
+these approximation spaces. The derived diffusion wavelets are
+orthogonal, compact, and multiscale in nature, and have been employed
+in 3D mesh compression
+in~\cite{mahadevan2007AdaMesCom3DComGraUsiMulManLea}.
+In~\cite{gavish2010multiscale,ram2012redundant}, tree-based,
+data-adaptive wavelet transforms are developed for high-dimensional
+Euclidean data sets and weighted graphs, under the assumption that the
+data have a rich geometrical structure that can be captured by a
+hierarchical tree.
+
 The primary reason that classical wavelet transforms cannot be directly adapted to graph or manifold is
 that for a mother function $\psi(x)$ defined on a manifold,
 there is no obvious definition for $\psi(sx)$. One approach to solve this problem is appealing to the Fourier domain,
@@ -311,8 +349,6 @@ The Parseval relations holds for the manifold harmonics transform
   scale 1, 3 and 5.}
 \label{SGW}
 \end{figure}
-
-\subsubsection{Spectral Graph Wavelet Transform}
 
 We generate SGWT from a special wavelet operator that acts on functions defined on the manifold. Given a real-valued transfer function $g$, the wavelet operator $T_g$ is defined by how it modulate on $f:\mathcal{M}\to\mathbb{R}$ on Fourier domain
 \begin{equation}
@@ -484,7 +520,7 @@ topological information. These inspire us to
 creatively combine SGWs and bi-harmonic distance field to enable the
 multi-scale and multi-level description of any region of interests.
 
-\section{Sparse Representations}
+\section{Sparsity-Based Modeling}
 
 In recent years, sparse approximation techniques have become
 increasingly popular in various fields of signal processing and
@@ -507,7 +543,7 @@ be redundant or overcomplete, allowing great freedom and flexibility in
 design to accommodate a sparse set of atoms that can better capture
 the signals' intrinsic characteristics.
 
-\subsection{Sparse Approximation Problems}
+\subsection{Sparse Modeling Problems}
 
 Consider signal $\mathbf{b}\in\mathbb{R}^n$ and dictionary matrix
 $\mathbf{D}\in\mathbb{R}^{n\times m}$ with $n<m$. If the dictionary constitutes an
@@ -601,6 +637,20 @@ sizes. A variety of methods have been developed for finding near-optimal solutio
 the most important two classes are \emph{greedy pursuit} and \emph{convex relaxation}~\cite{Tropp2010}.
 
 \subsubsection*{Greedy Pursuit Methods}
+One of the most commonly-used approaches to sparse approximation is
+the greedy pursuit method. The central idea is to iteratively refine a
+sparse solution in a greedy manner. More specifically, in each
+iteration one or more atoms of the dictionary are chosen
+and the corresponding coefficients are modified
+such that the greatest improvement in approximation quality can be achieved.
+Representative greedy pursuit algorithms include matching pursuit
+(MP)~\cite{Mallat1993}, orthogonal matching pursuit
+(OMP)~\cite{Pati1993}, and simultaneous orthogonal matching pursuit (S-OMP)~\cite{Tropp2006a}.
+The latter is suitable for solving the simultaneous sparse approximation problem where
+the input signal have multiple correlated channels and the same subset of atoms is to be used
+for every channel.
+
+
 The basic idea of greedy pursuit methods is to iterative refine the estimation of the coefficient vector
 $\mathbf{x}$. In each step, one or several coefficients are modified to yield biggest possible improvement
 in approximating the signal. The simplest greedy pursuit algorithm is \emph{matching pursuit (MP)}~\cite{Mallat1993},

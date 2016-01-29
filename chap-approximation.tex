@@ -2,8 +2,8 @@
 
 Sparse approximation have gained great success on the regular domain 
 of 2D images. However, the topics of approximating or compressing signals defined 
-over graphs or manifolds are much less investigated
-due to the irregularity of underlying domains. In this chapter, we
+over meshes are much less investigated due to the irregularity of 
+underlying domains. In this chapter, we
 takes an initiative to explore the challenging problem of sparse
 approximation of discrete 3D shapes for compressive shape representation.
 
@@ -35,10 +35,11 @@ suited for encoding shapes with many local details. We employ the SGW
 as shape bases to construct redundant dictionary with multiscale
 wavelets centered around each vertex, and employ the simultaneous
 orthogonal matching pursuit (S-OMP) algorithm to find a sparse coding
-of the original shape geometry. This chapter's primary contributions are
-hinging upon the unique integration of the spectral graph wavelets
+of the original shape geometry. The primary contributions of this work
+are hinging upon the unique integration of the spectral graph wavelets
 (SGW) and sparse representation and its powerful application in 3D
-shape compression.
+shape compression. To the best extent of our knowledge, our current 
+work is the first attempt to employ the SGW in the task of 3D mesh compression.
 
 Through our extensive experiments, we wish to demonstrate that our
 compression method outperforms the MHB-based Fourier compression in
@@ -50,11 +51,10 @@ algorithms, can all be migrated into our system with very little extra
 workload. So we are expecting further computational improvement in
 compression performance in the near future.
 
-
-\section{Background}
+\section{Spectral Mesh Compression}
 
 Harmonic analysis techniques such as Fourier transform and wavelet
-transform have achieved tremendous success in compressing images,
+transform are fundamental tools in compressing images,
 audio, and video signals. Prominent applications include the
 JPEG~\cite{wallace1992jpeg} and JPEG2000~\cite{skodras2001jpeg} image
 compression standards, which are based on 2D discrete cosine transform
@@ -69,21 +69,7 @@ popularity of sparse approximation methods, which enable the utility
 of redundant or over-complete dictionaries for signal representation.
 From the dictionary of elementary signals, a small subset that can
 best capture the structure of the input signal is selected, and the
-input signal is approximated by a linear combination of the selected
-signals.
-
-One of the most commonly-used approaches to sparse approximation is
-the greedy pursuit method. The central idea is to iteratively refine a
-sparse solution in a greedy manner. More specifically, in each
-iteration one or more atoms of the dictionary are chosen
-and the corresponding coefficients are modified
-such that the greatest improvement in approximation quality can be achieved.
-Representative greedy pursuit algorithms include matching pursuit
-(MP)~\cite{Mallat1993}, orthogonal matching pursuit
-(OMP)~\cite{Pati1993}, and simultaneous orthogonal matching pursuit (S-OMP)~\cite{Tropp2006a}.
-The latter is suitable for solving the simultaneous sparse approximation problem where
-the input signal have multiple correlated channels and the same subset of atoms is to be used
-for every channel.
+input signal is approximated by a linear combination of the selected signals.
 
 A 3D mesh can be expressed as the connectivity information of the mesh
 topology plus the 3D mesh coordinates. The mesh connectivity defines
@@ -101,36 +87,6 @@ and Gotsman extended the spectral compression method by using fixed
 eigenbases derived from a 6-regular mesh to approximate the eigenbases
 of the non-regular input meshes, avoiding the cost of Laplacian
 decomposition on the decoder side~\cite{karni20013d}.
-
-It is attractive to be able to define wavelet transform directly on 3D
-shapes without the need of parameterization. Various schemes of
-manifold wavelets have been proposed via different
-approaches~\cite{Antoine2010189}. Diffusion wavelets, introduced by
-Maggioni and Coifman~\cite{Coifman2006}, use diffusion as a
-scaling tool to achieve multiscale analysis. Wavelet and scaling
-functions are constructed by repeatedly applying a diffusion operator
-$T$ on the graph or manifold space. After applying dyadic powers of
-$T$ at each scale, a localized orthogonalization procedure is
-performed to yield nested approximation spaces, and then wavelets are
-produced by locally orthogonalizing vectors spanning the difference of
-these approximation spaces. The derived diffusion wavelets are
-orthogonal, compact, and multiscale in nature, and have been employed
-in 3D mesh compression
-in~\cite{mahadevan2007AdaMesCom3DComGraUsiMulManLea}.
-In~\cite{gavish2010multiscale,ram2012redundant}, tree-based,
-data-adaptive wavelet transforms are developed for high-dimensional
-Euclidean data sets and weighted graphs, under the assumption that the
-data have a rich geometrical structure that can be captured by a
-hierarchical tree.
-
-One particularly interesting type of graph wavelets is the spectral
-graph wavelet (SGW), proposed by Hammond et
-al~\cite{Hammond2011}. SGW functions are locally defined in
-the vicinity of each point by their spectral representations using
-the Laplacian basis, and the scaling is carried out in the frequency
-domain. . To the best extent of our
-knowledge, our current work is the first attempt to employ the SGW in
-the task of 3D mesh compression.
 
 \section{Mesh Compression via Sparse Approximation}
 
@@ -915,8 +871,8 @@ is consistently superior to the MHB truncation method.
 
 \section{Chapter Summary}
 
-In this chapter, we have developed an algorithm for sparse approximation
-of 3D shapes. We employed the spectral graph wavelets (SGW) to
+In this chapter, we have developed an algorithm for sparse 
+approximation of 3D shapes. We employed the spectral graph wavelets to
 construct the redundant dictionary of shape bases, and used
 simultaneous orthogonal matching pursuit to seek a sparse
 representation of the input mesh. The use of spatially-localized

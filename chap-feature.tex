@@ -2,33 +2,32 @@
 
 \section{Introduction}
 
-Studies in feature abstraction and analysis have been
-gaining momentum because they can assist numerous downstream graphics
-tasks and applications such as shape recognition, segmentation,
-analysis, understanding, etc
+Studies in feature abstraction and analysis have been gaining momentum because 
+features are essential for numerous downstream graphics tasks and applications 
+such as shape recognition, segmentation, analysis, understanding, etc
 ~\cite{Bronstein2011,Kin-ChungAu:2012,Song:2014:MSV}. Influenced
-by the newly-arisen concept of high-level representations in computer
-vision, which are based on object-wise components, now much more
-attention has been directed towards region-wise feature analysis in
-computer graphics. In this work, we advocate a new region-based and
+by the trending concept of high-level representations in computer
+vision, which are based on object-wise components, more
+attention has now been directed towards region-wise feature analysis in
+geometry modeling. In this work, we advocate a new region-based and
 user-specified type of feature as well as a novel
-graph-wavelet-inspired multi-scale and multi-level descriptor, and they
+wavelet-inspired multi-scale and multi-level descriptor, and they
 jointly enable our feature detection framework that can further
-facilitate various practical applications.
+facilitate various applications.
 
 Conventional feature descriptors are usually constructed by considering
-the discontinuities of certain differential attributes at different
+the discontinuities of certain differential attributes of different
 orders (e.g., the second-order attribute like surface curvature) that
 naturally afford their discriminative power in characterizing point
 features, line/curve features, small patch-based features with regular
-boundaries, etc. Such descriptions have facilitated point/patch-based
+boundaries, etc. Such descriptions have been employed in point/patch-based
 recognition, point-wise correspondence, and curvature-based saliency
-detection with great success. However, for more complex applications
+detection with great success. However, for more complicated applications
 such as modeling by example~\cite{Funkhouser:2004}, model
 composition~\cite{Kreavoy:2007}, and key component
 analysis~\cite{Sipiran:2012}, the aforementioned conventional features
 are usually too localized to capture the multi-scale neighboring
-information, and it is desirable to have a flexible, region-wise feature
+information, and it is desirable to have a flexible, region-induced feature
 description. Furthermore, in many real-world settings, shape data may be
 degraded due to acquisition imperfections and noises, necessitating the
 use of region descriptors which tend to be much more robust.
@@ -198,36 +197,6 @@ correspondence processes.
 \label{specification}
 \end{figure*}
 
-\textbf{Spectral Graph Wavelets.} Wavelet, which can localize a given
-function both in space and in scale, is a powerful analytical tool in
-signal processing~\cite{Mallat2008}. Unlike Fourier transform which
-are globally defined, wavelet analysis is able to perform localized
-multi-resolution analysis. Classical wavelets are constructed by
-translating and scaling a mother wavelet in Euclidean space. However,
-transplanting wavelets to graphs (specifically, triangular meshes) is
-not straightforward due in part to the fact that it is unclear how to
-apply the scaling operation on a signal that is defined on the mesh
-vertices, so early studies using wavelet mostly relied on the
-parameterization~\cite{Werghi:2002,Liu:2007}. One way to construct
-wavelets on graph structures is using a diffusion operator and its
-dyadic powers to obtain multi-scale wavelet and scaling
-functions~\cite{Coifman2006,Hou2013}. Another approach to define
-graph wavelets is by expanding graph functions with the eigen-system
-of the graph Laplacian matrix and performing scaling in the frequency
-domain~\cite{Hammond2011,Hou2012}, giving rise to the spectral
-graph wavelet transform (SGWT). More recently, Kim et
-al.~\cite{Kim:2012,Kim:2014} introduced a wavelet-based multi-scale
-descriptor for the analysis of cortical surface signals using the SGWT
-and Li et al.~\cite{Li:2013} proposed a SGWT-based descriptor and
-utilized the intrinsic spatial pyramid matching (ISPM) for global
-shape retrieval. Though these researches discover the potentials of
-SGWs, they all concentrate on global shape analysis based on point
-signatures, ignoring the SGWs' power in integrating the
-local-to-global/in-between geometrical and topological information.
-These inspire us to combine SGWs and bi-harmonic distance field to
-enable the multi-scale and multi-level description of the region of
-interests.
-
 \section{Local-to-global Shape Feature Definition}
 \label{sec:GF}
 
@@ -298,10 +267,9 @@ and integral geometry information.
 \section{Multi-level And Multi-scale Shape Description}
 \label{sec:Des}
 
-Our novel descriptor primarily exploits the SGWs and the metric
-statistics. This section introduces the SGWs-related description and
-the contour-based statistics before the complete descriptor can be
-constructed.
+Our novel descriptor primarily make use of the statistics
+of SGWs coefficients. As a supplement, contour-based statistics are also
+included the descriptor to achieve better discriminative power.  
 
 \subsection{SGW-based Description}
 
@@ -374,27 +342,26 @@ W_f(t,i) = \langle \psi_{t,i},f \rangle = \sum_{l=0}^{n-1}g(t\lambda_l)\hat{f}(l
 \end{equation}
 where
 \begin{equation}
-  \hat{f}(l) = \langle \chi_l,f \rangle = \sum_{i=0}^{n-1} \chi_l(i)f(i),
+  \hat{f}(l) = \langle \chi_l,f \rangle,
 \end{equation}
 and
 \begin{equation}
   f(i) = \sum_{l=0}^{n-1} \hat{f}(l) \chi_l(i).
 \end{equation}
 Here, the signal function $f$ can be any kind of surface signal
-depending on applications. For example, mean curvature,
-characterizing detailed distortions, is a good choice for the
-recognition of repetitive features within certain models, the
-detection of similar features among models with different poses, etc.
+depending on the downstream application. For example, mean curvature,
+characterizing detailed local distortions, is a good choice for the
+recognition of repetitive features within individual models and the
+detection of similar features across models with different poses.
 For coarse-to-fine recognition, the HKS is more favorable thanks to
-its robustness to noise. Different settings of $f$ will be shown
-later for different applications. The coefficients $W_f$
-obtained from the transformation is the inner product of the signal
+its robustness to noise. The coefficients $W_f$
+obtained from the spectral wavelet transform is the inner product of the signal
 function and the corresponding wavelet at scale $t$ and location $i$.
-It is a representation of the signal for that scale, that is to say,
+It is an encoding of the signal at that particular scale, i.e.,
 it describes the original signal in certain frequency with respect to
 the local geometry and topology. Repeating this process for $J$
-scales (as shown in Fig.~\ref{wmd}(a)-(d) with 4 scales), the set of
-coefficients obtained comprises our multi-level descriptor.
+scales (as shown in Fig.~\ref{wmd}(a)-(d) with 4 scales), the collection of
+coefficients obtained comprises our multi-level and multi-scale descriptor.
 
 \begin{figure}[!to]
 \begin{center}
@@ -1075,9 +1042,10 @@ reliability, robustness, etc.
 \label{recognition}
 \end{figure}
 
-One of our future work is to make the universal interface and functionality
-more flexible and intuitive, allowing users to sketch the boundary of any
+One of our future work is to make the user interface and functionality
+more flexible and intuitive, e.g., allowing users to sketch the boundary of
 intended feature region. We also plan to to incorporate more powerful
 analytical tools into the descriptor space for improved performance.
-Finally, we intend to broaden the application scope of the proposed shape features to support feature-centric registration, structure-driven co-segmentation
+Finally, we intend to broaden the application scope of the proposed shape features
+to support feature-centric registration, structure-driven co-segmentation
 and high-fidelity model production. 

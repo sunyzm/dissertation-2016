@@ -13,81 +13,89 @@ algorithms for shape modeling and analysis.
 
 \section{Problem Statement}
 
-Spectral analysis refers to the analysis in terms of the
-eigenvalues and eigenfunctions of certain linear operator. In the context
-of geometry processing and analysis, the most popular spectrum is derived
-from the eigen-decomposition of the discrete Laplacian operator, and a great
-diversity of spectral methods have been developed for a wide range of shape modeling
-problems, including compression~\cite{Karni2000}, segmentation~\cite{Liu2007},
-deformation~\cite{Rong2008}, remeshing~\cite{dong2006spectral},
-paramterization~\cite{Zhou2004}, shape indexing~\cite{Reuter:2006:CAD, Rustamov:2007:LEF},
-and retrieval~\cite{Lavoue:2012}. In these applications, we sometimes
-directly use the Laplacian eigenvectors as Fourier-like harmonic basis to
-encode shape geometry, and sometimes use the eigenvectors and eigenvalues to
-construct more sophisticated shape descriptors or measures.
+In order to effectively encode 3D geometric data and facilitate different
+shape analysis and processing tasks, many different shape representations have
+been developed and adopted, including point clouds, polygon meshes, spline surfaces,
+voxels, etc. Choosing the most appropriate representation generally depends on the
+specific data source and task at hand，but of all these representations,
+polygon meshes, especially triangle meshes, are perhaps the most widely used.
+Thanks to its conceptual simplicity, the discrete mesh representation is flexible, versatile,
+and highly efficient for batch processing and rendering.
 
 From the point of view of signal processing, the vertex coordinate function of
 a mesh is essentially a vector-valued discrete signal defined on the domain of
 mesh vertices, just like an image is a color-valued signal defined on 2D grids.
-The enormous success of applications of digital signal processing with other types
-of signals, such as audio and images, has long motivated people to employ and
-adapt techniques in classic signal processing to tackle geometry
-processing problems in the mesh domain. For instance, in one of the pioneering
-works~\cite{Taubin1995} on geometric signal processing, Taubin showed that the
-process of surface smoothing can be carried out by applying the graph Laplacian
-operator to the mesh coordinates, which is equivalent to low-pass filtering
-of discrete signals defined on vertices.
+Naturally, the countless successful applications of digital signal processing with conventional
+types of signals, such as audio and images, have long motivated people to employ 
+and adapt signal processing techniques to solve shape modeling problems in the 
+mesh domain. For instance, in one of the pioneering works~\cite{Taubin1995} on 
+geometric signal processing, Taubin showed that the operation of surface smoothing 
+can be carried out by applying the graph Laplacian operator to the mesh coordinates, 
+which is equivalent to low-pass filtering of discrete signals defined on vertices.
 
-One key aspect of signal processing is to represent the signal in a transform
-domain by decomposing it as the linear combination of a suitable choice of basis
-vectors. Analyzing the coefficient representation with respect to the transform
+One key aspect of signal processing is \emph{transform}, i.e., to explicitly represent 
+the signal in a transform domain by decomposing it as the linear combination of a suitable
+choice of basis vectors. Analyzing the coefficient representation with respect to the transform
 basis can often reveal important properties of the original signal, and many
-shape operations that are difficult to achieve directly on the mesh domain
+operations that are difficult to perform directly on the spatial domain
 can be easily accomplished in the transform domain by manipulating the
-transform coefficients. In Euclidean space, the most fundamental signal transform
+coefficients. In Euclidean space, the most fundamental transform
 is the well known Fourier transform, which converts signals from time/space domain to
-frequency domain with multi-scale sinusoids as basis.
+frequency domain with multi-scale sinusoids as basis. 
 
-In the general manifold domain, the natural equivalent to the classic Fourier basis is
-the manifold harmonic basis (MHB)~\cite{Vallet2008}, which is actually the set
-of eigenfunctions of the manifold's Laplace-Beltrami operator.
-According to the spectral theory, the Laplacian eigenfunctions form an orthonormal and complete
-basis of functions defined on the manifold, i.e., the Laplacian eigenbasis, thus inducing the
-manifold harmonic transform (MHT) which affords space-frequency decomposition on the manifold, similar
-to the Fourier transform in regular domains. In the discrete setting, MHB refers to the eigenvectors
-of the mesh/graph Laplacian matrix.
+The classic Fourier basis functions are actually the eigenfunctions of the second-order 
+differential operator in Euclidean space, corresponding to the spectra of 1D Laplacian.
+In general, spectral analysis refers to the analysis in terms of the
+eigenvalues and eigenfunctions of certain linear operator. 
 
-Unlike classic Fourier basis functions which are simply fixed sinusoids, the manifold harmonic basis
-differ with the connectivity, geometry, and the type of Laplacian operator that is adopted~\cite{Zhang:2010:CGF}.
-As a result, the mesh Laplacian eigenvectors and eigenvalues actually encode substantial topological and
-geometric information and can help characterize the global shape property and reveal intrinsic structure of the
-original mesh. This lends to the popularity of spectral methods in
-the area of geometry processing and analysis.
+In the context of geometry processing and analysis, the natural equivalent to the 
+Fourier basis is the set of eigenfunctions of the mesh's Laplacian operator.
+According to the spectral graph theory, the Laplacian eigenfunctions form an 
+orthonormal and complete basis of functions defined on the mesh vertices, thus inducing the
+graph Fourier transform which affords space-frequency decomposition of functions defined on 
+the surface, analogous to the Fourier transform in regular domains. 
 
-Myriads of successful applications notwithstanding, there are certain limitations in employing the Laplacian
-eigenpairs directly for shape analysis. Primarily, the Laplacian eigenvalues and eigenvectors are determined
-by the global Laplacian matrix and thus encode information of the entire shape. Hence, they are more suitable
-for representing the overall shape but are not very effective in encoding local details. In addition, the Laplacian
-eigenpairs are not very stable across shapes and direct comparisons become unreliable after the first few eigenpairs.
-To more effectively describing the properties of local regions and the pair-wise relations between regions
-in a shape, people have developed a series of sophisticated spectral representations building upon the
-Laplacian eigenpairs, including various forms of kernels and distances.
+Unlike classic Fourier basis functions which are simply fixed sinusoids, the manifold harmonic 
+basis differ with the connectivity, geometry, and the type of Laplacian operator that is 
+adopted~\cite{Zhang:2010:CGF}. As a result, the mesh Laplacian eigenvectors and eigenvalues 
+actually encode substantial topological and geometric information and can help characterize 
+the global shape property and reveal intrinsic structure of the original mesh. This lends 
+to the popularity of spectral methods for shape analysis and processing, including 
+compression~\cite{Karni2000}, segmentation~\cite{Liu2007}, deformation~\cite{Rong2008}, 
+remeshing~\cite{dong2006spectral}, paramterization~\cite{Zhou2004}, shape indexing~\cite{Reuter:2006:CAD},
+and retrieval~\cite{Lavoue:2012}, to name just a few.
 
-In recent years, the focus of harmonic analysis has been moving from orthogonal basis with
-minimum size like the Fourier basis to richer, more expressive dictionaries with many redundant
-atoms such as wavelets, and from simple determinant time-frequency transform to coefficient
-decomposition based on sparsity-driven optimization. Comparing with Fourier-based signal processing,
-richer dictionaries are more flexible and have greater expressive power. With appropriate
-sparsity-seeking algorithm, the obtained representation provides
-not only a more concise description of the original signal, but also, in many cases, a more precise one.
-Thus, computing the sparse representation can help manifest the essential components of a signal,
-facilitating a diversity of applications such as signal compression, pattern recognition,
-noise reduction, source separation, and signal restoration.
+Myriads of successful applications notwithstanding, there are certain 
+limitations in employing the Laplacian eigenpairs directly for shape analysis. 
+Primarily, the Laplacian eigenvalues and eigenvectors are determined by the 
+global Laplacian matrix and thus encode information of the entire shape. 
+Hence, they are more suitable for representing the overall shape but are not 
+very effective in encoding local details. In addition, the Laplacian eigenpairs 
+are not very stable across shapes and direct comparisons become unreliable 
+after the first few eigenpairs. To more effectively describing the properties 
+of local regions and the pair-wise relations between regions in a shape, people
+have developed a series of sophisticated spectral representations building upon 
+the Laplacian eigenpairs, including various forms of kernels and distances.
 
-Wavelets and sparse representation have gained great momentum in the signal processing
-community~\cite{Mallat2008}, but most successful applications focus on regular domains
-such as images and audio. Currently there is very few existing study taking advantages of
-graph wavelets and sparsity-seeking techniques to solve problems in shape analysis and processing.
+In recent years, the focus of harmonic analysis has been moving from orthogonal 
+basis with minimum size like the Fourier basis to richer, more expressive 
+dictionaries with many redundant atoms such as wavelets, and from simple 
+determinant time-frequency transform to coefficient decomposition based on 
+sparsity-seeking optimization. Comparing with Fourier-based signal processing,
+richer dictionaries allows more flexibility in basis design and affords greater 
+expressive power. With suitable dictionary and appropriate sparse optimization 
+algorithm, the obtained representation can provide a very concise description or 
+approximation of the original signal, help manifest a signal's essential 
+components, and potentially facilitate a diversity of applications such as signal 
+compression, pattern recognition, noise reduction, source separation and signal 
+restoration.
+
+The concepts of redundant dictionary and sparse representation have gained great momentum
+in the signal processing community~\cite{Mallat2008}, but most existing study focused on 
+regular domains such as images and audio rather than the more challenging and universal 
+problem of signal processing on graphs. In this dissertation, we will present our research 
+work in shape analysis and processing by incorporating spectral representations and sparse 
+modeling techniques.
 
 \section{Contributions}
 
@@ -99,32 +107,21 @@ graph wavelets and sparsity-seeking techniques to solve problems in shape analys
   \label{fig:thesis_hierarchy}
 \end{figure}
 
-The basic idea of sparse representation is to use as few as possible elementary functions chosen
+The basic idea of sparse modeling is to use as few as possible elementary functions chosen
 in a dictionary to decompose or approximate a signal, based on the intuition that a meaningful
 high-dimensional signal probably possesses a low-dimensional intrinsic structure, which can be
 captured by a sparse coefficient representation with respect to a suitable dictionary. Given a
 redundant dictionary, we can compute a sparse decomposition or approximation of the original signal
 by using various sparse optimization algorithms. The obtained sparse representation provides not
 only a more concise description of the original signal, which can be utilized for signal compression,
-but also, in many cases, a more precise one.
+but also, in many cases, a more precise and structure-revealing one.
 
-The efficacy of sparsity-based methods depends on the the selection of dictionaries.
+The efficacy of sparsity-driven algorithms highly depends on the the selection of dictionaries.
 Generally, the more ``expressive'' the dictionary is, the fewer elementary functions
 are needed to faithfully reconstruct the original signal, as there are more ``words''
 available to express the information. Hence, instead of selecting a complete and orthogonal basis
-like the Fourier basis as the dictionary, it is often desirable to construct a redundant,etrieval algorithms based on spectral
-representations. Features are encoded with heat kernel signatures
-or our SGW-derived feature descriptors. For coarse matching, we adopt
-tensor-based high-order graph matching to maximizes the
-geometric compatibility between features tuples, and for dense matching,
-we present a hierarchical shape registration algorithm, generating
-correspondence in multiples levels in a coarse-to-fine manner. We also
-propose the novel Bag-of-Feature-Graph (BoFG) descriptor for shape retrieval
-For each geometric word in the vocabulary, BoFG constructs a graph that records
-spatial relations of all feature pairs in the shape, weighted by their
-similarities to this word. The BoFG descriptor significantly reducing the number
-of pointed required for computing distributions in comparisons with more traditional
-Bag-of-Features descriptors.
+like the Fourier basis as the dictionary, it is often desirable to construct a redundant, overcomplete
+dictionary. 
 
 A natural choice for constructing redundant dictionary is to use wavelets. A family
 of wavelets can be generated by scaling and translating a single mother wavelet function,
@@ -139,20 +136,19 @@ such as multiscale and spatial-locality of SGWs have proved to be valuable in a 
 analysis applications.
 
 In addition to acting as overcomplete basis for shape signals, the spectral
-graph wavelets also captures valuable geometric information of the original
-shape in a multiscale and spatially-localized way, thus are very suitable to
-constitute the building blocks of local shape descriptors.
+graph wavelets also captures valuable intrinsic geometric information of the original
+shape in a multiscale and spatially-localized way, thus are a promising choice to
+serve as the building blocks for constructing local shape descriptors.
 
 In this dissertation, we present solutions combining graph-based spectral
-representations, especially spectral graph wavelets and heat kernels, and
-sparsity-seeking techniques to a series of fundamental problems in shape
-analysis and geometry processing, including mesh compression, surface
-inpainting, feature description, shape correspondence, and shape retrieval.
-Through various experiments, we demonstrate the competitive performance of
-our proposed methods and the great potential of spectral sparse
-representations. Fig.~\ref{fig:thesis_hierarchy} highlights the hierarchy
-of this dissertation. Specifically, the contributions of this dissertations
-are summarized as follows:
+representations, especially spectral graph wavelets, and sparse modeling
+methods to a series of fundamental problems in shape analysis and geometry 
+processing, including mesh compression, surface inpainting, feature description, 
+shape correspondence, and shape retrieval. Through various experiments, we 
+demonstrate the competitive performance of our proposed methods and the great 
+potential of spectral representations and sparse modeling in shape analysis and processing. 
+Fig.~\ref{fig:thesis_hierarchy} highlights the hierarchy of our methodology. 
+Specifically, the contributions of this dissertations are summarized as follows:
 
 \begin{itemize}
 \item We present an innovative approach to 3D mesh compression using spectral graph
@@ -193,10 +189,8 @@ mesh compression methods.
 
 \item We develop effective feature-driven articulated shape
 correspondence and retrieval algorithms based on spectral
-representations. Features are encoded with heat kernel signatures
-or our SGW-derived feature descriptors. For coarse matching, we adopt
-tensor-based high-order graph matching to maximizes the
-geometric compatibility between features tuples, and for dense matching,
+descriptors. For coarse matching, we adopt tensor-based high-order graph matching 
+to maximizes the geometric compatibility between features tuples, and for dense matching,
 we present a hierarchical shape registration algorithm, generating
 correspondence in multiples levels in a coarse-to-fine manner. We also
 propose the novel Bag-of-Feature-Graph (BoFG) descriptor for shape retrieval
@@ -204,7 +198,7 @@ For each geometric word in the vocabulary, BoFG constructs a graph that records
 spatial relations of all feature pairs in the shape, weighted by their
 similarities to this word. The BoFG descriptor significantly reducing the number
 of pointed required for computing distributions in comparisons with more traditional
-Bag-of-Features descriptors.
+Bag-of-Words descriptors.
 
 \end{itemize}
 
@@ -225,7 +219,7 @@ using the manifold harmonic basis as dictionary.
 In Chapter~5, we propose a new kind of shape descriptors built upon
 spectral graph wavelets for the characterization of user-specified feature regions
 and develop a generalized feature detection framework.
-In Chapter~6, we present a new algorithm for feature-driven shape matching based on
-our generalized region descriptor and high-order graph matching.
-Finally, we conclude this dissertation with discussions and outline a few future
-research directions in Chapter~7.   
+In Chapter~6, we present a few new algorithms for feature-driven shape correspondence 
+and retrieval based on spectral shape descriptors. 
+Finally, we conclude this dissertation 
+with discussions and outline a few future research directions in Chapter~7.   

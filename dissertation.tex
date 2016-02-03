@@ -17,6 +17,7 @@
 \usepackage{multirow}
 \usepackage{pb-diagram}
 \usepackage{pbox}
+\usepackage{ragged2e}
 \usepackage{subcaption}
 \usepackage{setspace}
 \usepackage{tabularx}
@@ -81,7 +82,7 @@ Sparsity-Driven Algorithms for Shape Modeling and Analysis}
 \vspace*{2\baselineskip}
 \centerline{Stony Brook University}
 \vspace*{2\baselineskip}
-\centerline{\bf{May 2016}}
+\centerline{\bf{Spring 2016}}
 
 \newpage
 \pagenumbering{gobble}
@@ -147,36 +148,29 @@ Algorithms for Shape Modeling and Analysis}}
 \centerline{\bf{2016}}
 \vspace*{2\baselineskip}
 
-With the advent of ever more advanced and affordable 3D data acquisition
-technologies, digitalized 3D shapes have become ubiquitous in our daily life
-and played important roles in numerous fields and applications. In recent
-years, there is a growing trend towards spectral methods for shape analysis
-and processing based on the eigenvalues and eigenfunctions of Laplacian operator,
-thanks to the many nice properties of spectral graph basis.
-
-In this dissertation, we aim to extend traditional spectral mesh processing
-by incorporating spectral graph wavelets and sparsity-seeking
-algorithms. Spectral graph wavelets are defined with the eigenfunctions of
-graph Laplacian, with scaling implemented in the spectral domain. Unlike
-Laplacian eigenbasis which are localized in frequency but have global support
-in space, the SGWs are localized in both space and frequency domain, thus are
-more suitable for representing local geometry. In recent years, sparsity has
-become an important concept in signal processing applications. By providing a
+In this dissertation, we focus on extending spectral methods for shape analysis 
+and processing by incorporating spectral graph wavelets and sparsity-seeking
+algorithms. Spectral graph wavelets (SGWs) are defined with the eigenfunctions of
+graph Laplacian, with scaling implemented in the spectral domain. Comparing with
+the Laplacian eigenbasis, the SGWs are localized in both space and frequency domains, 
+and thus are more suitable for representing local geometry. In recent years, sparsity has
+become an important concept in signal processing. By supplying a
 rich, often redundant, dictionary of elementary vectors and forcing certain
-sparsity-constraints, a signal usually can be decomposed into or well
-approximated by the linear combination of very few vectors, giving rise to a
-sparse coefficient representation that is not only more concise but also, in
-many cases, more precise than the original representation.
+sparsity constraints, real life signals can often be approximated by very concise 
+coefficient representations with great fidelity, or can be well reconstructed 
+from imprecise or incomplete observations. Inspired by its many successful applications in 
+computer vision and image processing, we aim to employ sparse modeling techniques to 
+solve various shape modeling problems. 
 
 Conventional spectral mesh compression employs the eigenfunctions of mesh
 Laplacian as shape bases, which are highly inefficient in representing local
 geometry. To ameliorate, we advocate an innovative approach to 3D mesh
 compression using spectral graph wavelets as dictionary to encode mesh geometry.
 The spectral graph wavelets are locally defined at individual vertices and can
-better capture local shape information than Laplacian eigenbasis. The
-multi-scale spectral graph wavelets form a redundant dictionary as shape basis,
-so we formulate the compression of 3D shape as a sparse approximation problem
-that can be readily handled by greedy pursuit algorithms.
+better capture local shape information than Laplacian eigenbasis. The 
+multi-scale SGWs form a redundant dictionary as shape basis, so we formulate 
+the compression of 3D shape as a sparse approximation problem that can be 
+readily handled by greedy pursuit algorithms.
 
 Surface inpainting refers to the completion or recovery of missing shape
 geometry based on the shape information that is currently available. We
@@ -219,16 +213,43 @@ discussing some remaining challenges and new research directions.
 \addcontentsline{toc}{chapter}{\listfigurename}
 \listoffigures
 
-\clearpage
-\phantomsection
-\addcontentsline{toc}{chapter}{\listtablename}
-\listoftables
+%\clearpage
+%\phantomsection
+%\addcontentsline{toc}{chapter}{\listtablename}
+%\listoftables
 
 %\centerline{\bf{Acknowledgements}}
 \chapter*{Acknowledgements}
 \addcontentsline{toc}{chapter}{Acknowledgements}
-%\vspace*{4\baselineskip}
-\emph{TODO}
+
+First of all, I would like to thank my advisor, Professor Hong Qin, for his
+persistent support and guidance throughout my PhD study. Without his
+inspirations and encouragement this dissertation would not be possible. 
+I feel enormously fortunate to have the opportunity to work with him. 
+
+I am deeply grateful to all my committee members. Professor Joseph Mitchell
+and Professor Xianfeng Gu also served in my thesis proposal committee. And I
+would like to thank Professor Xiangming Jiao and Professor Alex Berg for serving in
+my research proficiency exam. Specially, I would thank Professor Xin Li for taking 
+the time to serve as the external examiner of my defense committee. 
+
+I would like to thank my research collaborators including Dr. Tingbo Hou, Dr. Shengfa Wang, 
+Xiaohua Hou and Nannan Li. I feel privileged to work with these wonderful colleagues
+and I am indebted to their help and insights. 
+
+Many of my other colleagues at Stony Brook and the two companies where I did internship,
+DreamWorks Animation and Google, also offered me very helpful suggestions and advices. 
+In particular, I want to express my gratitude to Dr. Rui Shi, 
+Dr. Deepak Tolani, Dr. Jianping Hu, Dr. Xiaochao Wang, Ning Zhang and Dr. Vitalii Li. 
+
+Last but not least, I would like to give my special thanks to my parents and
+my wife. Without their support and encouragement, I would never have had this long
+but rewarding journey. 
+\\
+\begin{flushright}
+Ming Zhong\hspace*{0.25in}
+\end{flushright}
+
 
 \newpage
 \chapter*{Publications}

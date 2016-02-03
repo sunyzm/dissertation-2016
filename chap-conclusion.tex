@@ -1,9 +1,9 @@
 \chapter{Conclusion and Future Work}
 
 \section{Conclusion}
-This dissertation presents our research work on shape modeling and 
-analysis based on spectral representations and sparsity-driven algorithms. 
-Our proposed methods provide solutions to a wide range of shape modeling 
+This dissertation presents our research work on shape modeling and
+analysis based on spectral representations and sparsity-driven algorithms.
+Our proposed methods provide solutions to a wide range of shape modeling
 problems with competitive performance, demonstrating the great potential
 of spectral methods and sparse representations in the mesh domain.
 
@@ -22,30 +22,21 @@ this descriptor, we develop a generalized feature detection framework, which can
 types of regional descriptors to facilitate widespread applications including partial matching and
 model recognition.
 
-We develop an effective feature-driven articulated shape correspondence
-algorithms. For coarse matching, we adopt
+We develop an effective feature-driven shape correspondence and retrieval
+algorithms. For coarse correspondence, we adopt
 tensor-based high-order graph matching to maximizes the
-geometric compatibility between features tuples, and for dense matching,
+geometric compatibility between features tuples; and for dense matching,
 we present a hierarchical shape registration algorithm, generating
-correspondence in multiples levels in a coarse-to-fine manner.
-
-We develop effective feature-driven articulated shape
-correspondence and retrieval algorithms based on 
-isometry-invariant spectral representations. For coarse 
-matching, we adopt tensor-based high-order graph matching to 
-maximizes the geometric compatibility between features tuples, 
-and for dense matching, we present a hierarchical shape 
-registration algorithm, generating correspondence in multiples 
-levels in a coarse-to-fine manner. Using the Bag-of-Feature-Graph (BoFG) 
-descriptor for shape retrieval, we significantly reduce the number of 
-pointed required for computing distributions in comparisons with 
-more traditional Bag-of-Features descriptors. 
+correspondence in multiples levels in a coarse-to-fine manner. 
+We also propose the Bag-of-Feature-Graph (BoFG) descriptor for shape retrieval, 
+which significantly reduce the number of points required for computing 
+distributions, comparing with traditional Bag-of-Features descriptors.
 
 \section{Future Work}
 
-There are many possible extensions and improvements related to our current research 
-work in spectral representations and sparse modeling. Here we introduce some 
-potential topics. 
+There are many possible extensions and improvements related to our current research
+work in spectral representations and sparse modeling. Here we introduce some
+potential topics.
 
 \subsection*{Shape Editing}
 
@@ -63,13 +54,15 @@ conforming to the constraints of new handle positions.
 
 Let function $\mathbf{f}=\mathbf{x'}-\mathbf{x}$ and denote the values of $\mathbf{f}$ at
 handle vertices as $d_j = c_j - x_j, j\in C$. The optimization problem can be rewritten as
+
 \begin{equation}
 \label{eq:laplace-editing}
 \min_\mathbf{f} \sum_{j\in C} (f_j - d_j)^2 + \gamma \mathbf{f}^T L^2 \mathbf{f}.
 \end{equation}
 
 Expanding $\mathbf{f}$ w.r.t. the Laplacian eigenbasis $\mathbf{\Phi}=\{\mathbf{\phi_k}\}$
-as $\mathbf{f}=\sum_k a_k \mathbf{\phi_k}$, Eq.~\ref{eq:laplace-editing} changes to
+as $\mathbf{f}=\sum_k a_k \mathbf{\phi_k}$, Eq.~\ref{eq:laplace-editing} becomes
+
 \begin{equation}
 \label{eq:Laplace-editing2}
 \min_\mathbf{f} \sum_{j\in C} (f_j - d_j)^2 + \gamma \sum_k \lambda_k^2 a_k^2,
@@ -86,6 +79,7 @@ $W=\mathbf{\Phi}g(t\Lambda)\mathbf{\Phi^T}$, where $g(\cdot)$ is the spectral do
 function. Instead of preserving the differential or Laplacian coordinates, we may choose
 to preserve wavelet coefficients of different scales after deformation. The spectral expansion
 of the optimization problem then becomes
+
 \begin{equation}
 \label{eq:sgw-editing}
 \min_\mathbf{f} \sum_{j\in C} (f_j - d_j)^2 + \gamma \sum_k g(t\lambda_k) a_k^2.
@@ -98,8 +92,8 @@ influence the contribution of components of different frequencies in the final r
 Our current research focuses on reconstructive sparse models with predefined dictionaries
 composed of analytical functions such as wavelets. Nevertheless, sparse representations have
 also great potential for pattern recognition, as most meaningful high-dimensional
-signals probably reside in some low-dimensional subspace which can be better revealed by proper
-sparse models.
+signals probably reside in some low-dimensional subspace which can more better revealed
+by proper sparse models.
 
 To construct a highly discriminative sparse models, predefined dictionaries are usually not
 sufficiently expressive. To improve the sparsity and discriminative power, a dictionary learned from
@@ -114,16 +108,28 @@ The dictionary learning can be handled by algorithms such as K-SVD~\cite{Aharon2
 After the dictionary $D$ is learned, for an input signal $y$, a sparse coefficient
 representation $\hat{x}$ can be easily computed with respect $D$ using
 common $l_1$ formulation:
+
 \begin{equation}
 \hat{x} = \arg\min_{x} \{\|Dx - y\|_2^2 + \lambda\|x\|_1\}.
 \end{equation}
 
 For shape signals, we cannot directly apply the dictionary learning formulation in
-Eq.~\ref{eq:laplace-editing}, since different models generally have vastly different
-graph structures and cannot be easily corresponded. Nevertheless, we can design feature
-descriptors as a proxy instead of processing shape signals directly. A highly discriminative
-sparse model in the descriptor space has great potential in classification and retrieval of
-shape features or whole shapes.
+Eq.~\ref{eq:dictionary-learning}, since different models generally have vastly different
+graph structures and cannot be easily mapped. Nevertheless, we can adopt or devise appropriate
+feature descriptors as a proxy instead of encoding shape signals directly. A highly discriminative
+sparse model in the descriptor space should have great potential for tasks such as classification 
+and retrieval.
 
 \subsection*{General Graph Signal Analysis}
+In this dissertation, our research research is mainly about spectral shape modeling, but 
+discrete mesh is only a special type of graph structure. Graph-based representations are
+also the foundation for modeling various types of networks such as transportation networks and 
+social networks. It is also common to infer graph structures on from data
+to help organize data sets without pre-defined networks. 
 
+In recent years, there is a growing interest towards adapting and applying signal processing 
+techniques on graphs~\cite{ShumanNarangFrossardEtAl2013, SandryhailaMoura2014}, especially
+with the explosive increase of data sets from the Internet and sensors. Currently, there is 
+very few existing works on sparse and redundant modeling on graphs, and it is
+a promising direction to adapt and extend our research in spectral representations and 
+sparsity-driven algorithms to the processing and analysis of general graph signals.

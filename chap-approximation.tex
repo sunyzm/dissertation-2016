@@ -1,8 +1,8 @@
 \chapter{Mesh Approximation and Compression}
 
-Sparse approximation have gained great success on the regular domain 
-of 2D images. However, the topics of approximating or compressing signals defined 
-over meshes are much less investigated due to the irregularity of 
+Sparse approximation have gained great success on the regular domain
+of 2D images. However, the topics of approximating or compressing signals defined
+over meshes are much less investigated due to the irregularity of
 underlying domains. In this chapter, we
 takes an initiative to explore the challenging problem of sparse
 approximation of discrete 3D shapes for compressive shape representation.
@@ -38,7 +38,7 @@ orthogonal matching pursuit (S-OMP) algorithm to find a sparse coding
 of the original shape geometry. The primary contributions of this work
 are hinging upon the unique integration of the spectral graph wavelets
 (SGW) and sparse representation and its powerful application in 3D
-shape compression. To the best extent of our knowledge, our current 
+shape compression. To the best extent of our knowledge, our current
 work is the first attempt to employ the SGW in the task of 3D mesh compression.
 
 Through our extensive experiments, we wish to demonstrate that our
@@ -871,7 +871,7 @@ is consistently superior to the MHB truncation method.
 
 \section{Chapter Summary}
 
-In this chapter, we have developed an algorithm for sparse 
+In this chapter, we have developed an algorithm for sparse
 approximation of 3D shapes. We employed the spectral graph wavelets to
 construct the redundant dictionary of shape bases, and used
 simultaneous orthogonal matching pursuit to seek a sparse
@@ -884,10 +884,10 @@ compression ratio settings towards sparse representation.
 
 As for the future work, we plan to investigate other
 improved formulations of graph wavelets as basis vectors to enhance
-the expressive power of dictionary. For example, it is more desirable
-to have data-specific, anisotropic wavelets that are adaptive to shape
-features such as sharp corners and edges, which can further facilitate
-more efficient and sparse representation of shape geometry. We also
+the expressive power of dictionary. For example, it is potentially desirable
+to have data-dependent, anisotropic wavelets that are adaptive to shape
+features such as sharp corners and edges to attain more efficient and 
+sparse representation of shape geometry. We also
 plan to explore faster sparse approximation algorithms such as
 stagewise orthogonal matching pursuit (StOMP)~\cite{Donoho2012} to
 arrive at better time performance. 

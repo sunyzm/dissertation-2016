@@ -1,39 +1,49 @@
 \chapter{Background Review}
-In this chapter, we first briefly review spectral analysis in the
-manifold and mesh domain, including the theories and applications of
-Laplacian eigenstructures and spectral graph wavelets.
-Then we give an overview of the concept of sparse representation as
-well as related computational methods and applications in signal processing.
+In this chapter, we first briefly review spectral analysis in the context of 
+shape analysis, including the theories and applications of Laplacian 
+eigenstructures and spectral graph wavelets. Then we give an overview of the 
+concept of sparse representation modeling as well as its related computational 
+methods and applications in signal processing.
 
 \section{Laplacian and Graph Fourier Transform}
-Fourier transform is the most fundamental tool for time-frequency (or space-frequency)
-signal analysis. The key idea is to represent functions as linear combinations of a
-set of sinusoid functions of different frequencies, i.e., the Fourier basis. The collection
-of Fourier basis functions $\{\phi_n;n\in \mathbb{Z}\}$ form a complete
-\textsl{orthonormal basis}~\cite{Gomes:1999} of the underlying function space $\mathcal{F}$.
-The decomposition of the original signal can be expressed as
+
+\subsection*{Laplacian and Spectral Transform}
+Fourier transform is perhaps the most fundamental tool for classical 
+time-frequency (or space-frequency) signal analysis. The key idea is to decompose 
+a temporal/spatial signal into the linear combinations of a set of sinusoid 
+functions (i.e., the Fourier basis) of different frequencies. The collection of 
+Fourier basis functions $\{\phi_n;n\in \mathbb{Z}\}$ form a complete orthogonal 
+basis~\cite{Gomes:1999} of the underlying function space $\mathcal{F}$, and the 
+transform coefficients gives a frequency-domain representation of the original
+signal. In generally, this decomposition can be written as
+
 \begin{equation}
 f=\sum_{k=-\infty}^\infty \langle f,\phi_k\rangle\phi_k
 \end{equation}
 
-We first consider the classical Fourier analysis in $\mathbb{R}^1$. From the perspective of
-partial differential equations, the $k$th Fourier basis function $\phi_k(x)$
-satisfies the following Helmholtz equation in $\mathbb{R}^1$
+We first consider the classical Fourier analysis in $\mathbb{R}^1$. From the 
+perspective of differential equations, the $k$th Fourier basis function 
+$\phi_k(x)$ satisfies the following Helmholtz equation in $\mathbb{R}^1$
+
 \begin{equation}\label{eq:Helmholtz1D}
 -\frac{\partial^2 \phi_k(x)}{\partial x^2}=\omega_k^2 \phi_k(x).
 \end{equation}
-This is to say, in 1D Euclidean space, the Fourier bases are the eigenfunctions of the Laplace
-operator $\frac{\partial^2}{\partial x^2}$.
 
-We want to generalize the Fourier transform and Fourier series to manifold domain.
+This is to say, in 1D Euclidean space, the Fourier basis functions are actually 
+the eigenfunctions of the second order differential operator (i.e. Laplace operator)
+$\frac{\partial^2}{\partial x^2}$.
+
+The concept of Fourier transform can be generalized to the manifold domain.
 Given a manifold $\mathcal{M}$ with Riemannian metric $g$. The goal is to find a
-family of functions $\{\phi_k(x)\}$ that form a orthonormal and complete basis of the
-Hilbert space $\L^2(\mathcal{M,g}):\mathcal{M}\to\mathbb{R}$. In manifold space, the Laplace
-operator can be generalized to the \emph{Laplace-Beltrami operator} which acts on scalar functions defined on
-Riemannian manifold. We denote by $\Delta_\mathcal{M}$ the Laplace-Beltrami operator
-of $\mathcal{M}$. The Laplace-Beltrami operator is a self-adjoint and semi-positive definite
-operator \cite{Rosenberg:1997}, hence $\Delta_\mathcal{M}$ admits an orthonormal eigensystem.
-By solving the Dirichlet problem for the Laplacian:
+family of functions $\{\phi_k(x)\}$ that form a orthonormal and complete
+basis of the Hilbert space $\L^2(\mathcal{M,g}):\mathcal{M}\to\mathbb{R}$ with
+properties similar to the classical Fourier basis. In manifold space, the equivalent
+to the Laplace operator is the \emph{Laplace-Beltrami operator} which acts on 
+scalar functions defined on the manifold. We denote by $\Delta_\mathcal{M}$ the 
+Laplace-Beltrami operator of $\mathcal{M}$. The Laplace-Beltrami operator is a self-adjoint 
+and semi-positive definite operator~\cite{Rosenberg:1997}, hence $\Delta_\mathcal{M}$ admits 
+an orthonormal eigensystem. By solving the following Dirichlet problem for the Laplacian
+
 \begin{equation}
 \left\{
     \begin{array}{l}
@@ -42,91 +52,72 @@ By solving the Dirichlet problem for the Laplacian:
     \end{array}
 \right.
 \end{equation}
-we obtain the eigenvalues $\{\lambda_k\}_{k=0}^\infty$ and eigenfunctions $\{\phi_k(x)\}_{k=0}^\infty$ of the Laplace-Beltrami operator. According to the Spectral Theorem, the eigenvalues constitute a real diverging sequence
+
+we obtain the eigenvalues $\{\lambda_k\}_{k=0}^\infty$ and eigenfunctions $\{\phi_k(x)\}_{k=0}^\infty$ 
+of the Laplace-Beltrami operator. According to the spectral theorem, the eigenvalues constitute a real 
+diverging sequence
+
 \begin{equation*}
 0\leq\lambda_0\leq\lambda_1\leq\cdots\leq +\infty
 \end{equation*}
-and the eigenfunctions $\{\phi_k\}_{k=0}^\infty$ form a complete and orthonormal basis of the Hilbert space $L^2(\mathcal{M})$ \cite{Levy2006}.
 
-The eigenvalues $\{\lambda_k\}_{k=0}^\infty$ are sometimes called the Laplace-Beltrami spectra \cite{Reuter:2006:CAD}, which are analogous to $\{\omega_n^2\}$
-in Eq. (\ref{eq:Helmholtz1D}) in classical Fourier transform and their square roots can be deemed as the shape frequencies. The eigenfunctions, also known
- as the manifold harmonics or shape harmonics \cite{Vallet2008}, have periodic oscillations on manifolds, behaving similarly to sine and cosine functions over the real line.
+and the eigenfunctions $\{\phi_k\}_{k=0}^\infty$ form a complete and orthonormal basis of the Hilbert 
+space $L^2(\mathcal{M})$~\cite{Levy2006}.
 
-A function $f(x)\in L^2(\mathcal{M})$ can be expanded on the manifold harmonics as a series
+The eigenvalues $\{\lambda_k\}_{k=0}^\infty$ are sometimes referred to as the Laplace-Beltrami 
+spectra~\cite{Reuter:2006:CAD}, which are analogous to $\{\omega_n^2\}$ in Eq.~\ref{eq:Helmholtz1D} 
+in classical Fourier transform; their square roots can be deemed as the global shape frequencies. 
+The eigenfunctions, also known as the manifold harmonics or shape harmonics~\cite{Vallet2008}, 
+have global periodic oscillations on the manifold, behaving similarly to sine and cosine 
+functions over the real line. 
+
+A function $f(x)\in L^2(\mathcal{M})$ then can be uniquely expanded on the manifold harmonics 
+
 \begin{equation}\label{eq:ift}
 f(x)=\sum_{k=0}^\infty\hat{f}(k)\phi_k(x),
 \end{equation}
+
 where
+
 \begin{equation}
 \hat{f}(k)=\langle f(x),\phi_k(x)\rangle.
 \end{equation}
-We may call $\hat{f}(k)$ the \emph{manifold harmonics transform} of function $f(x)$ \cite{Hou2012}.
 
+We may call $\{\hat{f}(k)\}$ the \emph{manifold harmonics transform} of function $f(x)$.
 
-We can extend the concept of Fourier transform and expansion to bivariate case. Suppose we have
-a bivariate kernel function $\theta:\mathcal{M}\times\mathcal{M}\to\mathbb{R}$ which corresponds
-to a self-adjoint operator $\Theta$. The bivariate kernel can be expanded on the manifold Fourier bases
-\begin{equation}
-\theta(x,y)=\sum_{k=0}^\infty \hat{\theta}(k)\phi_k(x)\phi_k(y)
-\end{equation}
-where
-\begin{equation}
-\hat{\theta}(k)=\langle\langle\theta(x,y),\phi_k(x)\rangle,\phi_k(y)\rangle.
-\end{equation}
-$\hat{\theta}(k)$ can be regarded as the Fourier transform of the bivariate kernel with a slight abuse of language.
+\subsection*{Mesh Laplacian and its Spectra}
 
-For example, the Laplace-Beltrami operator can be expanded as
-\begin{equation}
-\Delta_\mathcal{M}(x,y)=\sum_{i=0}^\infty \lambda_k\phi_k(x)\phi_k(y).
-\end{equation}
-Hence, its Fourier transform is $\widehat{\Delta_\mathcal{M}}(k)=\lambda_k$.
+In practical geometry processing, we often use discrete meshes to represent shapes. 
+Consider a manifold $\mathcal{M}$ approximated by triangular mesh $M$ with vertex
+set $V:=\{v_i, i=1,\ldots,N\}$, edge set $E$, and face set $F$. $|V|=N$ is the size
+of $M$. In addition, we define $N(i)=\{j|(v_i,v_j)\in E\}$ and $d_i=|N(i)|$. $N(i)$
+denotes the index set of the 1-ring neighborhood of the vertex $v_i$, and $d_i$ is
+the valence of $v_i$.
 
-Aside from being employed for Fourier analysis on a shape, the eigenvalues and eigenfunctions of the
-Laplace-Beltrami operator, together known as the eigenstructure, are extremely useful for
-constructing shape analysis tools that are both global and intrinsic. Because the Laplace-Beltrami
-operator is globally defined and is completely determined by the metric tensor, which is itself an
-isometry invariant, the eigenvalues and eigenfunctions encode meaningful global information about
-the shape and they are invariant under isometric deformations up to a change in
-sign \cite{Rustamov:2007:LEF,Sun:2009:CGF}.
+In principle, $M$ can be viewed as the geometric embedding of a graph structure 
+$G$ into $\mathbb{R}^3$. In another word, $M$ can be decomposed into the 
+topological component, namely the underlying graph structure $G$, and the geometric 
+component, i.e., the vertex coordinate function $\mathbf{P}$ which maps each vertex 
+$v_i$ of the graph to a position in the 3D Euclidean space $p_i\in\mathbb{R}^3$.
 
-\subsection*{Discrete Settings}
-
-In order to effectively encode 3D geometric data and facilitate different
-shape analysis and processing tasks, many different shape representations have
-been developed, including point clouds, polygon meshes, spline surfaces,
-voxels, etc. Choosing the most appropriate representation generally depends on the
-specific data source and geometric task at hand，but of all these representations,
-polygon meshes, especially triangle meshes, are perhaps the most widely used.
-Thanks to the conceptual simplicity, triangle meshes are flexible, versatile,
-and highly efficient for batch processing and rendering.
-
-In principle, a triangle mesh $\mathbb{M}$ can be viewed as the geometric
-embedding of a graph structure $G$ into $\mathbb{R}^3$. In another word,
-$\mathbb{M}$ can be decomposed into the topological component, namely the
-underlying graph structure $G$, and the geometric component, i.e., the
-vertex coordinate function $\mathbf{P}$ which maps each vertex $v_i$ of
-the graph to a position in the 3D Euclidean space $p_i\in\mathbb{R}^3$.
-
-Consider a manifold $\mathcal{M}$ approximated by triangular mesh $M$, with vertex
-set $V:=\{p_i, i=1,\ldots,N\}$, edge set $E$, and face set $F$. $|V|=N$ is the size
-of $M$. In addition, we define $N(i)=\{j|(p_i,p_j)\in E\}$ and $d_i=|N(i)|$. $N(i)$
-denotes the index set of the 1-ring neighborhood of the vertex $p_i$, and $d_i$ is
-the valence of $p_i$.
-
-The discrete Laplace-Beltrami operator on mesh $M$ is represented as a
-$N\times N$ matrix $\Delta=(\delta_{ij})$, defined by its linear action
+The discrete Laplace-Beltrami operator of $M$ is a $N\times N$ matrix 
+$\Delta=(\delta_{ij})$, defined by its linear action
 on vertex-based functions defined on $V$:
+
 \begin{equation}
-\Delta f(p_i)=\sum_{j=0}^{N-1}\delta_{ij}f(p_j).
+\Delta f(v_i)=\sum_{j=0}^{N-1}\delta_{ij}f(v_j).
 \end{equation}
 
-One simple approximation to the smooth Laplace-Beltrami operator is to
+One simple discretization of the smooth Laplace-Beltrami operator is to
 define $\Delta f(p_i)$ as the average difference between the function
-value at $p_i$ and its 1-ring neighborhood:
+values at $v_i$ and its 1-ring neighborhood:
+
 \begin{equation}
-\Delta f(p_i)=\frac{1}{d_i}\sum_{j\in N(i)} [f(p_i)-f(p_j)].
+\Delta f(v_i)=\frac{1}{d_i}\sum_{j\in N(i)} [f(v_i)-f(v_j)].
 \end{equation}
+
 The corresponding Laplacian matrix is
+
 \begin{equation}
 \Delta(i,j)=\left\{
     \begin{array}{lc}
@@ -136,10 +127,12 @@ The corresponding Laplacian matrix is
     \end{array}
 \right.
 \end{equation}
-$\Delta$ and its simple variations are called the \emph{combinatorial Laplacian}
-or \emph{graph Laplacian}, since they only considers the connectivity of the mesh
-graph. Graph Laplacian can well approximate the smooth Laplacian only when the mesh
-is uniformly distributed.
+
+$\Delta$ and some of its variations are called the \emph{combinatorial Laplacian}
+or \emph{graph Laplacian}, since they only take into account the connectivity 
+of the underlying graph topology while ignoring the geometric properties. 
+Graph Laplacian can serve as a good approximation of the smooth Laplacian only
+when the mesh vertices are uniformly distributed.
 
 \begin{figure}
   \centering
@@ -164,16 +157,16 @@ and the area of the Voronoi cell size surrounding a vertex to weight the vertex.
 Its action on vertex-based function $f$ on mesh $M$ is
 
 \begin{equation}
-\Delta f(p_i)=\frac{1}{a_i}\sum_{j\in N(i)}w_{ij}\frac{f(p_i)-f(p_j)}{d_i}.
+\Delta f(v_i)=\frac{1}{a_i}\sum_{j\in N(i)}w_{ij}\frac{f(v_i)-f(v_j)}{d_i}.
 \end{equation}
 
-Here $a_i$ is the area of the Voronoi cells around vertex $p_i$, and weights
+Here $a_i$ is the area of the Voronoi cells around vertex $v_i$, and the weights
 
 \begin{equation}
 w_{ij}:=\frac{\cot\alpha_{ij}+\cot\beta_{ij}}{2},
 \end{equation}
 
-where $\alpha_{ij}$ and $\beta_{ij}$ denote the two angles opposite to the edge $(p_i,p_j)$
+where $\alpha_{ij}$ and $\beta_{ij}$ denote the two angles opposite to the edge $(v_i,v_j)$
 (See Fig.~\ref{fig:cotweights}).
 
 Let us define the area matrix $A=diag(a_i)$ and weight matrix $W$ as
@@ -181,42 +174,135 @@ Let us define the area matrix $A=diag(a_i)$ and weight matrix $W$ as
 W(i,j)=\left\{
        \begin{array}{lc}
         \sum_{k\in N(i)}w_{ik}\quad & i=j \\
-        -w_{ij}\quad & (p_i,p_j)\in E \\
+        -w_{ij}\quad & (v_i,v_j)\in E \\
         0\quad & \text{otherwise}
     \end{array}
 \right.
 \end{equation*}
-The geometric Laplacian matrix is then $L=A^{-1}W$.
+The geometric Laplacian matrix then can be written as $L=A^{-1}W$.
 
-Generally, such defined $L$ is not symmetric. We rewrite the Laplace equation $L\mathbf{v}=\lambda\mathbf{v}$ as the generalized eigenvalue problem
+Generally, such defined $L$ is not symmetric. However, we can rewrite the the 
+equation $L\mathbf{\phi}=\lambda\mathbf{\phi}$ as the generalized eigenvalue 
+problem
+
 \begin{equation}
-W\mathbf{v}=\lambda A\mathbf{v}.
+\label{eq:geneigen}
+W\mathbf{\phi}=\lambda A\mathbf{\phi}.
 \end{equation}
-Since $W$ is symmetric and $A$ is symmetric positive-definite, the generalized eigenvectors $\mathbf{v}$ corresponding to different generalized eigenvalues $\lambda$ are orthogonal, and all of the generalized eigenvalues/eigenvectors are real. The orthogonality is with respect to the $A$-inner product
-\begin{equation*}
-\langle\mathbf{v}_i,\mathbf{v}_j\rangle=\mathbf{v}_i^T A\mathbf{v}_j=0,\quad i\neq j.
-\end{equation*}
 
-If the mesh vertices are evenly distributed, i.e., each vertex has the same Voronoi cell size, we can make $A=I$ by proper normalization. In this case, the $A$-inner product becomes the standard dot product ($I$-inner product). This is unfortunately not valid for meshes whose vertices are not distributed uniformly over the surface area. To obtain symmetric mesh Laplacian, we may use the system $A^{-1/2}WA^{-1/2}\mathbf{y}=\lambda\mathbf{y}$ which will give the same eigenvalues \cite{Vallet2008}. The original eigenvectors can be retrieved by $\mathbf{v}=W^{-1/2}\mathbf{y}$. However, this symmetrization is not preferable since solving the generalized eigenvalue problem is more stable than inverting $W$~\cite{Reuter:CG:2009}.
+Since $W$ is symmetric and $A$ is symmetric positive-definite, the generalized 
+eigenvectors $\mathbf{\phi_i}$ corresponding to different generalized eigenvalues 
+$\lambda_i$ are orthogonal, and all of the generalized eigenvalues/eigenvectors 
+are real. We should note that the orthogonality is with respect to the inner product
+induced by $A$
+
+\begin{equation}
+\langle\mathbf{\phi_i},\mathbf{\phi_j}\rangle=\mathbf{\phi_i}^T A \mathbf{\phi_j}=0,\quad i\neq j.
+\end{equation}
+
+If the mesh vertices are evenly distributed, i.e., each vertex has the same Voronoi 
+cell size, we can make $A=I$ by proper normalization. In this case, the $A$-inner 
+product becomes the standard dot product ($I$-inner product). This is unfortunately 
+not valid for general meshes whose vertices are not distributed uniformly over the 
+surface area. We may adopt the symmetric version of mesh Laplacian $L_s = A^{-1/2}WA^{-1/2}$, 
+which will give the same eigenvalues~\cite{Vallet2008}. The original eigenvectors can be 
+obtained by $\mathbf{\phi_i}=W^{-1/2}\mathbf{\phi^s_i}$. However, this symmetrization is not 
+preferable since solving the generalized eigenvalue problem is more stable than 
+inverting $W$~\cite{Reuter:CG:2009}.
 
 Let $\{\lambda_i\}_{i=0}^{N-1}$ be the set of generalized eigenvalues of
- $\Delta_M=A^{-1}W$, and $\{\mathbf{\phi_i}\in\mathbb{R}^N\}$ their corresponding
-eigenvectors. A scalar function $\mathbf{f}$ defined on $V$ can be expanded as
-the linear combination of the eigenvectors:
+$\Delta_M=A^{-1}W$, and $\{\mathbf{\phi_i}\in\mathbb{R}^N\}$ their corresponding
+eigenvectors. A square-integrable scalar function $\mathbf{f}$ defined on $V$ can 
+be expanded as the linear combination of the eigenvectors
+
 \begin{equation}
 \mathbf{f}(p)=\sum_{k=0}^{N-1}\langle \mathbf{f},\mathbf{\phi_k}\rangle_A \mathbf{\phi_k}(p),
 \end{equation}
+
 where the inner-product is the $A$-induced scalar product
+
 \begin{equation}
-\langle \mathbf{f},\mathbf{g}\rangle_A = \mathbf{f}^T A\mathbf{g}=\sum_{i=0}^{N-1}a_i(i)\mathbf{f}(i)\mathbf{g}(i).
+\langle \mathbf{f},\mathbf{g}\rangle_A = \mathbf{f}^T A\mathbf{g}=\sum_{i=0}^{N-1}a_i \mathbf{f}(i)\mathbf{g}(i).
 \end{equation}
 
+Unlike classic Fourier basis functions which are simply fixed sinusoids, the
+manifold harmonic basis differ with the connectivity, geometry, and the type 
+of Laplacian operator that is adopted~\cite{Zhang:2010:CGF}. As a result, the 
+mesh Laplacian eigenvectors and eigenvalues actually encode substantial topological 
+and geometric information and can help characterize the global shape property and 
+reveal intrinsic structure of the original mesh. In addition, Laplace-Beltrami
+operator is globally defined and is completely determined by the metric tensor, 
+which is itself an isometry invariant. Hence, the Laplacian eigenvalues and eigenfunctions 
+encode meaningful global intrinsic information about the shape and they are invariant 
+under isometric deformations up to a change in sign~\cite{Rustamov:2007:LEF,Sun:2009:CGF}.
+This lends to the popularity of spectral methods in the area of geometry processing 
+and analysis. 
+
+Directly employing the eigenstructures of mesh Laplacian, a great diversity of spectral
+methods have been developed for shape modeling problems including compression~\cite{Karni2000},
+segmentation~\cite{Liu2007}, deformation~\cite{Rong2008}, remeshing~\cite{dong2006spectral},
+paramterization~\cite{Zhou2004}, shape indexing~\cite{Reuter:2006:CAD, Rustamov:2007:LEF},
+and retrieval~\cite{Lavoue:2012}. We refer readers to \cite{Zhang:2010:CGF} for a more thorough
+review of the theories and applications of mesh Laplacian spectra.
+
 \section{Kernels and Spectral Graph Wavelets}
-Wavelet is a powerful analytical tool in signal processing. Intuitively speaking, a
-wavelet is a wave-like pulse in time (or space). By scaling and translating a single mother wavelets,
-we may obtain a family of wavelet functions. Just like that in Fourier analysis a function $f$ can
-be decomposed into a series of component harmonics, in wavelet analysis $f$ is represented by a family
-of component wavelets. But there are some fundamental differences between the Fourier and wavelet analysis:
+
+\subsection*{Kernel Functions}
+
+The concept of manifold Fourier transform can be extended to the bivariate case to define kernel functions.
+Suppose we have a bivariate kernel 
+$\theta:\mathcal{M}\times\mathcal{M}\to\mathbb{R}$ which corresponds to a 
+self-adjoint operator $\Theta$. The bivariate kernel $\theta$ can be expanded 
+on the manifold Fourier basis
+
+\begin{equation}
+\theta(x,y)=\sum_{k=0}^\infty \hat{\theta}(k)\phi_k(x)\phi_k(y),
+\end{equation}
+
+where
+
+\begin{equation}
+\hat{\theta}(k)=\langle\langle\theta(x,y),\phi_k(x)\rangle,\phi_k(y)\rangle.
+\end{equation}
+
+$\hat{\theta}(k)$ can be deemed as the Fourier transform of the bivariate kernel 
+with a slight abuse of language.
+
+For example, the Laplace-Beltrami operator itself can be expanded as
+\begin{equation}
+\Delta_\mathcal{M}(x,y)=\sum_{i=0}^\infty \lambda_k\phi_k(x)\phi_k(y).
+\end{equation}
+
+Hence, its Fourier transform is $\widehat{\Delta_\mathcal{M}}(k)=\lambda_k$.
+
+The kernel function $\theta(x,y)$ describes the relations between each pair of 
+points on the manifold, and its diagonal $\theta(x,x)$ affords a
+signature function for the characterization of individual points. 
+
+One well known kernel function is the heat kernel $K(t,x,y)$, which is
+the fundamental solution to the heat equation with appropriate boundary condition. 
+Expanded on the manifold harmonic functions, the heat kernel with time parameter 
+$t$ has the following expression:
+
+\begin{equation}
+K(t,x,y)=\sum_{k=0}^{\infty} e^(-\lambda_k t) \phi_k(x)\phi_k(y).
+\end{equation}
+
+On the mesh domain, the heat kernel affords a multi-scale, stable and intrinsic
+characterization of the geometric shape~\cite{Sun:2009:CGF}, and have been 
+the foundation for many shape analysis applications including shape matching~\cite{Ovsjanikov2010}
+and shape retrieval~\cite{Bronstein2011}. 
+
+
+\subsection*{Wavelets on Graphs}
+
+Wavelet is a powerful analytical tool in signal processing. Intuitively speaking, 
+a wavelet is just a wave-like pulse in time (or space). By scaling and translating
+a single mother wavelet, we may obtain a family of wavelet functions that cover 
+the entire domain in question. Similar to Fourier analysis in which a function $f$ 
+can be decomposed into a series of component harmonics, in wavelet analysis $f$ 
+can be expanded by a family of component wavelets. Nevertheless, there are some 
+fundamental differences between the Fourier and wavelet analysis:
 
 \begin{itemize}
 \item In Fourier analysis, each component harmonic is globally defined in space/time. In wavelet analysis, the component wavelet are all locally defined at different locations.
@@ -224,7 +310,7 @@ of component wavelets. But there are some fundamental differences between the Fo
 \item The component harmonics in Fourier analysis are all orthogonal to each other. In fact, the Fourier basis functions form an orthonormal basis of the space of square-integrable functions. This is not necessarily true for wavelet functions.
 \end{itemize}
 
-In short, wavelet functions can be simultaneously localized in both time/space and frequency domain,
+In a nutshell, wavelet functions can be simultaneously localized in both time/space and frequency domain,
 in contrast to the Fourier transform in which the basis harmonic functions are all globally defined
 in time/space. For signals whose primary information lies in localized singularities, such as edges
 in images or step discontinuities in time series signals, wavelet transform affords a more compact
@@ -237,10 +323,9 @@ scientific visualization \cite{Cracium:2005:TVCG}, spectral rendering \cite{Iehl
 animation compression \cite{Payan:2007:CG}, etc.
 
 Classical wavelets are constructed by translating and scaling a mother wavelet in Euclidean
-space, however, transplanting wavelets to graphs (specifically,
-triangular meshes) is not straightforward due in part to the fact that
-it is unclear how to apply the scaling operation on a signal that is
-defined on the mesh vertices, so early studies using wavelet mostly
+space, however, transplanting wavelets to graphs (specifically, triangular meshes) is not
+straightforward due in part to the fact that it is unclear how to apply the scaling operation
+on a signal that is defined on the mesh vertices, so early studies using wavelet mostly
 relied on the spherical parameterization~\cite{Werghi:2002,Liu:2007}.
 
 One popular scheme to imitate scaling on meshed surfaces is achieved via explicit subdivision,
@@ -310,6 +395,8 @@ data-adaptive wavelet transforms are developed for high-dimensional
 Euclidean data sets and weighted graphs, under the assumption that the
 data have a rich geometrical structure that can be captured by a
 hierarchical tree.
+
+\subsection*{Spectral Graph Wavelets}
 
 The primary reason that classical wavelet transforms cannot be directly adapted to graph or manifold is
 that for a mother function $\psi(x)$ defined on a manifold,
@@ -465,7 +552,6 @@ Fig.~\ref{fg:MexicanHatWavelet} visualizes the value of the wavelet functions ov
 \item For a larger scale, the Mexican hat wavelet has a wider windows in space, but a narrower window in frequency.
 \end{itemize}
 
-\subsubsection*{Scaling Functions}
 By construction, the spectral wavelets $\psi_{t,x}$ are all orthogonal to the the null eigenvector $\phi_0$,
 and nearly orthogonal to $\phi_l$ for $\lambda_l$ near zero \cite{Hammond2011}.
 
@@ -475,8 +561,6 @@ Introducing the scaling functions helps ensure stable recovery of the original s
 coefficients when the scale parameter $t$ is sampled at discrete values ${t_j}$.
 Stable recovery will be assured if $G(\lambda)=h(\lambda)^2+\sum_{j=1}^J g(t_j\lambda)^2$ is
 bounded away from zero. The design of the scaling function generator $h$ is uncoupled from the choice $g$.
-
-\subsubsection*{Reconstruction}
 
 The spectral wavelets depend on the continuous scale parameter $t$. For practical computation,
 $t$ must be sampled at a finite number of scales $\{t_j\}_{j=1}^J$, which generates
@@ -503,45 +587,38 @@ Given a set of coefficients $c$, the synthesis/reconstruction of $f$ can be give
 (W^*W)f=W^*c.
 \end{equation}
 
-\subsubsection*{Applications}
-
-Because of its attractive and powerful properties such as
-spatial localization, multiscale, and geometry awareness, SGW has
-already been adopted as a tool for shape analysis applications.
-Kim et al.~\cite{Kim:2012,Kim:2014}
+Because of its attractive and powerful properties such as spatial localization, 
+multiscale, and geometry awareness, SGW has already been adopted as a descriptor 
+for a handful of shape analysis applications. Kim et al.~\cite{Kim:2012,Kim:2014}
 introduced a wavelet-based multi-scale descriptor for the analysis of
 cortical surface signals using the SGWT and Li et al.~\cite{Li:2013}
 proposed a SGWT-based descriptor and utilized the intrinsic spatial
 pyramid matching (ISPM) for global shape retrieval. Though these
 researches discover the potentials of SGWs, they all concentrate on
 global shape analysis based on point signatures, ignoring the SGWs'
-power in integrating the local-to-global/in-between geometrical and
-topological information. These inspire us to
-creatively combine SGWs and bi-harmonic distance field to enable the
-multi-scale and multi-level description of any region of interests.
+power in integrating the local-to-global geometrical and topological information.
 
-\section{Sparsity-Based Modeling}
+\section{Sparse Representation Modeling}
 
-In recent years, sparse approximation techniques have become
+In recent years, sparse modeling techniques have become
 increasingly popular in various fields of signal processing and
 analysis, especially in image processing and computer vision. Its
 widespread applications include data compression, signal denoising,
 pattern recognition, etc.
 
-The fundamental idea of sparse approximation is to estimate a signal
-as the linear combination of a very few vectors selected from a large
-number of candidate vectors serving as bases. These candidate vectors,
-also called \emph{atoms}, constitute a set called the
-\emph{dictionary}. With a given dictionary, the signal is encoded as
-the coefficients w.r.t. the selected atoms and can be easily
-reconstructed. The rationale of sparse
-approximation is that most meaningful high-dimensional signals probably
+The fundamental idea of sparse modeling is to decompose or approximate the
+signal in question as the linear combination of a very small subset of vectors
+selected from a large number of candidate elementary vectors. These candidate
+elementary vectors, also called \emph{atoms}, constitute a set called the
+\emph{dictionary}. With a given dictionary, the signal is encoded by the
+coefficients w.r.t. the selected atoms and can be easily reconstructed. The
+rationale of sparse modeling is that most meaningful high-dimensional signals probably
 have some intrinsic structures or patterns, which can be exploited for
-efficient representation in a lower-dimensional subspace. Because of
-the versatility of acquired signals, it is often desirable for dictionaries to
-be redundant or overcomplete, allowing great freedom and flexibility in
+efficient representation in a subspace of much lower dimension. Because of
+the versatility of the input signals, it is often desirable for dictionaries to
+be redundant or overcomplete, allowing greater freedom and flexibility in
 design to accommodate a sparse set of atoms that can better capture
-the signals' intrinsic characteristics.
+an input signal's intrinsic characteristics.
 
 \subsection{Sparse Modeling Problems}
 

@@ -1,7 +1,7 @@
 \chapter{Surface Inpainting}
+\label{chap:inpainting}
 
 \section{Introduction}
-
 In principle, surface inpainting refers to the completion or recovery of
 missing shape geometry based on the shape information that is currently
 available. The most prominent application of surface inpainting is mesh repair.
@@ -97,15 +97,14 @@ names such as hole filling, mesh completion, and surface restoration.
 We refer readers to~\cite{Attene2013} for a recent survey of popular
 algorithms for hole filling and mesh completion.
 
-One simple approach for surface inpainting is by filling the missing
-region with an inpainting patch that interpolates the surrounding
-geometry. The interpolating patch may be generated with simple
-polynomial functions~\cite{Wang2007}, triangular
-B-splines~\cite{Pfeifle1996}, or radial basis
-functions~\cite{Branch2006}, and are generally smooth and continuous
-across the boundaries. The interpolation-based approaches, however,
-only work well with disk-like holes and are not suitable for filling
-regions with complex boundaries.
+One simple approach for surface inpainting is by filling the missing region
+with an inpainting patch that interpolates the surrounding geometry. The
+interpolating patch may be generated with simple polynomial
+functions~\cite{Wang2007}, triangular B-splines~\cite{Pfeifle1996}, or radial
+basis functions~\cite{Branch2006}, and are generally smooth and continuous
+across the boundaries. The interpolation-based approaches, however, only work
+well with disk-like holes and are not suitable for filling regions with
+complex boundaries.
 
 Typical mesh-based hole filling algorithms have two steps: (1) Find an
 initial triangulation of the missing region defined by the hole
@@ -138,14 +137,19 @@ Clarenz et al. proposed a shape restoration algorithm by computing the
 $l_2$-gradient flow of the Willmore energy which ensures the
 continuity of the normal field.
 
-Finally, a lot of mesh inpainting methods are exemplar-based. In
-\cite{Kraevoy2005}, Kraevoy and Sheffer introduced an algorithm for
-mesh completion by mapping the incomplete mesh with a template model.
-Context-based surface completion methods like \cite{Sharf2004} and \cite{Park2005}
-fill holes by importing patches from similar regions and adapt them
-to the hole regions via shape deformation. A coherence objective can be imposed
-such that every local neighborhood of the filled mesh is similar to some local
-neighborhood from the input mesh~\cite{Harary2014}.
+Finally, a large number of mesh inpainting methods can be classified as
+exemplar-based or template-based. The basic idea is to find a known patch or a
+template model that has similar context with the damaged or missing region and then
+adapt the selected patch for inpainting. Symmetry-guided methods
+\cite{PaulyMitraWallnerEtAl2008, Sharf2004, Park2005, LiYinWeiEtAl2011}
+take advantage of intrinsic shape symmetry to repair damaged regions by
+transplanting similar regions from the object itself; the pitfall is that it
+only works when the damaged region's corresponding symmetric counterpart exists
+and is not missing or damaged. Template-guided methods \cite{Kraevoy2005, GalShamirHassnerEtAl2007, ZhangYuManheinEtAl2015, WeiYuLiEtAl2011,Pauly2005}
+conduct mesh completion by matching the incomplete region with a template model
+which may be deformed to adapt to the context. The main challenges are:
+(1) Suitable template model may not be available in the template database;
+(2) Inpainting results can be affected by cross-shape parameterization.
 
 \subsection{Sparse Signal Recovery and Inpainting}
 
@@ -457,39 +461,6 @@ more robust and generally produce better inpainting results than greedy algorith
 we use the l1\_ls solver introduced in \cite{Kim2007} which implements a fast interior-point method
 for solving $l_1$-regularized least-square problems like Eq.~\ref{eq:bpdn2}.
 
-\begin{figure}
-    \centering
-    \begin{subfigure}[b]{0.36\linewidth}
-        \includegraphics[width=\linewidth]{FIG6}
-        \caption{}
-    \end{subfigure}%
-    ~
-    \begin{subfigure}[b]{0.36\linewidth}
-        \includegraphics[width=\linewidth]{FIG7}
-        \caption{}
-    \end{subfigure}%
-    \\
-    \begin{subfigure}[b]{0.4\linewidth}
-        \includegraphics[width=\linewidth]{FIG8}
-        \caption{}
-    \end{subfigure}%
-    ~
-    \begin{subfigure}[b]{0.4\linewidth}
-        \includegraphics[width=\linewidth]{FIG9}
-        \caption{}
-    \end{subfigure}%
-    \caption[Estimating Laplacian eigenbasis coefficients with partial cube model.]
-      {Estimating the Laplacian eigenbasis coefficients of the
-      cube model with 40\% random missing vertices. (a) Original shape model;
-      green dots denote vertices that are labelled as missing. (b) The
-      reconstructed shape using our inpainting method. (c) The
-      coefficient representation of the original shape's
-      x-coordinates. (d) Estimated coefficient representation of the
-      x-coordinates inferred from the information of available
-      vertices. }
-\label{fig:cube:random:inpaint}
-\end{figure}
-
 As an example, Fig.~\ref{fig:cube:random:inpaint} demonstrates the
 potentials of our sparsity-based inpainting method. We randomly label
 40\% of vertices of the original cube model as missing vertices, and
@@ -575,23 +546,38 @@ with local geometric details than with the overall structure of the shape. In
 our experiments, we find that the best inpainting results are usually achieved
 with a dictionary of 20\% to 50\% total eigenvectors.
 
-
-\section{Experiments}
-In this section, we first evaluate the performance of our sparsity-based
-inpainting algorithms on recovering missing geometry from partial observations.
-Then we demonstrate how our method can be applied to repairing damaged geometry
-and filling surface holes.
-
-\subsection{Geometry Recovery}
-To evaluate the performance of geometry recovery, for each testing model, we
-randomly label 20\%-50\% vertices as missing and use our sparsity-based
-inpainting method to estimate the original geometry based on the coordinates of
-the still available vertices. The estimated coordinates are then compared with
-the original coordinates.
-
-All the testing models have been translated and scaled to be contained inside
-the unit cube. The recovery error is measured as the
-root-mean-square error (RMSE) of the coordinates of the missing vertices.
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.36\linewidth}
+        \includegraphics[width=\linewidth]{FIG6}
+        \caption{}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[b]{0.36\linewidth}
+        \includegraphics[width=\linewidth]{FIG7}
+        \caption{}
+    \end{subfigure}%
+    \\
+    \begin{subfigure}[b]{0.4\linewidth}
+        \includegraphics[width=\linewidth]{FIG8}
+        \caption{}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[b]{0.4\linewidth}
+        \includegraphics[width=\linewidth]{FIG9}
+        \caption{}
+    \end{subfigure}%
+    \caption[Estimating Laplacian eigenbasis coefficients with partial cube model.]
+      {Estimating the Laplacian eigenbasis coefficients of the
+      cube model with 40\% random missing vertices. (a) Original shape model;
+      green dots denote vertices that are labelled as missing. (b) The
+      reconstructed shape using our inpainting method. (c) The
+      coefficient representation of the original shape's
+      x-coordinates. (d) Estimated coefficient representation of the
+      x-coordinates inferred from the information of available
+      vertices. }
+\label{fig:cube:random:inpaint}
+\end{figure}
 
 \begin{figure}
   \centering
@@ -621,22 +607,22 @@ root-mean-square error (RMSE) of the coordinates of the missing vertices.
 
 \begin{figure}
   \centering
-    \begin{subfigure}[b]{0.35\linewidth}
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG14}
         \caption{20\% vertices missing.}
     \end{subfigure}
     ~
-    \begin{subfigure}[b]{0.35\linewidth}
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG15}
         \caption{Shape recovered from (a).}
     \end{subfigure}
-    \\
-    \begin{subfigure}[b]{0.35\linewidth}
+    ~
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG16}
         \caption{50\% vertices missing.}
     \end{subfigure}
     ~
-    \begin{subfigure}[b]{0.35\linewidth}
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG17}
         \caption{Shape recovered from (c).}
     \end{subfigure}
@@ -647,22 +633,22 @@ root-mean-square error (RMSE) of the coordinates of the missing vertices.
 
 \begin{figure}
   \centering
-    \begin{subfigure}[b]{0.35\linewidth}
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG18}
         \caption{20\% vertices missing.}
     \end{subfigure}
     ~
-    \begin{subfigure}[b]{0.35\linewidth}
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG19}
         \caption{Shape recovered from (a).}
     \end{subfigure}
-    \\
-    \begin{subfigure}[b]{0.35\linewidth}
+    ~
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG20}
         \caption{50\% vertices missing.}
     \end{subfigure}
     ~
-    \begin{subfigure}[b]{0.35\linewidth}
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG21}
         \caption{Shape recovered from (c).}
     \end{subfigure}
@@ -673,22 +659,22 @@ root-mean-square error (RMSE) of the coordinates of the missing vertices.
 
 \begin{figure}
   \centering
-    \begin{subfigure}[b]{0.35\linewidth}
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG22}
         \caption{20\% vertices missing.}
     \end{subfigure}
     ~
-    \begin{subfigure}[b]{0.35\linewidth}
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG23}
         \caption{Shape recovered from (a).}
     \end{subfigure}
-    \\
-    \begin{subfigure}[b]{0.35\linewidth}
+    ~
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG24}
         \caption{50\% vertices missing.}
     \end{subfigure}
     ~
-    \begin{subfigure}[b]{0.35\linewidth}
+    \begin{subfigure}[b]{0.23\linewidth}
         \includegraphics[width=\linewidth]{FIG25}
         \caption{Shape recovered from (c).}
     \end{subfigure}
@@ -696,60 +682,6 @@ root-mean-square error (RMSE) of the coordinates of the missing vertices.
 {Recovery of the centaur model with 20\% and 50\% random missing vertices.}
 \label{fig:centaur:recovery}
 \end{figure}
-
-\begin{table}
-\centering
-  \begin{tabular}{|c|c|c|c|c|c|c|}
-  \hline
-  Mesh                     & \#vertices                 & \#eigenvectors          & \pbox{20cm}{Decomposition\\ time (s)}        & \pbox{15cm}{Missing\\ ratio} & Error  & $l_1$ time (s) \\
-  \hline
-  \multirow{2}{3em}{bunny} & \multirow{2}{4em}{2.5k}    & \multirow{2}{5em}{1000} & \multirow{2}{5em}{19.6}   & 0.2          & 1.9e-2 & 2.8       \\
-                           &                            &                         &                           & 0.5           & 2.2e-2 & 2.1       \\
-
-  \hline
-  \multirow{2}{3em}{horse} & \multirow{2}{4em}{8.4k}    & \multirow{2}{5em}{4000} & \multirow{2}{5em}{1015.4} & 0.2          & 8.6e-3 & 19.7      \\
-                           &                            &                         &                           & 0.5           & 1.0e-2 & 59.0      \\
-  \hline
-  \multirow{2}{3em}{fandisk} & \multirow{2}{4em}{6.5k} & \multirow{2}{5em}{3000} & \multirow{2}{5em}{445.2}   & 0.2          & 8.8e-3 & 17.4      \\
-                             &                          &                         &                           & 0.5           & 1.2e-2 & 33.9      \\
-  \hline
-  \multirow{2}{3em}{centaur} & \multirow{2}{4em}{15.8k} & \multirow{2}{5em}{2000} & \multirow{2}{5em}{397.7}  & 0.2          & 7.1e-3 & 12.2      \\
-                             &                          &                         &                           & 0.5           & 8.0e-3 & 15.0      \\
-  \hline
-  \end{tabular}
-\caption[Geometry recovery errors and time performance.]
-{Geometry recovery errors and time performance. For each model, we test the recovery performance with
-20\% and 50\% randomly selected vertices labelled as missing. Each experiment has been repeated three times
-and averaged on a system with quad-core 2.4GHz CPU and 16GB RAM. }
-\label{tab:recovery}
-\end{table}
-
-Fig.~\ref{fig:bunny:recovery}, Fig.~\ref{fig:horse:recovery}, Fig.~\ref{fig:fandisk:recovery}, and Fig.~\ref{fig:centaur:recovery}
-show some examples of geometry recovery with 20\% and 50\%  missing vertices. Table~\ref{tab:recovery} documents
-the recovery errors and time performance of our tests. From the experimental results, we have the following
-observations:
-
-\begin{itemize}
-  \item When the missing vertices are randomly dispersed on the shape, our
-        sparsity-based method can reliably recover the missing coordinates
-        with great precision, even when the ratios of missing vertices are
-        as high as 50\%.
-  \item The $l_1$ estimation generally becomes more time consuming when the
-        ratio of missing vertices increases.
-  \item As noted in Sec.~\ref{sec:inpaint:remark}, using the truncated Laplacian
-        eigenbasis dictionary is acceptable for restoring smooth shapes.
-        However, for shapes with many edges and corners, such as the fandisk
-        model (see Fig.~\ref{fig:fandisk:recovery}), our inpainting method
-        cannot well preserve local discontinuities, since the high-frequency
-        basis are simply not present in the truncated dictionary.
-\end{itemize}
-
-\subsection{Geometry Repair}
-Our sparsity-based inpainting method is very suitable for repairing partially
-damaged geometry. After manually selecting the damaged regions, we can apply
-our inpainting method to estimate the original whole shape with the same
-connectivity based on the remaining parts of the shape. The corrupted regions
-can then be substituted by the inpainting patch.
 
 \begin{figure}
     \centering
@@ -838,6 +770,98 @@ can then be substituted by the inpainting patch.
           is color-coded. }
 \label{fig:repair:wolf}
 \end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.45\linewidth}
+        \includegraphics[width=\linewidth]{horse_error_vs_ratio}
+        \caption{Horse model}
+    \end{subfigure}%
+    ~
+    \begin{subfigure}[b]{0.45\linewidth}
+        \includegraphics[width=\linewidth]{fandisk_error_vs_ratio}
+        \caption{Fandisk model}
+    \end{subfigure}
+    \caption[Inpainting errors given different ratios of randomly missing vertices.]
+    {Inpainting errors given different ratios of randomly missing vertices using our method. 
+    The horse model uses 2,000 eigenvectors and the fandisk model uses 3,000 eigenvectors to
+    construct dictionaries, respectively.}
+\label{fig:error_vs_ratio}
+\end{figure}
+
+\section{Experiments}
+In this section, we first evaluate the performance of our sparsity-based
+inpainting algorithms on recovering missing geometry from partial observations.
+Then we demonstrate how our method can be applied to repairing damaged geometry
+and filling surface holes.
+
+\subsection{Geometry Recovery}
+To evaluate the performance of geometry recovery, for each testing model, we
+randomly label 20\%-50\% vertices as missing and use our sparsity-based
+inpainting method to estimate the original geometry based on the coordinates of
+the still available vertices. The estimated coordinates are then compared with
+the original coordinates.
+
+All the testing models have been translated and scaled to be contained inside
+the unit cube. The recovery error is measured as the
+root-mean-square error (RMSE) of the coordinates of the missing vertices.
+
+\begin{table}
+\centering
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+  \hline
+  Mesh                     & \#vertices                 & \#eigenvectors          & \pbox{20cm}{Decomposition\\ time (s)}        & \pbox{15cm}{Missing\\ ratio} & Error  & $l_1$ time (s) \\
+  \hline
+  \multirow{2}{3em}{bunny} & \multirow{2}{4em}{2.5k}    & \multirow{2}{5em}{1000} & \multirow{2}{5em}{19.6}   & 0.2          & 1.9e-2 & 2.8       \\
+                           &                            &                         &                           & 0.5           & 2.2e-2 & 2.1       \\
+
+  \hline
+  \multirow{2}{3em}{horse} & \multirow{2}{4em}{8.4k}    & \multirow{2}{5em}{4000} & \multirow{2}{5em}{1015.4} & 0.2          & 8.6e-3 & 19.7      \\
+                           &                            &                         &                           & 0.5           & 1.0e-2 & 59.0      \\
+  \hline
+  \multirow{2}{3em}{fandisk} & \multirow{2}{4em}{6.5k} & \multirow{2}{5em}{3000} & \multirow{2}{5em}{445.2}   & 0.2          & 8.8e-3 & 17.4      \\
+                             &                          &                         &                           & 0.5           & 1.2e-2 & 33.9      \\
+  \hline
+  \multirow{2}{3em}{centaur} & \multirow{2}{4em}{15.8k} & \multirow{2}{5em}{2000} & \multirow{2}{5em}{397.7}  & 0.2          & 7.1e-3 & 12.2      \\
+                             &                          &                         &                           & 0.5           & 8.0e-3 & 15.0      \\
+  \hline
+  \end{tabular}
+\caption[Geometry recovery errors and time performance.]
+{Geometry recovery errors and time performance. For each model, we test the recovery performance with
+20\% and 50\% randomly selected vertices labelled as missing. Each experiment has been repeated three times
+and averaged on a system with quad-core 2.4GHz CPU and 16GB RAM. }
+\label{tab:recovery}
+\end{table}
+
+Fig.~\ref{fig:bunny:recovery}, Fig.~\ref{fig:horse:recovery}, Fig.~\ref{fig:fandisk:recovery}, and Fig.~\ref{fig:centaur:recovery}
+show some examples of geometry recovery with 20\% and 50\%  missing vertices. Fig.~\ref{fig:error_vs_ratio} shows
+two examples of how the inpainting error (MSRE) changes with the ratio of vertices randomly labeled as missing. 
+
+Table~\ref{tab:recovery} documents
+the recovery errors and time performance of our tests. From the experimental results, we have the following
+observations:
+
+\begin{itemize}
+  \item When the missing vertices are randomly dispersed on the shape, our
+        sparsity-based method can reliably recover the missing coordinates
+        with great precision, even when the ratios of missing vertices are
+        as high as 50\%.
+  \item The $l_1$ estimation generally becomes more time consuming when the
+        ratio of missing vertices increases.
+  \item As noted in Sec.~\ref{sec:inpaint:remark}, using the truncated Laplacian
+        eigenbasis dictionary is acceptable for restoring smooth shapes.
+        However, for shapes with many edges and corners, such as the fandisk
+        model (see Fig.~\ref{fig:fandisk:recovery}), our inpainting method
+        cannot well preserve local discontinuities, since the high-frequency
+        basis are simply not present in the truncated dictionary.
+\end{itemize}
+
+\subsection{Geometry Repair}
+Our sparsity-based inpainting method is very suitable for repairing partially
+damaged geometry. After manually selecting the damaged regions, we can apply
+our inpainting method to estimate the original whole shape with the same
+connectivity based on the remaining parts of the shape. The corrupted regions
+can then be substituted by the inpainting patch.
 
 Fig.~\ref{fig:repair:cube}, \ref{fig:repair:epcot}, and \ref{fig:repair:wolf}
 demonstrate repairing damaged local geometry using our sparsity-regularized

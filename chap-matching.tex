@@ -1,18 +1,21 @@
-\chapter{Shape Correspondence and Retrieval}
+\chapter{Feature-Driven Shape Correspondence and Retrieval}
+\label{chap:matching}
 
-As we mentioned in Chapter 2, the eigenvalues and eigenvectors of mesh Laplacian matrix 
+As we mentioned in Chapter \ref{chap:background}, the eigenvalues and eigenvectors of mesh Laplacian matrix
 encode valuable intrinsic geometric information of the original mesh. The Laplacian
-spectrum on its own only affords very limited descriptive power of the global shape. 
-However, the Laplacian eigenpairs can be integrated into more sophisticated spectral 
-representations for highly discriminative and robust local feature descriptors and 
-distance measures, which can facilitate various high-level shape analysis tasks. 
-In this chapter, we present our contributions in feature-driven shape correspondence and 
-retrieval based on robust spectral representations such as the heat kernels. 
+spectrum on its own only affords very limited descriptive power of the global shape.
+However, the Laplacian eigenpairs can be integrated into more sophisticated spectral
+representations for highly discriminative and robust local feature descriptors and
+distance measures, which can facilitate various high-level shape analysis tasks.
+In this chapter, we present our contributions in feature-driven shape correspondence and
+retrieval based on robust spectral representations such as the heat kernels.
 
 \section{High-Order Shape Matching}
-
-The heat-kernel-induced signatures and distances are well suited for corresponding points on deformable shapes.
-For better feature points correspondence, other than considering the similarity of point heat kernel signatures
+Signatures and distances induced by the Laplacian eigenpairs are well suited for corresponding points on
+deformable shapes, since the Laplacian spectra encode intrinsic, global information of the topological and
+geometric information of the mesh in question. Among the many spectral representations, heat kernel is one
+of the most commonly used thanks to its robustness and multi-scale properties. For better feature points
+correspondence, other than considering the similarity of point heat kernel signatures
 and pair-wise heat kernel distances, we additionally take into account the compatibility of heat kernels across
 more than two points by conducting high-order graph matching on the manifold. The heat kernel tensor (HKT) is a
 high-order potential of geometric compatibility of feature tuples on manifolds. To facilitate the matching process,
@@ -165,10 +168,10 @@ The rationale of our approach is that distinguishing elements that are distant f
 \label{fig:components}
 \end{figure}
 
-\textbf{Hierarchical registration.}
+\textbf{Hierarchical Registration.}
 Given a source shape $S$ and a target shape $T$, both represented as triangular meshes, and let $V^S=\{s_i\}$ and $V^T=\{t_i\}$ be their respective vertex sets, the objective of dense registration is to find an optimal mapping $\tau: V^S \to V^T$. In practice, we represent the registration results as a set of correspondences $R=\{v^S_i, v^T_i\}$. When the shapes in question are not complete, some vertices in $V^S$ may not have correspondences in $R$.
 
-\textbf{Initial feature detection and matching.}
+\textbf{Initial Feature Detection and Matching.}
 The goal of this step is to obtain a small feature correspondence set $C^*$.
 In this work, we adopt the heat kernel signature (HKS) \cite{Sun:2009:CGF}
 to extract multi-scale features and spectral graph matching
@@ -207,9 +210,16 @@ t_i=\argmin_{t\in n(t_j,T_k)}\|{\HKC}_S(s_i)-{\HKC}_T(t)\|_2
 \end{equation}
 where $n(t_j,T_k)$ represent the set of $t_j$'s neighboring vertices in $T_k$, and $\HKC_S$ and $\HKC_T$ denote the heat kernel coordinates of points on $S$ and $T$.
 
-The correspondence propagation continues until all vertices in $S_k$ have been matched and we get the correspondence set $\{(s_i,t_i)\} \subset V^S_{m-1} \times V^T_{m-1}$. Note that for each correspondence $(s_i,t_i)$, the endpoint $t_i$ actually represent a set of vertices $K(t_i)$ in the original mesh $T_0$. To find the precise correspondence of $s_i$ in the original target mesh, we search $K(t_i)$ and replace $t_i$ with $t_j \in K(t_i)$ if $t_j$ is closer to $s_i$ in the embedding space. The result is the $l$-th level correspondence set $R_k$ that relates points $s_i \in S_k$ to $t_i \in T_0$. For each correspondence $(s_i,t_j)$, we assign a matching score
+The correspondence propagation continues until all vertices in $S_k$ have been matched
+and we get the correspondence set $\{(s_i,t_i)\} \subset V^S_{m-1} \times V^T_{m-1}$.
+Note that for each correspondence $(s_i,t_i)$, the endpoint $t_i$ actually represent a
+set of vertices $K(t_i)$ in the original mesh $T_0$. To find the precise correspondence
+of $s_i$ in the original target mesh, we search $K(t_i)$ and replace $t_i$ with
+$t_j \in K(t_i)$ if $t_j$ is closer to $s_i$ in the embedding space. The result is the
+$l$-th level correspondence set $R_k$ that relates points $s_i \in S_k$ to $t_i \in T_0$.
+For each correspondence $(s_i,t_j)$, we assign a matching score
 \begin{equation}
-score(s_i,t_j)=\exp(-\|{\HKC}_S(s_i)-{\HKC}_T(t_j)\|_2).
+\text{score}(s_i,t_j)=\exp(-\|{\HKC}_S(s_i)-{\HKC}_T(t_j)\|_2).
 \end{equation}
 
 We then select from $R_l$ some vertex pairs as new features and insert them into the feature set. These new added feature pairs should be both reliable (having great matching score) and not in the $\delta$-neighborhood of any existing feature points. The expanded feature set $C_l$ enables a more discriminative HKC in the next level. We carry on this process from the coarsest level to the finest level until we obtain the final registration set $R_0$ between the original meshes $S_0$ and $T_0$.
@@ -243,24 +253,24 @@ between features into our representation, and the most effective way to encode p
 relation is through graph-based feature aggregation method, such as spatially-sensitive
 bags-of-words (SS-BoW)~\cite{Bronstein2011} or relevance diffusion~\cite{Furuya2015}.
 
-We present a new paradigm, called bag-of-feature-graphs (BoFG), for non-rigid shape retrieval. 
-The basic idea is to represent a shape by constructing graphs among its features, which significantly 
-reduces the number of points involved in computation. Given a vocabulary of geometric words, for each 
-word the BoFG builds a graph that records spatial information of features, weighted by their similarities 
-to this word. This eliminates unlikely points in a word category, during shape comparison. Feature graphs 
-are governed by their affinity matrices of weighted heat kernels, whose eigenvalues form a concise shape 
-descriptor. Given a vocabulary of geometric words, corresponding to each word we build a graph that records 
-spatial information between features, weighted by their similarities to this word. Specific characteristics 
+We present a new paradigm, called bag-of-feature-graphs (BoFG), for non-rigid shape retrieval.
+The basic idea is to represent a shape by constructing graphs among its features, which significantly
+reduces the number of points involved in computation. Given a vocabulary of geometric words, for each
+word the BoFG builds a graph that records spatial information of features, weighted by their similarities
+to this word. This eliminates unlikely points in a word category, during shape comparison. Feature graphs
+are governed by their affinity matrices of weighted heat kernels, whose eigenvalues form a concise shape
+descriptor. Given a vocabulary of geometric words, corresponding to each word we build a graph that records
+spatial information between features, weighted by their similarities to this word. Specific characteristics
 of the BoFG include:
 
 \begin{itemize}
-\item It is concise by significantly reducing the number of points involved in 
+\item It is concise by significantly reducing the number of points involved in
       representation, and thus, is fast to compute.
 \item It explicitly records spatial information among features.
-\item It is representative, since features are salient points containing 
+\item It is representative, since features are salient points containing
       important information of the shape.
-\item Graphs have different dominating features associated with corresponding 
-      words. This greatly improves the accuracy in shape comparison by 
+\item Graphs have different dominating features associated with corresponding
+      words. This greatly improves the accuracy in shape comparison by
       eliminating unlikely word-distributions.
 \end{itemize}
 
@@ -290,22 +300,22 @@ of the BoFG include:
 \label{fig:represent}
 \end{figure}
 
-We first revisit the ShapeGoogle method originally introduced in \cite{Ovsjanikov:2009}, 
-which requires a point descriptor $K(x)$ and a distance measure $\gamma(x,y)$ defined on 
-surface $\mathcal{M}$. 
-%The HKS descriptor $K(x)$ is a vector of HKS sampled at different values of $t$. 
-Let $W=\{W_1,\dots,W_V\}$ be a vocabulary of geometric words with size $V=|W|$. 
+We first revisit the ShapeGoogle method originally introduced in \cite{Ovsjanikov:2009},
+which requires a point descriptor $K(x)$ and a distance measure $\gamma(x,y)$ defined on
+surface $\mathcal{M}$.
+%The HKS descriptor $K(x)$ is a vector of HKS sampled at different values of $t$.
+Let $W=\{W_1,\dots,W_V\}$ be a vocabulary of geometric words with size $V=|W|$.
 The words $\{W_i\}$ are representative vectors in the descriptor space
-clustered by the k-means algorithm. For each point $x$, the ShapeGoogle method computes its word 
-distribution $\Theta(x)=[\theta_1(x),\dots,\theta_V(x)]^T$. The similarity between $x$ and 
+clustered by the k-means algorithm. For each point $x$, the ShapeGoogle method computes its word
+distribution $\Theta(x)=[\theta_1(x),\dots,\theta_V(x)]^T$. The similarity between $x$ and
 word $W_i$ is given by
 
 \begin{equation}\label{eq:similar}
 \theta_i(x)=c(x)e^{-\frac{\|K(x)-W_i\|^2}{2\sigma^2}},
 \end{equation}
 
-where $\sigma$ is a parameter, and $c(x)$ is the normalization factor selected 
-such that $\|\theta(x)\|_1 = 1$. The BoW descriptor of $\mathcal{M}$ is 
+where $\sigma$ is a parameter, and $c(x)$ is the normalization factor selected
+such that $\|\theta(x)\|_1 = 1$. The BoW descriptor of $\mathcal{M}$ is
 computed by integrating word similarities over the entire shape
 
 \begin{equation}
@@ -313,8 +323,8 @@ f(\mathcal{M})=\int_\mathcal{M}\Theta(x)d\mu(x),
 \end{equation}
 
 where $\mu(x)$ denotes the surface area of $x$. As shown in Fig.~\ref{fig:represent},
-the BoW descriptor is a $|W|\times 1$ vector that measures the frequencies of words 
-appearing on the shape. 
+the BoW descriptor is a $|W|\times 1$ vector that measures the frequencies of words
+appearing on the shape.
 
 The ShapeGoogle algorithm also introduced the Spatially-Sensitive Bag-of-Words (SS-BoW)
 descriptor, given by
@@ -323,33 +333,33 @@ descriptor, given by
 F(\mathcal{M})=\int_{\mathcal{M}\times\mathcal{M}}\Theta(x)\Theta^T(y)\gamma(x,y)d\mu(x)d\mu(y).
 \end{equation}
 
-As shown in Fig.~\ref{fig:represent}, $F(\mathcal{M})$ is a $|W|\times|W|$ matrix which 
-measures frequencies of word pairs modulated by their spatial relations. The BoW needs 
-to evaluate the word distributions for all points in the query shape, while the 
+As shown in Fig.~\ref{fig:represent}, $F(\mathcal{M})$ is a $|W|\times|W|$ matrix which
+measures frequencies of word pairs modulated by their spatial relations. The BoW needs
+to evaluate the word distributions for all points in the query shape, while the
 SS-BoW needs to comptue all word-to-word distributions for all pair of points.
 
-In practice, heat kernel signature (HKS) or scale-invariant heat kernel signature (SI-HKS) is often 
-employed as point descriptors thanks to the properties of robustness and isometry-invariance.  
-To make comparison more efficient, the ShapeGoogle algorithm highly suppresses the geometric 
-information by computing the frequencies of words or word-pairs on the shape. It ends up with concise descriptors for comparison, 
-yet completely loses spatial information. Besides, the shape-google algorithms are time-consuming, 
-since they are working on all the points in the data. 
+In practice, heat kernel signature (HKS) or scale-invariant heat kernel signature (SI-HKS) is often
+employed as point descriptors thanks to the properties of robustness and isometry-invariance.
+To make comparison more efficient, the ShapeGoogle algorithm highly suppresses the geometric
+information by computing the frequencies of words or word-pairs on the shape. It ends up with concise descriptors for comparison,
+yet completely loses spatial information. Besides, the shape-google algorithms are time-consuming,
+since they are working on all the points in the data.
 
-To reduce the complexity of ShapeGoogle, it is desirable to reduce the number of points involved 
-in representing the shape. A straightforward solution is to select feature points, which keep most 
-information of the shape geometry. Because of the multi-scale property, HKS features contain geometry 
-information ranging from points in small scales to the entire shape in large scales. However, one concern 
-is that a reduced number of points may not be sufficient to faithfully represent the shape. Therefore, 
-instead of counting word frequencies, we construct graphs on detected features, giving rise to a 
-bag-of-feature-graphs (BoFG) paradigm. The graphs encode spatial relations between features, which contain 
+To reduce the complexity of ShapeGoogle, it is desirable to reduce the number of points involved
+in representing the shape. A straightforward solution is to select feature points, which keep most
+information of the shape geometry. Because of the multi-scale property, HKS features contain geometry
+information ranging from points in small scales to the entire shape in large scales. However, one concern
+is that a reduced number of points may not be sufficient to faithfully represent the shape. Therefore,
+instead of counting word frequencies, we construct graphs on detected features, giving rise to a
+bag-of-feature-graphs (BoFG) paradigm. The graphs encode spatial relations between features, which contain
 much more geometry information in representing the shape.
 
-We adopt weighted heat kernel matrices to capture global structures of graphs. Specifically, for a shape $M$ with 
-feature set $F$, only points $x\in F$ are involved in computing word distributions $\Theta(x)$, which significantly reduces 
-computation. Features are vector-quantized by a fuzzy classification, which assigns $\theta_i(x)$ portion of similarity 
-to word $W_i$ in the distribution of feature $x$. The distribution $\Theta(x)$ is computed by Eq.~(\ref{eq:similar}) 
-with $\sigma$ set as $\frac{1}{4}$ of the average distance of words in the vocabulary. This fuzzy classification reduces 
-ambiguities in graph comparison, and also avoids misclassification in a hard quantization. For a geometric word $W_i$, we 
+We adopt weighted heat kernel matrices to capture global structures of graphs. Specifically, for a shape $M$ with
+feature set $F$, only points $x\in F$ are involved in computing word distributions $\Theta(x)$, which significantly reduces
+computation. Features are vector-quantized by a fuzzy classification, which assigns $\theta_i(x)$ portion of similarity
+to word $W_i$ in the distribution of feature $x$. The distribution $\Theta(x)$ is computed by Eq.~(\ref{eq:similar})
+with $\sigma$ set as $\frac{1}{4}$ of the average distance of words in the vocabulary. This fuzzy classification reduces
+ambiguities in graph comparison, and also avoids misclassification in a hard quantization. For a geometric word $W_i$, we
 construct a matrix $G_i$, whose entry $G_i(x,y)$ with $(x,y)\in F\times F$ is computed by
 
 \begin{equation}
@@ -358,14 +368,14 @@ G_i(x,y)=\theta_i(x)\theta_i(y)h_t(x,y).
 
 $G_i$ the heat kernel between $x$ and $y$ weighted by their similarities to the geometric word $W_i$.
 
-The matrix set $\textbf{G}(M)=\{G_1,\dots,G_V\}$ comprises a BoFG representation of the shape $M$. 
-As shown in the bottom row of Fig.~\ref{fig:represent}, matrices characterize spatial information 
-of features assigned to different word categories. The near-zero entries in a matrix indicate 
-they are hardly classified to this category, and therefore, not considered in this graph. 
-It contains all the geometric information of features in a multi-scale way, which faithfully 
-characterizes the shape. The computation complexity for this matrix representation 
+The matrix set $\textbf{G}(M)=\{G_1,\dots,G_V\}$ comprises a BoFG representation of the shape $M$.
+As shown in the bottom row of Fig.~\ref{fig:represent}, matrices characterize spatial information
+of features assigned to different word categories. The near-zero entries in a matrix indicate
+they are hardly classified to this category, and therefore, not considered in this graph.
+It contains all the geometric information of features in a multi-scale way, which faithfully
+characterizes the shape. The computation complexity for this matrix representation
 is O($|$F$|^2$D), as the computed heat kernels can be shared by all matrices.
-Considering that the size of feature set is always much fewer than the total number of points on the 
+Considering that the size of feature set is always much fewer than the total number of points on the
 shape, the BoFG is much faster than ShapeGoogle.
 
 \begin{figure}
@@ -376,23 +386,55 @@ shape, the BoFG is much faster than ShapeGoogle.
 \label{fig:eigen}
 \end{figure}
 
-The mechanism of shape retrieval is to build concise BoFG descriptors of shape models in a database 
-in an off-line process, and retrieve related shapes for a query by the approximate nearest neighbor 
-(ANN) search. The BoFG descriptor is constructed by concatenating the most significant eigenvalues of each BoFG matrix. 
-Each $G_i$ is a real symmetric matrix, whose eigenvalues are all real and eigenvectors are orthogonal to each other. 
-We choose its six largest eigenvalues, denoted as $S_i(M)$, which contributes to a $6V \times$1 vector $[S_1(M),\dots,S_V(M)]^T$ 
-as a concise descriptor. This reduces the dimension of the matrix by multi-dimensional scaling (MDS) \cite{Bronstein2006}. 
-Fig.~\ref{fig:eigen} shows some non-rigid shapes and their BoFG descriptors. The deformed cat-models 
-have very similar BoFG descriptors, while the horse-model has a quite different one. It projects the matrix to 
-its main directions in the subspace spanned by the eigenvectors corresponding to $S_i(M)$, 
+The mechanism of shape retrieval is to build concise BoFG descriptors of shape models in a database
+in an off-line process, and retrieve related shapes for a query by the approximate nearest neighbor
+(ANN) search. The BoFG descriptor is constructed by concatenating the most significant eigenvalues of each BoFG matrix.
+Each $G_i$ is a real symmetric matrix, whose eigenvalues are all real and eigenvectors are orthogonal to each other.
+We choose its six largest eigenvalues, denoted as $S_i(M)$, which contributes to a $6V \times$1 vector $[S_1(M),\dots,S_V(M)]^T$
+as a concise descriptor. This reduces the dimension of the matrix by multi-dimensional scaling (MDS) \cite{Bronstein2006}.
+Fig.~\ref{fig:eigen} shows some non-rigid shapes and their BoFG descriptors. The deformed cat-models
+have very similar BoFG descriptors, while the horse-model has a quite different one. It projects the matrix to
+its main directions in the subspace spanned by the eigenvectors corresponding to $S_i(M)$,
 which are stable to a small amount of outliers. Then, we define the similarity distance between two models $M_1$ and $M_2$ as
 
 \begin{equation}
 d(M_1,M_2)=\sum_{i=1}^{V}\|S_i(M_1)-S_i(M_2) \|_2.
 \end{equation}
 
-The above distance is based on one-scale heat kernels, which can be easily extended to 
+The above distance is based on one-scale heat kernels, which can be easily extended to
 multi-scale by averaging distances of heat kernels at different values of $t$.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.3\linewidth]{pr_1}
+\hspace{8pt}
+\includegraphics[width=0.3\linewidth]{pr_2}
+\hspace{8pt}
+\includegraphics[width=0.3\linewidth]{pr_3}\\
+%\hspace{30pt} (c) Hole \hspace{60pt} (d) Resolution and Partial\\
+\caption{Precision-recall curves of evaluated methods, with categories of (from \emph{Left} to \emph{Right}) null, scale change, and hole.}
+\label{fig:pr}
+\end{figure*}
+
+To test the methods under some challenging cases, we apply transformations to
+the query shapes. This leads to categorized experiments, including null (no
+transformation), scale change (scaling vertex coordinates), and hole
+(topological change and missing information). For comparison purpose, we also
+evaluate some state-of-the-art methods that are similar to ours, including the
+BoW shape google, the SS-BoW ShapeGoogle, and the SI-HKS. Since the SS-BoW
+runs extremely slow, we only consider feature points in its implementation,
+denoted as FSS-BoW.
+
+The methods are quantitatively evaluated by the \emph{precision-recall} (PR)
+curve that is often adopted for evaluating retrieval performance~\cite{FunkhouserMinKazhdanEtAl2003}.
+It plots the trade-off between precision (ratio of the number of relevant
+shapes retrieved and the total number of shapes retrieved) and recall
+(ratio of the number of relevant shapes retrieved and the total number
+of existing relevant shapes that could be ideally
+retrieved). Fig.~\ref{fig:pr} shows the PR curves of evaluated
+methods, with categories of null, scale change, and hole.
+The BoFG has competitive results comparing with some state-of-the-art
+methods.
 
 \section{Chapter Summary}
 
@@ -400,8 +442,8 @@ In this chapter, we present several algorithms for feature-driven shape
 correspondence and retrieval. We adopt heat kernel tensor for high-order
 graph matching of shape features and propose a hierarchical coarse-to-fine
 registration method to achieve better dense correspondence. We also propose
-a novel paradigm for shape retrieval called the bag-of-feature-graph (BoFG). 
-In BoFG, both the similarity between features and words in vocabulary and 
+a novel paradigm for shape retrieval called the bag-of-feature-graph (BoFG).
+In BoFG, both the similarity between features and words in vocabulary and
 the spatial relations among features are explicitly encoded. By only considering
-feature points, the required computation is significantly reduced comparing 
-with traditional spatially-sensitive shape retrieval methods. 
+feature points, the required computation is significantly reduced comparing
+with traditional spatially-sensitive shape retrieval methods.

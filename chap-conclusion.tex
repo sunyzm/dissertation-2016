@@ -1,4 +1,5 @@
 \chapter{Conclusion and Future Work}
+\label{chap:conclusion}
 
 \section{Conclusion}
 This dissertation presents our research work on shape modeling and
@@ -89,10 +90,10 @@ Clearly, changing the generator function $g(\cdot)$ or the scale parameter $t$ w
 influence the contribution of components of different frequencies in the final reconstruction.
 
 \subsection*{Sparse Representation Learning}
-Our current research focuses on reconstructive sparse models with predefined dictionaries
-composed of analytical functions such as wavelets. Nevertheless, sparse representations have
-also great potential for pattern recognition, as most meaningful high-dimensional
-signals probably reside in some low-dimensional subspace which can more better revealed
+Our current research focuses on \emph{reconstructive} sparse models with predefined dictionaries
+composed of analytical functions such as wavelets. Nevertheless, sparse representations also have
+great potential as \emph{discriminative} models for pattern recognition, as most meaningful 
+high-dimensional signals probably reside in some low-dimensional subspace which can more better revealed
 by proper sparse models.
 
 To construct a highly discriminative sparse models, predefined dictionaries are usually not
@@ -121,15 +122,19 @@ sparse model in the descriptor space should have great potential for tasks such 
 and retrieval.
 
 \subsection*{General Graph Signal Analysis}
-In this dissertation, our research research is mainly about spectral shape modeling, but 
-discrete mesh is only a special type of graph structure. Graph-based representations are
-also the foundation for modeling various types of networks such as transportation networks and 
-social networks. It is also common to infer graph structures on from data
-to help organize data sets without pre-defined networks. 
+In this dissertation, our research work concentrates on graph spectral analysis in the context 
+of shape modeling. Nonetheless, discrete mesh is only a special type of graph structure. For modeling 
+various types of tangible or intangible networks, such as transportation networks and social networks,
+graph representation is the natural choice. It is also a common practice to infer graph structures
+from data sets without pre-defined networks to help organize the data in a specific way. 
+Even for data with existing graph structure, such as 2D images, it is sometimes helpful to cluster 
+the original data points into some super nodes and create an alternative graph topology.  
+Graph is therefore a very generic data structure as it allows flexible representations of 
+relations among data points. 
 
-In recent years, there is a growing interest towards adapting and applying signal processing 
-techniques on graphs~\cite{ShumanNarangFrossardEtAl2013, SandryhailaMoura2014}, especially
-with the explosive increase of data sets from the Internet and sensors. Currently, there is 
-very few existing works on sparse and redundant modeling on graphs, and it is
-a promising direction to adapt and extend our research in spectral representations and 
-sparsity-driven algorithms to the processing and analysis of general graph signals.
+In recent years, with the explosive increase of data sets generated from Internet and devices 
+with sensors, there bas been a growing interest towards adapting and applying signal processing 
+techniques for analyzing and modeling graph signals~\cite{ShumanNarangFrossardEtAl2013, SandryhailaMoura2014}.
+Currently, there is very few existing works in literature employing sparse and redundant modeling 
+methods for graph signal, and it is a promising direction to extend our research in spectral 
+representations and sparsity-driven algorithms for the analysis of general graph signals.

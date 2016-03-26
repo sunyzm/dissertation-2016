@@ -1,4 +1,5 @@
 \chapter{Mesh Approximation and Compression}
+\label{chap:approximation}
 
 Sparse approximation have gained great success on the regular domain
 of 2D images. However, the topics of approximating or compressing signals defined
@@ -20,12 +21,12 @@ compression is that the Fourier bases are only localized in the
 frequency domain yet having global support in the spatial domain, and
 thus are not efficient in encoding local signal information. A popular
 and powerful solution is to use wavelet bases, which are functions
-localized in both location and frequency and can capture local signal
-information in a more compact and efficient way.
+localized in both vertex domain and frequency domain and can capture local
+signal information in a more compact and efficient way.
 
 In this chapter, we propose to use the spectral graph wavelets (SGW),
-pioneered by Hammond et al.~\cite{Hammond2011}, for mesh
-compression. To the best of our knowledge, we believe that it is the
+pioneered by Hammond et al.~\cite{Hammond2011}, for mesh approximation
+and compression. To the best of our knowledge, we believe that it is the
 first attempt to exploit the SGW in sparse representation, with a
 unique application in 3D geometric compression. The SGW has many
 attractive properties such as spatial localization, being smooth,
@@ -51,11 +52,11 @@ algorithms, can all be migrated into our system with very little extra
 workload. So we are expecting further computational improvement in
 compression performance in the near future.
 
-\section{Spectral Mesh Compression}
+\subsection{Background}
 
 Harmonic analysis techniques such as Fourier transform and wavelet
-transform are fundamental tools in compressing images,
-audio, and video signals. Prominent applications include the
+transform are fundamental tools for compact representations of images,
+audio, and video signals. The most prominent applications include the
 JPEG~\cite{wallace1992jpeg} and JPEG2000~\cite{skodras2001jpeg} image
 compression standards, which are based on 2D discrete cosine transform
 and discrete wavelet transform, respectively. The key idea of harmonic
@@ -88,34 +89,24 @@ eigenbases derived from a 6-regular mesh to approximate the eigenbases
 of the non-regular input meshes, avoiding the cost of Laplacian
 decomposition on the decoder side~\cite{karni20013d}.
 
-\section{Mesh Compression via Sparse Approximation}
+\section{Spectral Mesh Compression}
+\label{sec:mhbapprox}
 
-\subsection{Mesh Laplacian and Manifold Harmonic Basis}
-\label{sec:mhb}
-
-Consider a 3D mesh represented as a graph $M=(V,E)$ with vertices $V$
+Consider a 3D mesh $M=(V,E)$ with vertices $V$
 and edges $E$, where $V=\{v_1,v_2,\ldots,v_n\}$. A vector-valued
 function $\mathbf{f}:V\to\mathbb{R}^c$ defined on $V$ can be
-represented as an $n\times c$ matrix, where the $i$-th row represents
+represented as an $n\times c$ matrix, where the $i$th row represents
 the function value at $v_i$.
 
-The Laplace matrix of mesh $M$ can be defined by the result of applying it to
-a function $\mathbf{f}$ defined on $V$:
+As we mentioned in Chapter~\ref{chap:background}, the Laplacian matrix
+of $M$ admits an orthogonal and complete basis of $L^2(M)$, i.e.,
+the space of square-integrable functions defined on $M$, and enables
+Fourier-like harmonic analysis on the vertex domain.
 
-\begin{equation}
-  (L\mathbf{f})_i=\frac{1}{a_i}\sum_{j\in N(i)} w_{ij}(\mathbf{f}_i-\mathbf{f}_j),
-\end{equation}
-
-where $N(i)$ denotes the index set of the 1-ring neighbors of $v_i$,
-and $a_i$ are the masses associated with each vertex and $w_{ij}$
-represents the weight of each edge.
-
-Depending on the choice of $a_i$ and $w_{ij}$, mesh Laplacian may have
-many different forms and can be classified as either
-\emph{combinatorial} or \emph{geometric}~\cite{Zhang:2010:CGF}. A
-combinatorial Laplacian is determined solely by the connectivity of
-the mesh. A geometric Laplacian, on the other hand, takes into account
-both the topological and geometric information.
+There are many different formations of discrete Laplacian. A combinatorial
+Laplacian matrix is determined solely by the connectivity of the mesh.
+A geometric Laplacian, on the other hand, takes into account both the
+topological and geometric information.
 
 Although a geometric Laplacian affords much more precise description
 of the mesh geometry, it is not a feasible choice in mesh compression
@@ -135,20 +126,48 @@ L_{ij} =
 \end{equation}
 where $d(i)$ represents the valence of $v_i$.
 
-The graph Laplacian is symmetric and negative semi-definite, and by
-solving the eigenvalue problem $L_s\mathbf{\chi}_k=-\lambda_k\chi_k$
-we obtain the eigensystem $\{\lambda_k,\mathbf{\chi}_k\}_{k=0}^{n-1}$,
-where $\{\lambda_k,\mathbf{\chi}_k\}$ denotes the $k$-th eigenvalue
+The graph Laplacian admits an eigensystem $\{\lambda_k,\mathbf{\chi}_k\}_{k=0}^{n-1}$,
+where $\{\lambda_k,\mathbf{\chi}_k\}$ denotes the $k$th eigenvalue
 and eigenfunction. According to the spectral theorem, the
 eigenfunctions $\{\mathbf{\chi}_k\}$ form an complete and orthonormal
 basis, called the \emph{Laplacian eigenbasis}, or, in the context of
-shape analysis, the manifold harmonic basis
-(MHB).  Fig.~\ref{fig:mhb} visualizes the MHB
-on an example mesh. It is straightforward to see that the values of
+shape analysis, the manifold harmonic basis (MHB).
+Fig.~\ref{fig:mhb} visualizes the MHB on an example mesh. It is
+straightforward to see that the values of
 MHB oscillate between negative and positive on the surface, and the
 larger the associated eigenvalues, the more frequent the oscillation
 becomes, similar to the behaviors of regular Fourier basis functions
 in the Euclidean domain.
+
+As mentioned earlier, the MHB can be employed to define the graph Fourier transform,
+also known as the \emph{manifold harmonic transform} (MHT), which converts
+a function between spatial domain and frequency domain. Any $f\in
+L^2(M)$ can be expanded by MHB as
+\begin{equation}
+\label{eq:mht}
+f = \sum_{k=0}^{n-1}\widehat{f}_k\phi_k = \sum_{k=0}^{n-1}\langle f,\phi_k\rangle\phi_k,
+\end{equation}
+in which $\widehat{f}_k$ is the $k$-th MHT coefficient of $f$.
+
+The MHT is the theoretical foundation of the spectral mesh compression
+proposed by Karni and Gotsman~\cite{Karni2000}. Viewing the
+Euclidean mesh coordinates $\mathbf{x}$, $\mathbf{y}$ and $\mathbf{z}$
+as functions defined on vertices, the basic idea of spectral
+compression is to compute the MHT of the coordinate function and then
+truncate out certain number of high-frequency coefficients. Take the
+x-coordinate function $\mathbf{x}$ as an example. The original
+coordinates can be perfectly recovered as in Eq.~(\ref{eq:mht}) if all
+$n$ MHT coefficients $\{\widehat{x}_0,\ldots,\widehat{x}_{n-1}\}$ are
+used. If we only retain the first $n'<n$ coefficients, the
+reconstructed x-coordinate function $\mathbf{x'}=\sum_{k=0}^{n'-1}
+\widehat{x}_k\phi_k$ is a low-pass-filtered version of $\mathbf{x}$
+and can be regarded as an acceptable approximation. The reconstructed
+mesh is smooth and the overall appearance tends to be very similar to
+the original mesh, since low-frequency components, which correspond to
+large-scale shape information, are prioritized to be preserved, and
+human's visual system tends to be more forgiving to the loss of
+high-frequency information.
+
 \begin{figure}
         \centering
         \begin{subfigure}[b]{0.3\linewidth}
@@ -175,66 +194,35 @@ in the Euclidean domain.
         \label{fig:mhb}
 \end{figure}
 
-\subsection{Spectral Mesh Approximation via MHB}
-\label{sec:mhbapprox}
+Fig.~\ref{fig:fourier_approx} shows an example of spectral mesh approximation
+with different number of MHB.
 
-The MHB can be employed to define the graph Fourier transform, also
-known as the \emph{manifold harmonic transform} (MHT), which converts
-a function between spatial domain and frequency domain. Any $f\in
-L^2(M)$ can be expanded by MHB as
-\begin{equation}
-\label{eq:mht}
-f = \sum_{k=0}^{n-1}\widehat{f}_k\phi_k = \sum_{k=0}^{n-1}\langle f,\phi_k\rangle\phi_k,
-\end{equation}
-in which $\widehat{f}_k$ is the $k$-th MHT coefficient of $f$.
-
-The MHT is the theoretical foundation of the spectral mesh compression
-proposed by Karni and Gotsman~\cite{Karni2000}. Viewing the
-Euclidean mesh coordinates $\mathbf{x}$, $\mathbf{y}$ and $\mathbf{z}$
-as functions defined on vertices, the basic idea of spectral
-compression is to compute the MHT of the coordinate function and then
-truncate out certain number of high-frequency coefficients. Take the
-x-coordinate function $\mathbf{x}$ as an example. The original
-coordinates can be perfectly recovered as in Eq.~(\ref{eq:mht}) if all
-$n$ MHT coefficients $\{\widehat{x}_0,\ldots,\widehat{x}_{n-1}\}$ are
-used. If we only retain the first $n'<n$ coefficients, the
-reconstructed x-coordinate function $\mathbf{x'}=\sum_{k=0}^{n'-1}
-\widehat{x}_k\phi_k$ is a low-pass-filtered version of $\mathbf{x}$
-and can be regarded as an acceptable approximation. The reconstructed
-mesh is smooth and the overall appearance tends to be very similar to
-the original mesh, since low-frequency components, which correspond to
-large-scale shape information, are prioritized to be preserved, and
-our visual observations tend to be more forgiving to the loss of
-high-frequency information.
-
-Fig.~\ref{fig:fourier_approx} shows an example result of
-spectral approximation using different number of MHB.
 \begin{figure}
  \centering
- \begin{subfigure}[b]{0.23\linewidth}
+ \begin{subfigure}[b]{0.35\linewidth}
   \includegraphics[width=\linewidth]{4}
   \caption{}
   \label{fig:fourier1}
  \end{subfigure}
  ~
- \begin{subfigure}[b]{0.23\linewidth}
+ \begin{subfigure}[b]{0.35\linewidth}
   \includegraphics[width=\linewidth]{5}
   \caption{}
   \label{fig:fourier2}
  \end{subfigure}
- ~
- \begin{subfigure}[b]{0.23\linewidth}
+ \\
+ \begin{subfigure}[b]{0.35\linewidth}
   \includegraphics[width=\linewidth]{6}
   \caption{}
   \label{fig:fourier3}
  \end{subfigure}
  ~
- \begin{subfigure}[b]{0.23\linewidth}
+ \begin{subfigure}[b]{0.35\linewidth}
   \includegraphics[width=\linewidth]{7}
   \caption{}
   \label{fig:fourier4}
  \end{subfigure}
- \caption[Spectral approximation of wolf model.]
+ \caption[Spectral approximation of the wolf model.]
  {Spectral approximation~\cite{Karni2000} of a 3D
   wolf model containing 4,344 vertices. (a) The original mesh. (b)
   Reconstruction using 100 eigenbases. (c) Reconstruction using 300
@@ -242,87 +230,7 @@ spectral approximation using different number of MHB.
  \label{fig:fourier_approx}
 \end{figure}
 
-\subsection{Spectral Graph Wavelets}
-\label{sec:sgw}
-
-The spectral graph wavelets (SGW), as described
-in~\cite{Hammond2011}, are expressed as bivariate kernel
-functions expanded on the MHB
-\begin{equation}
-\mathbf{\Psi_t}(i,j)=\sum_{k=0}^{n-1}g(t\lambda_k)\chi_k(i)\chi_k(j),
-\end{equation}
-where $g$ is the real-valued wavelet generator function and $t$ is the
-scale parameter. The generator function $g$ modulates the spectral
-wavelets in the frequency domain, and should satisfy the admissibility
-condition
-\begin{equation}
-C_g=\int_0^{\infty}\frac{g^2(x)}{x}dx < \infty
-\end{equation}
-and $g(0)=0$. The $i$th row of $\Psi_t$
-\begin{equation}
-\psi_{t,i}(\cdot)=\sum_{k=0}^{n-1} g(t\lambda_k)\chi_k(i)\chi_k(\cdot)
-\end{equation}
-is the spectral wavelet spatially-localized at $v_i$, and in the
-frequency domain, localized at scale $t$.
-
-In practice, the scale parameter $t$ is discretized. The
-spectral graph wavelets $\psi_{t,i}$ are near orthogonal to
-$\chi_k$ for $\lambda_k$ near 0, i.e., low-frequency eigenbasis,
-for any discrete scale $t$. Hence, to better capture low-frequency signal
-information, \cite{Hammond2011} also introduced the \emph{spectral
-scaling functions} which have similar constructions with SGW but act like low-pass filters
-\begin{equation}
-  \mathbf{\Phi}_t(i,j)=\sum_{k=0}^{n-1} h(t\lambda_k)\chi_k(i)\chi_k(j),
-\end{equation}
-in which the scaling generator function $h$ should satisfy $h(0)>0$
-and $h(x)\rightarrow 0|_{x\rightarrow\infty}$.
-
-Suppose we compute the spectral wavelets at $J$ different scales
-$\{t_1,t_2,\ldots,t_J\}$, the constructed SGW then comprises
-$(J+1)\times n$ functions in $\mathbb{R}^n$. In this chapter, we adopt
-the same formulation of wavelet and scaling functions used
-in~\cite{Hammond2011} with the generator function
-\begin{equation}
-g(x)=
-\begin{cases}
-        x^2 & \text{if } x<1\\
-        -5+11x-6x^2+x^3 & \text{if } 1\leq x \leq 2\\
-        4x^{-2} & \text{if } x>2.
-    \end{cases}
-\end{equation}
-The $J$ scales are selected to be logarithmically equally spaced
-between the minimum scale $t_J=2/\lambda_{max}$ and the maximum scale
-$t_1=40/\lambda_{max}$, where $\lambda_{max}$ is the upper bound of
-the Laplacian eigenvalues. For the scaling function, the generator is
-$h(x)=\gamma\exp(-(\frac{20x}{0.6\lambda_{max}})^4)$, in which
-$\gamma=h(0)$ equals the maximum value of $g$.
-
-Fig.~\ref{fig:sgw} visualizes multiscale spectral graph wavelets on a
-3D mesh. It may be noted that, the values of wavelets are attenuated
-and oscillating on the mesh, and wavelets with a larger scale have a
-wider oscillating window.
-\begin{figure}
-\centering
-\begin{subfigure}[b]{0.3\linewidth}
-    \includegraphics[width=\linewidth]{8}
-    \label{fig:sgw1}
-\end{subfigure}%
-~
-\begin{subfigure}[b]{0.3\linewidth}
-    \includegraphics[width=\linewidth]{9}
-    \label{fig:sgw2}
-\end{subfigure}
-~
-\begin{subfigure}[b]{0.3\linewidth}
-    \includegraphics[width=\linewidth]{10}
-    \label{fig:sgw3}
-\end{subfigure}%
-\caption[Visualization of spectral graph wavelets with different scales.]
-{Visualization of spectral graph wavelets localized at the
- same point but with different scales. From left to right, the
- spectral wavelets at scale 1, 3, and 5 are highlighted.}
-\label{fig:sgw}
-\end{figure}
+\section{Sparse Shape Approximation via SGW}
 
 In Sec.~\ref{sec:mhbapprox} we have shown that the mesh coordinates
 can be transformed into the frequency domain via MHT using the
@@ -335,7 +243,7 @@ Laplacian eigenbasis, which serve as the compression dictionary, all
 have global support and therefore are not efficient in encoding local
 geometry.
 
-In this chapter, we propose to use SGW to construct a redundant
+In this section, we propose to use SGW to construct a redundant
 dictionary. Because of its powerful property of spatial localization,
 the multiscale SGW functions are much more efficient in representing
 local mesh geometry around individual vertices than the Laplacian
@@ -367,20 +275,21 @@ $\mathbf{x}$, denoted by the pseudo-norm $\|\mathbf{x}\|_0$, should
 satisfy $\|\mathbf{x}\|_0 \ll n$ in order to achieve significant
 reduction in storage. Fixing the number of participating atoms in the
 sparse approximation to be $n'$, the problem to produce the optimal
-sparse representation $\mathbf{x}$ can be formulated as:
+sparse representation $\mathbf{x}$ can be formulated as
 \begin{equation}
-  \min_{\mathbf{x}} \|\mathbf{y}-D\mathbf{x}\|_2^2\ \textrm{subject\ to}\ \|\mathbf{x}\|_0 = n'.
+  \min_{\mathbf{x}} \|\mathbf{y}-D\mathbf{x}\|_2^2\ \textrm{subject\ to}\ \|\mathbf{x}\|_0 = n'，
 \label{eq:sa}
 \end{equation}
+which is called the \emph{Best Basis Selection} problem
 
-If the input signal has $c$ channels, denoted as a $n\times c$ matrix
+If the input signal has $c$ channels, denoted as an $n\times c$ matrix
 $\mathbf{Y}=(\mathbf{y_1},\mathbf{y_2},\ldots,\mathbf{y_c})$, the
 coefficient representation should be a $m\times c$ matrix
 $\mathbf{X}=(\mathbf{x_1},\ldots,\mathbf{x_c})$ satisfying $\mathbf{Y}
 \approx \mathbf{D}\mathbf{X}$. We may either treat each channel
 (column) of $\mathbf{Y}$ independently and select different subsets of
-participating atoms for each channel, or use the same subset for all
-the channels and minimize the combined approximation errors. The
+participating atoms for each channel, or enforce to select the same subset
+for all the channels and minimize the combined approximation errors. The
 latter one is called the \emph{simultaneous sparse approximation} problem
 \begin{equation*}
   \min_{\mathbf{X}} \|\mathbf{Y}-\mathbf{D}\mathbf{X}\|_F^2
@@ -401,8 +310,8 @@ $p(\mathbf{v})=(\mathbf{v_x}, \mathbf{v_y}, \mathbf{v_z})$. Since the
 three coordinate functions are correlated, it is preferable to
 formulate the mesh compression as the simultaneous sparse
 approximation problem. Determining the optimal solution to
-Eq.~(\ref{eq:simulsa}) is NP-hard, but we can find approximate
-solutions using greedy pursuit algorithms such as the
+Eq.~(\ref{eq:simulsa}) is NP-hard with the time complexity of $O(nm^{n'}{n'}^2$,
+but we can find approximate solutions using greedy pursuit algorithms such as
 \emph{simultaneous orthogonal matching pursuit} (S-OMP)
 \cite{Tropp2006a}. The key idea is to iteratively select
 from the dictionary a new atom that has the best correlation with the
@@ -452,7 +361,7 @@ the omission of the step to update all existing coefficients by orthogonal proje
 If all atoms in $\mathbf{D}$ are mutually orthogonal (e.g., Fourier dictionary), S-MP and S-OMP
 will produce exactly the same result.
 
-\subsection{Dictionary Design Strategies}
+\subsection{SGW and Dictionary Design Strategies}
 \label{sec:dictionary}
 
 The key to effective sparse approximation is the selection of
@@ -470,9 +379,97 @@ However, MHB dictionary is very inefficient in capturing
 non-periodical, local details due to the global support. It is
 desirable to have a dictionary with a class of functions that have
 local support but are still smooth and multiscale. In this work, we
-propose to use normalized multiscale SGW, as described in
-Sec.~\ref{sec:sgw}, as atoms to construct the dictionary for sparse
-approximation. The SGW dictionary has several advantages:
+propose to use normalized multiscale spectral graph wavelets (SGW)
+as atoms to construct the dictionary for sparse approximation.
+
+As we mentioned in Chapter~\ref{chap:background}, the spectral graph wavelets (SGW)
+are expressed as bivariate kernel functions expanded on the Laplacian eigenbasis
+
+\begin{equation}
+\mathbf{\Psi_t}(i,j)=\sum_{k=0}^{n-1}g(t\lambda_k)\chi_k(i)\chi_k(j),
+\end{equation}
+
+where $g$ is the real-valued wavelet generator function and $t$ is the
+scale parameter. The $i$th row of $\Psi_t$
+
+\begin{equation}
+\psi_{t,i}(\cdot)=\sum_{k=0}^{n-1} g(t\lambda_k)\chi_k(i)\chi_k(\cdot)
+\end{equation}
+
+is the spectral wavelet localized at $v_i$ in the vertex domain and
+at scale $t$ in the frequency domain.
+
+The spectral scaling functions is defined with the scaling generator
+function $h$ which satisfy
+\begin{equation}
+  \left\{
+  \begin{array}{l}
+    h(0)> 0 \\
+    h(x)\rightarrow 0|_{x\rightarrow\infty}.
+  \end{array}
+  \right.
+\end{equation}
+
+In practice, the scale parameter $t$ also need to be discretized. The spectral graph
+wavelets $\psi_{t,i}$ are near orthogonal to $\chi_k$ for $\lambda_k$
+near 0, i.e., low-frequency eigenbasis, for any discrete scale $t$. Hence,
+to better capture low-frequency signal information, \cite{Hammond2011}
+also introduced the \emph{spectral scaling functions} which have similar
+constructions with SGW but act like low-pass filters
+\begin{equation}
+  \mathbf{\Phi}_t(i,j)=\sum_{k=0}^{n-1} h(t\lambda_k)\chi_k(i)\chi_k(j),
+\end{equation}
+in which
+
+Suppose we compute the spectral wavelets at $J$ different scales
+$\{t_1,t_2,\ldots,t_J\}$, the constructed SGW then comprises
+$(J+1)\times n$ functions in $\mathbb{R}^n$. In this chapter, we adopt
+the same formulation of wavelet and scaling functions used
+in~\cite{Hammond2011} with the generator function
+\begin{equation}
+g(x)=
+\begin{cases}
+        x^2 & \text{if } x<1\\
+        -5+11x-6x^2+x^3 & \text{if } 1\leq x \leq 2\\
+        4x^{-2} & \text{if } x>2.
+    \end{cases}
+\end{equation}
+The $J$ scales are selected to be logarithmically equally spaced
+between the minimum scale $t_J=2/\lambda_{max}$ and the maximum scale
+$t_1=40/\lambda_{max}$, where $\lambda_{max}$ is the upper bound of
+the Laplacian eigenvalues. For the scaling function, the generator is
+$h(x)=\gamma\exp(-(\frac{20x}{0.6\lambda_{max}})^4)$, in which
+$\gamma=h(0)$ equals the maximum value of $g$.
+
+Fig.~\ref{fig:sgw} visualizes multiscale spectral graph wavelets on a
+3D mesh. It may be noted that, the values of wavelets are attenuated
+and oscillating on the mesh, and wavelets with a larger scale have a
+wider oscillating window.
+
+\begin{figure}
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{8}
+    \label{fig:sgw1}
+\end{subfigure}%
+~
+\begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{9}
+    \label{fig:sgw2}
+\end{subfigure}
+~
+\begin{subfigure}[b]{0.3\linewidth}
+    \includegraphics[width=\linewidth]{10}
+    \label{fig:sgw3}
+\end{subfigure}%
+\caption[Spectral graph wavelets with different scales.]
+{Visualizations of spectral graph wavelets localized at the
+ same point but with different scales. From left to right, the
+ spectral wavelets at scale 1, 3 and 5 are plotted.}
+\label{fig:sgw}
+\end{figure}
+
+The SGW dictionary has several advantages:
 \begin{itemize}
 \item The SGW atoms are compact and localized at vertices, suitable
   for encoding local geometric features.
@@ -544,7 +541,7 @@ takes up $k$ bits, and each coefficient in $\mathbf{X}$ requires $k'$
 bits to store, the storage size of the original 3D coordinates is then
 $3nk$ bits. The effective compression ratio is
 \begin{equation}\label{eq:compress}
-\Gamma = \frac{3n'k' + \min (m, n'\lceil\log_2 m\rceil}{3nk}.
+\Gamma = \frac{3n'k' + \min (m, n'\lceil\log_2 m\rceil)}{3nk}.
 \end{equation}
 
 Assume that the dictionary contains $m=\alpha n$ atoms, and both the
@@ -566,31 +563,92 @@ n$ increases slower than $n$.
 
 \subsection{Mesh Partitioning}
 
-The most time-consuming part of S-OMP is to compute the maximum inner
+The most time-consuming part of S-OMP is the computation of the maximum inner
 product between the residual and available atoms, which costs $O(mn)$
-in each iteration. In principle, the required number of iterations
-$n'$ and the size of dictionary $m$ are linearly proportional to the
-mesh size $n$, hence the total time complexity is $O(n^3)$, which is
-unacceptable for very large meshes. In addition, all the dictionaries
-we use are constructed from the eigenvectors of mesh Laplacian, but
-the full Laplacian eigendecomposition of a large mesh is very time
-consuming and can be numerically instable. Hence, when the input mesh
-is very large, it is necessary to perform graph partitioning and carry
-on the compression algorithm on each individual sub-mesh. As suggested
-in~\cite{Karni2000}, we use the METIS package~\cite{karypis1998fast}
-which implements several fast graph partitioning algorithms.
+in each iteration. If the required number of iterations, i.e., the
+sparsity of the solution is $l$, the total time complexity of S-OMP will be $O(lmn)$.
+Generally, the required number of iterations $l$ and the size of dictionary $m$ are
+linearly proportional to the mesh size $n$, hence the total time
+complexity is $O(n^3)$, which is unacceptable for very large meshes.
 
-On the other hand, as mentioned in Sec.~\ref{sec:compratio}, the
-overhead for storing the indices of selected atoms is smaller when the
-mesh size becomes larger. Moreover, increasing the number of
-sub-meshes also increases the occurrences of unpleasant artifacts
-along sub-mesh boundaries. Thus, a tradeoff needs to be made between
-the compression time and quality. In our implementation, a large mesh
-is decomposed into a number of patches containing approximately equal
-number of vertices, with the maximum patch size set to be 1,000.
+In addition, all the dictionaries we use are constructed from the eigenvectors of
+mesh Laplacian, but the full Laplacian eigendecomposition of a large mesh is
+very time consuming and can be numerically instable. Hence, when the input mesh
+is very large, it is necessary to perform graph partitioning and perform the
+compression algorithm on each individual sub-mesh. As suggested in~\cite{Karni2000},
+we use the METIS package~\cite{karypis1998fast} for fast graph partitioning. If
+the average size of each submesh is $v$, the time complexity of S-OMP will decrease
+to $O(n v^2)$.
 
+As mentioned in Sec.~\ref{sec:compratio}, the overhead ratio
+of storing the indices of selected atoms is smaller when the mesh size becomes
+larger. Moreover, increasing the number of sub-meshes also increases the
+occurrences of unpleasant artifacts along sub-mesh boundaries, known as the edge effects.
+On the flip side, partitioning a large mesh to smaller ones may result in better
+local fitting.
+
+Taking into account these factors, it is not immediately clear what partition size should be
+optimal. In our implementation, a large mesh is decomposed into patches containing
+approximately equal number of vertices, with the maximum patch size empirically
+set to be $1,000$, which seems to strike a good balance between time cost and approximation error.
+Fig.~\ref{fig:partition_perf} shows an example of how the approximation error and encoding time
+change with the partition size.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.28\linewidth}
+        \includegraphics[width=\linewidth]{horse_partition}
+        \caption{}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.33\linewidth}
+        \includegraphics[width=\linewidth]{horse_partition_time}
+        \caption{}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.33\linewidth}
+        \includegraphics[width=\linewidth]{horse_partition_error}
+        \caption{}
+    \end{subfigure}
+    \caption[Relationships between approximation performance and
+    partition size.]
+    {Relationships between approximation performance and
+    partition size. (a) The \emph{Horse} model partitioned into 
+    patches of about $1,000$ vertices. (b) Time performance \emph{vs} patch size. (c)
+    Approximation errors \emph{vs} patch size.}
+    \label{fig:partition_perf}
+\end{figure}
 
 \section{Experimental Results}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.32\linewidth}
+        \includegraphics[width=\linewidth]{12}
+        \caption{}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.29\linewidth}
+        \includegraphics[width=\linewidth]{13}
+        \caption{}
+    \end{subfigure}
+    \\
+    \begin{subfigure}{0.33\linewidth}
+        \includegraphics[width=\linewidth]{14}
+        \caption{}
+    \end{subfigure}
+    ~
+    \begin{subfigure}{0.29\linewidth}
+        \includegraphics[width=\linewidth]{15}
+        \caption{}
+    \end{subfigure}
+    \caption[Models used in the approximation experiments and their partitionings.]
+    {Models used in our approximation experiments and their
+     partitionings. (a) \emph{Cow}: 4,315 vertices. (b)
+     \emph{Fandisk}: 6,475 vertices. (c) \emph{Centaur}: 15,768
+     vertices. (d) \emph{Armadillo}: 172,974 vertices.}
+    \label{fig:partitions}
+\end{figure}
 
 \subsection{Evaluation Method}
 
@@ -628,35 +686,6 @@ differential error
 
 \begin{figure}
     \centering
-    \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{12}
-        \caption{}
-    \end{subfigure}
-    ~
-    \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{13}
-        \caption{}
-    \end{subfigure}
-    ~
-    \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{14}
-        \caption{}
-    \end{subfigure}
-    ~
-    \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{15}
-        \caption{}
-    \end{subfigure}
-    \caption[Examples of Mesh partitioning.]
-    {Models used in our experiments and their
-     partitioning. (a) \emph{Cow}: 4,315 vertices. (b)
-     \emph{Fandisk}: 6,475 vertices. (c) \emph{Centaur}: 15,768
-     vertices. (d) \emph{Armadillo}: 172,974 vertices.}
-    \label{fig:partitions}
-\end{figure}
-
-\begin{figure}
-    \centering
     \begin{subfigure}{0.44\linewidth}
         \includegraphics[width=\linewidth]{16}
         \caption{MHB, truncation}
@@ -689,7 +718,7 @@ differential error
         for the cow model. (a-d) show the reconstructed meshes at 20\%
         compression ratio and visualize each vertex's positional error
         comparing with the original model. (e) shows how the
-        compression errors change with the compression ratio.}
+        compression errors change with the target compression ratios.}
     \label{fig:coweval}
 \end{figure}
 
@@ -727,7 +756,7 @@ differential error
      for the fandisk model. (a-d) show the reconstructed meshes at
      20\% compression ratio and visualize each vertex's positional
      error comparing with the original model. (e) shows how the
-     compression errors change with the compression ratio.}
+     compression errors change with the target compression ratios.}
     \label{fig:fandiskeval}
 \end{figure}
 
@@ -756,7 +785,7 @@ differential error
     \begin{subfigure}{0.05\linewidth}
         (e)
     \end{subfigure}
-    \begin{subfigure}{0.83\linewidth}
+    \begin{subfigure}{0.75\linewidth}
         \includegraphics[width=\linewidth]{30}
 %        \caption{}
     \end{subfigure}
@@ -765,28 +794,28 @@ differential error
      for the centaur model. (a-d) show the reconstructed meshes at
      20\% compression ratio and visualize each vertex's positional
      error comparing with the original model. (e) shows how the
-     compression errors change with the compression ratio.}
+     compression errors change with the target compression ratios.}
     \label{fig:centaureval}
 \end{figure}
 
 \begin{figure}
     \centering
-    \begin{subfigure}{0.44\linewidth}
+    \begin{subfigure}{0.38\linewidth}
         \includegraphics[width=\linewidth]{31}
         \caption{MHB, truncation}
     \end{subfigure}
     ~
-    \begin{subfigure}{0.44\linewidth}
+    \begin{subfigure}{0.38\linewidth}
         \includegraphics[width=\linewidth]{32}
         \caption{MHB, S-MP}
     \end{subfigure}
     \\
-    \begin{subfigure}{0.44\linewidth}
+    \begin{subfigure}{0.38\linewidth}
         \includegraphics[width=\linewidth]{33}
         \caption{SGW, S-OMP}
     \end{subfigure}
     ~
-    \begin{subfigure}{0.44\linewidth}
+    \begin{subfigure}{0.38\linewidth}
         \includegraphics[width=\linewidth]{34}
         \caption{SGW+MHB, S-OMP}
     \end{subfigure}
@@ -794,7 +823,7 @@ differential error
     \begin{subfigure}{0.05\linewidth}
         (e)
     \end{subfigure}
-    \begin{subfigure}{0.83\linewidth}
+    \begin{subfigure}{0.72\linewidth}
         \includegraphics[width=\linewidth]{35}
         %\caption{}
     \end{subfigure}
@@ -804,8 +833,8 @@ differential error
         at 15\% compression ratio and visualize each vertex's
         positional error. Comparing (c) and (d), it is obvious that the SGW+MHB dictionary
         produces much smaller positional error than the SGW-only dictionary.
-        (e) shows how the compression errors change with the compression
-        ratio.}
+        (e) shows how the compression errors change with the target compression
+        ratios.}
     \label{fig:armadilloeval}
 \end{figure}
 
@@ -820,7 +849,7 @@ with the MHB-only dictionary; (2) S-OMP with the SGW-only dictionary;
 \centering
 \begin{tabular}{ |c|c|c|c|c| }
 \hline
-Model (\#vertices) & Ratio & Error & Error Decrease & Timing (s) \\
+Model (\#vertices) & Ratio & Error & Error Reduction & Timing (s) \\
 \hline
 \multirow{2}{*}{Cow (4,315)} & 20\% & 1.91e-3 & 18.0\% & 3.4 \\
                              & 40\% & 1.12e-3 & 27.5\% & 10.5 \\
@@ -839,8 +868,8 @@ Model (\#vertices) & Ratio & Error & Error Decrease & Timing (s) \\
 {Statistics of compression errors and
     running times using the S-OMP algorithm with SGW+MHB dictionary
     (on a machine with quad-core 2.4GHz processor and 16G RAM).
-    The ``Error Decrease'' column shows the decrease of compression
-    error compared with the MHB truncation method.}
+    The ``Error Reduction'' column denotes how much the compression
+    error is reduced comparing   with the MHB truncation method.}
 \label{tab:stat}
 \end{table}
 
@@ -871,23 +900,20 @@ is consistently superior to the MHB truncation method.
 
 \section{Chapter Summary}
 
-In this chapter, we have developed an algorithm for sparse
-approximation of 3D shapes. We employed the spectral graph wavelets to
-construct the redundant dictionary of shape bases, and used
-simultaneous orthogonal matching pursuit to seek a sparse
-representation of the input mesh. The use of spatially-localized
+In this chapter, we have developed an algorithm for sparse approximation of 3D
+shapes. We employed the spectral graph wavelets to construct the redundant
+dictionary of shape bases, and used simultaneous orthogonal matching pursuit
+to seek a sparse representation of the input mesh. The use of spatially-localized
 wavelets makes our algorithm very suitable and powerful for better
 approximating shapes with many local and fine geometric features.
 Through comprehensive experiments we have demonstrated the superiority
 of our algorithm for approximating complex 3D objects at different
 compression ratio settings towards sparse representation.
 
-As for the future work, we plan to investigate other
-improved formulations of graph wavelets as basis vectors to enhance
-the expressive power of dictionary. For example, it is potentially desirable
-to have data-dependent, anisotropic wavelets that are adaptive to shape
-features such as sharp corners and edges to attain more efficient and 
-sparse representation of shape geometry. We also
-plan to explore faster sparse approximation algorithms such as
-stagewise orthogonal matching pursuit (StOMP)~\cite{Donoho2012} to
-arrive at better time performance. 
+As for the future work, we plan to investigate other improved formulations of
+harmonic basis to enhance the expressive power of dictionary.
+For example, it is potentially desirable to have data-dependent, anisotropic
+wavelets that are adaptive to shape features such as sharp corners and edges to
+attain more efficient and sparse representation of shape geometry. We also
+plan to explore faster sparse approximation algorithms such as stagewise orthogonal
+matching pursuit (StOMP)~\cite{Donoho2012} to arrive at better time performance. 

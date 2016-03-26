@@ -1,9 +1,9 @@
 \chapter{Generalized Feature Description and Detection}
+\label{chap:feature}
 
 \section{Introduction}
-
-Studies in feature abstraction and analysis have been gaining momentum because 
-features are essential for numerous downstream graphics tasks and applications 
+Studies in feature abstraction and analysis have been gaining momentum because
+features are essential for numerous downstream graphics tasks and applications
 such as shape recognition, segmentation, analysis, understanding, etc
 ~\cite{Bronstein2011,Kin-ChungAu:2012,Song:2014:MSV}. Influenced
 by the trending concept of high-level representations in computer
@@ -269,55 +269,34 @@ and integral geometry information.
 
 Our novel descriptor primarily make use of the statistics
 of SGWs coefficients. As a supplement, contour-based statistics are also
-included the descriptor to achieve better discriminative power.  
+included the descriptor to achieve better discriminative power.
 
 \subsection{SGW-based Description}
 
-SGWT is introduced in~\cite{Hammond2011} for wavelet analysis
-on graphs. The central idea is to define the required scaling in the
-Fourier domain instead of the spatial domain. SGWT is determined by
-the generating kernel $g \colon \mathbb{R} \rightarrow \mathbb{R}$. To
-act as a band-pass filter, the kernel $g$ should satisfy $g(0) = 0$
-and $\lim_{x \rightarrow \infty} g(x) = 0$. The SGWs are then
-expressed as bivariate kernel functions
-expanded on the manifold harmonic basis, which are formed by the
-aforementioned Laplacian-Beltrami eigenfunctions on mesh models.
+As mentioned in Chapter~\ref{chap:background}, spectral graph wavelet transform (SGWT)
+defines a new type of wavelet analysis on graphs by performing scaling of mother wavelet
+in the Fourier domain instead of the spatial domain. The SGWs are expressed as bivariate
+kernel functions expanded on the manifold harmonic basis
 \begin{equation}
 \label{eq:SGW}
 \Psi_{t}(i,j)=\sum_{k=0}^{n-1}g(t\lambda_k) \chi_k(i)\chi_k(j),
 \end{equation}
 where $g$ is the real-valued wavelet generating kernel and $t$ is the
-scale parameter. The $i$-th row of $\Psi_{t}(\cdot,\cdot)$
+scale parameter. The $i$th row of $\Psi_{t}(\cdot,\cdot)$
 \begin{equation}
 \label{eq:SGW_vert}
 \psi_{t,i}(\cdot) = \Psi_{t}(i,\cdot)=\sum_{k=0}^{n-1}g(t\lambda_k) \chi_k(i)\chi_k(\cdot),
 \end{equation}
 is the spectral wavelet spatially-localized at $v_i$, and in the
-frequency domain, localized at scale $t$. Fig.~\ref{SGW} shows the
-SGWs of different scales located on one index point on the wolf model.
-It may be noted that, the values of wavelets are attenuated and
-oscillating on the mesh, and wavelets with a larger scale have a wider
-oscillating window than those with smaller scales. Here it should be emphasized
-that we choose to use the geometric mesh Laplacian instead of the combinatorial
-Laplacian as originally applied in~\cite{Hammond2011} for more precise description
-of the mesh geometry.
+frequency domain, localized at scale $t$. It should be noted that
+we choose to use the geometric mesh Laplacian for more geometric-aware
+description, instead of the combinatorial Laplacian originally used
+in~\cite{Hammond2011}.
 
-\begin{figure}[!to]
-\begin{center}
-\includegraphics[width=0.9\linewidth]{Fig_3}
-\end{center}
-\caption[Spectral graph wavelets on the wolf model.]
-  {Spectral Graph Wavelets centered at one vertex on the wolf
-  model. From left to right are wavelets from high frequency to low
-  frequency with scale 1, 3 and 5.}
-\label{SGW}
-\end{figure}
-
-It has been proved that SGWs can well represent the high frequency
-and low frequency geometric information around the index
-point~\cite{Hammond2011}.  Suppose we compute the spectral wavelets
-at $J$ different scales $\{t_1,t_2,...,t_J\}$, and adopt the same
-formulation of generating kernel functions used
+Multi-scale SGWs can well represent both the high frequency and low frequency
+geometric information around the index point.  Suppose we
+compute the spectral wavelets at $J$ different scales $\{t_1,t_2,...,t_J\}$,
+and adopt the same formulation of generating kernel functions used
 in~\cite{Hammond2011}, given by
 \begin{equation}
 g(x)=\left\{
@@ -334,20 +313,17 @@ of the Laplacian eigenvalues. The settings of $t_1$ and $t_J$
 guarantee that $g(t_1 x)$ has power-law decay for $x>\lambda_{min}$
 and $g(t_J x)$ has monotonic polynomial behavior for $x<\lambda_{max}$.
 
-Using the above formulations, we can easily get the wavelet
-coefficients of a given function on a specific vertex $v_i$ as
+Using the above formulations, we can easily obtain the wavelet
+coefficients of a given function centered on a specific vertex $v_i$ as
 \begin{equation}
 \label{eq:WMD}
 W_f(t,i) = \langle \psi_{t,i},f \rangle = \sum_{l=0}^{n-1}g(t\lambda_l)\hat{f}(l)\chi_l(i),
 \end{equation}
 where
 \begin{equation}
-  \hat{f}(l) = \langle \chi_l,f \rangle,
+  \hat{f}(l) = \langle \chi_l,f \rangle.
 \end{equation}
-and
-\begin{equation}
-  f(i) = \sum_{l=0}^{n-1} \hat{f}(l) \chi_l(i).
-\end{equation}
+
 Here, the signal function $f$ can be any kind of surface signal
 depending on the downstream application. For example, mean curvature,
 characterizing detailed local distortions, is a good choice for the
@@ -376,18 +352,16 @@ coefficients obtained comprises our multi-level and multi-scale descriptor.
 \label{wmd}
 \end{figure}
 
-Instead of using $W_f$ directly as the descriptor like
-in~\cite{Li:2013} and other harmonic analysis researches, we
-incorporate it into our descriptor by taking advantage of the
+Instead of using $W_f$ directly as descriptors like in \cite{Li:2013}, 
+we incorporate it into our descriptor by taking advantage of the
 consecutive depicting power of the bi-harmonic distance field. In
 order to comprehensively describe the geometric information contained
-within the feature, we subdivide the feature region into thinner bands
-with more contours as implemented in Section~\ref{sec:GF}, just as
-shown in Fig.~\ref{specification}(c)-(e). The number of dense contours
-may be set automatically as the integer nearest to $S_{s}/0.025$, and
-such dense contours have been verified to be able to elaborately
-depict and organize the inner geometrical information of the feature.
-Fig.~\ref{wmd}(e) illustrates the setup of our SGW-based statistical
+within the feature, we divide the feature region into thinner bands
+with more contours as shown in Fig.~\ref{specification}(c)-(e). 
+The number of dense contours may be set automatically as the integer nearest 
+to $S_{s}/0.025$, and such dense contours can elaborately depict and 
+organize the inner geometrical information within the feature
+region. Fig.~\ref{wmd}(e) illustrates the setup of our SGW-based statistical
 bands based on $W_f$, where different layers convey multi-level (from
 high to low frequency) information and different bands (denoted in
 yellow and green) in-between contours encode multi-scale information.
@@ -945,6 +919,15 @@ Our feature detection framework enjoys plenty of desirable properties
 as demonstrated in Section~\ref{sec:Framework}. They can further
 facilitate a host of applications as will be shown and analyzed.
 
+\begin{figure}[!to]
+\includegraphics[width=0.98\linewidth]{Fig_15}
+\caption[Comparisons of detecting complex feature regions.]
+  {Comparison on detection of complex feature regions. Figure
+  $(a)$ and $(b)$ are cited from the corresponding works. On each
+  model, the flower inside the yellow circle is the query region.}
+\label{Gal}
+\end{figure}
+
 \textbf{Partial Matching and Restoration.} We analyze the combined
 models from SHREC 2007's partial retrieval dataset, which comprises
 the SHREC 2007's watertight dataset and a query set of 30 models.
@@ -969,12 +952,13 @@ helping the conventional point-based correspondence and other complex
 partial matching tasks.
 
 \begin{figure}[!to]
-\includegraphics[width=0.98\linewidth]{Fig_15}
-\caption[Comparisons of detecting complex feature regions.]
-  {Comparison on detection of complex feature regions. Figure
-  $(a)$ and $(b)$ are cited from the corresponding works. On each
-  model, the flower inside the yellow circle is the query region.}
-\label{Gal}
+\includegraphics[width=0.95\linewidth]{Fig_16}
+\caption[Partial shape matching and restoration.]
+ {Partial matching and restoration on the SHREC's partial query
+  dataset. (a) Combined models with query regions in red. (b) Restored
+  models.  (c) Another two models containing the top-ranked similar
+  feature regions.}
+\label{partial-query}
 \end{figure}
 
 \textbf{Model Recognition.} Another immediate application is model
@@ -994,13 +978,14 @@ the database even when the models are somewhat incomplete (like the
 first recognized armadillo model).
 
 \begin{figure}[!to]
-\includegraphics[width=0.95\linewidth]{Fig_16}
-\caption[Partial shape matching and restoration.]
- {Partial matching and restoration on the SHREC's partial query
-  dataset. (a) Combined models with query regions in red. (b) Restored
-  models.  (c) Another two models containing the top-ranked similar
-  feature regions.}
-\label{partial-query}
+\begin{center}
+\includegraphics[width=1\linewidth]{Fig_17}
+\end{center}
+\caption[Model recognition by identifying multiple components.]
+ {Model recognition by identifying multiple components of
+ interest. (a) Query models with 3 or 4 specified features.
+  (b) Top three recognized models.}
+\label{recognition}
 \end{figure}
 
 \textbf{Other Potential Applications.} Many more practical applications
@@ -1030,17 +1015,6 @@ showcased in our comprehensive experiments. Extensive comparisons with
 other state-of-the-art techniques/methods have demonstrated certain
 key advantages of our method in terms of geometry-awareness,
 reliability, robustness, etc.
-
-\begin{figure}[!to]
-\begin{center}
-\includegraphics[width=1\linewidth]{Fig_17}
-\end{center}
-\caption[Model recognition by identifying multiple components.]
- {Model recognition by identifying multiple components of
- interest. (a) Query models with 3 or 4 specified features.
-  (b) Top three recognized models.}
-\label{recognition}
-\end{figure}
 
 One of our future work is to make the user interface and functionality
 more flexible and intuitive, e.g., allowing users to sketch the boundary of

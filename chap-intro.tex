@@ -1,4 +1,5 @@
 \chapter{Introduction}
+\label{chap:introduction}
 
 With the advent of ever more advanced and affordable 3D data acquisition
 technologies, digitalized 3D shapes have become ubiquitous in our daily
@@ -12,7 +13,6 @@ the main theme of this dissertation: spectral representations and sparsity-drive
 algorithms for shape modeling and analysis.
 
 \section{Problem Statement}
-
 In order to effectively encode 3D geometric data and facilitate different
 shape analysis and processing tasks, many different shape representations have
 been developed and adopted, including point clouds, polygon meshes, spline surfaces,
@@ -33,9 +33,9 @@ geometric signal processing, Taubin showed that the operation of surface smoothi
 can be carried out by applying the graph Laplacian operator to the mesh coordinates, 
 which is equivalent to low-pass filtering of discrete signals defined on vertices.
 
-One key aspect of signal processing is \emph{transform}, i.e., to explicitly represent 
-the signal in a transform domain by decomposing it as the linear combination of a suitable
-choice of basis vectors. Analyzing the coefficient representation with respect to the transform
+One key aspect of signal processing is to represent signals in some transform 
+domain by decomposing the signal as the linear combination of a suitable choice of basis 
+vectors. Analyzing the coefficient representation with respect to the transform
 basis can often reveal important properties of the original signal, and many
 operations that are difficult to perform directly on the spatial domain
 can be easily accomplished in the transform domain by manipulating the
@@ -99,14 +99,6 @@ modeling techniques.
 
 \section{Contributions}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.75\linewidth]{pipeline}
-  \caption[Hierarchy of this dissertation]
-  {Conceptal hierarchy of this dissertation.}
-  \label{fig:thesis_hierarchy}
-\end{figure}
-
 The basic idea of sparse modeling is to use as few as possible elementary functions chosen
 in a dictionary to decompose or approximate a signal, based on the intuition that a meaningful
 high-dimensional signal probably possesses a low-dimensional intrinsic structure, which can be
@@ -132,13 +124,21 @@ to define scaling on irregular mesh grids. Recently, Hammond et al. proposed the
 graph wavelets (SGWs) and spectral graph wavelet transform (SGWT)~\cite{Hammond2011}
 , in which the wavelet functions are defined with the spectral graph basis and scaling is carried
 out in the Fourier domain. The SGWs constitute an overcomplete wavelet frame, whose properties
-such as multiscale and spatial-locality of SGWs have proved to be valuable in a variety of data
+such as multi-scale and spatial-locality of SGWs have proved to be valuable in a variety of data
 analysis applications.
 
 In addition to acting as overcomplete basis for shape signals, the spectral
 graph wavelets also captures valuable intrinsic geometric information of the original
-shape in a multiscale and spatially-localized way, thus are a promising choice to
-serve as the building blocks for constructing local shape descriptors.
+shape in a multi-scale and spatially-localized way, and thus become a promising choice 
+to serve as the building blocks for constructing local shape descriptors.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.75\linewidth]{pipeline}
+  \caption[Hierarchy of this dissertation]
+  {Conceptal hierarchy of this dissertation.}
+  \label{fig:thesis_hierarchy}
+\end{figure}
 
 In this dissertation, we present solutions combining graph-based spectral
 representations, especially spectral graph wavelets, and sparse modeling
@@ -150,8 +150,9 @@ potential of spectral representations and sparse modeling in shape analysis and 
 Fig.~\ref{fig:thesis_hierarchy} highlights the hierarchy of our methodology. 
 Specifically, the contributions of this dissertations are summarized as follows:
 
-\begin{itemize}
-\item We present an innovative approach to 3D mesh compression using spectral graph
+\begin{description}
+  \item[Sparse Approximation of 3D Shapes] (Chapter \ref{chap:approximation})\hfill \\
+  We present an innovative approach to 3D mesh compression using spectral graph
 wavelets as dictionary to encode mesh geometry. In contrast to
 Laplacian eigenbasis, the spectral graph wavelets are locally
 defined at individual vertices and can better capture local shape
@@ -163,22 +164,24 @@ algorithms such as orthogonal matching pursuit. Various experiments
 demonstrate that our method are superior to the existing spectral
 mesh compression methods.
 
-\item  We devise a new algorithm for completing surface with
+  \item[Sparsity-Driven Surface Inpainting] (Chapter \ref{chap:inpainting}) \hfill \\
+  We devise a new algorithm for completing surface with
   missing geometry and topology founded upon the theory and techniques
   of sparse signal recovery. We find that for many shapes the vertex coordinate function
   can be well approximated by a very sparse coefficient representation with respect
-  to the dictionary comprising its Laplacian eigenbases, and it is then possible to
+  to the dictionary comprising its Laplacian eigenbasis, and it is then possible to
   recover this sparse representation from partial measurements of the original shape.
   Taking advantage of the sparsity cue, we advocate a novel
   variational approach for surface inpainting, integrating data
   fidelity constraints on the shape domain with coefficient sparsity
   constraints on the transformed domain. Because of the powerful
-  properties of Laplacian eigenbases, the inpainting results of our
+  properties of Laplacian eigenbasis, the inpainting results of our
   method tend to be smooth and globally coherent with the remaining
   shape. We demonstrate the performance of our new method via various
   examples in geometry restoration, shape repair, and hole filling.
-
-\item We propose a new kind of shape feature descriptors built upon the
+  
+  \item[Shape Feature Description based on Spectral Wavelets] (Chapter \ref{chap:feature})\hfill \\
+  We propose a new kind of shape feature descriptors built upon the
   coefficients of spectral graph wavelets and biharmonic distance fields.
   Our novel descriptors are both multi-scale and multi-level in nature,
   effectively encoding both local and global information
@@ -186,22 +189,22 @@ mesh compression methods.
   Via extensive experiments and comprehensive comparisons with the state-of-the-art,
   our descriptor has exhibited many attractive advantages such as being geometry-aware,
   versatile, robust, discriminative, and isometry-invariant.
-
-\item We develop effective feature-driven articulated shape
-correspondence and retrieval algorithms based on spectral
-descriptors. For coarse matching, we adopt tensor-based high-order 
-graph matching to maximizes the geometric compatibility between 
-features tuples, and for dense matching, we present a hierarchical 
-shape registration algorithm, generating correspondence in multiples 
-levels in a coarse-to-fine manner. We also propose the novel 
-Bag-of-Feature-Graph (BoFG) descriptor for shape retrieval. 
-For each geometric word in the vocabulary, BoFG constructs a graph that records
-spatial relations of all feature pairs in the shape, weighted by their
-similarities to this word. The BoFG descriptor significantly reducing the 
-number of points required for computing distributions in comparisons 
-with more traditional Bag-of-Words descriptors.
-
-\end{itemize}
+  
+  \item[Feature-Driven Shape Correspondence and Retrieval] (Chapter \ref{chap:matching})\hfill \\
+  We develop effective feature-driven articulated shape
+  correspondence and retrieval algorithms based on spectral
+  descriptors. For coarse matching, we adopt tensor-based high-order
+  graph matching to maximizes the geometric compatibility between
+  features tuples, and for dense matching, we present a hierarchical
+  shape registration algorithm, generating correspondence in multiples
+  levels in a coarse-to-fine manner. We also propose the novel
+  Bag-of-Feature-Graph (BoFG) descriptor for shape retrieval.
+  For each geometric word in the vocabulary, BoFG constructs a graph that records
+  spatial relations of all feature pairs in the shape, weighted by their
+  similarities to this word. The BoFG descriptor significantly reducing the
+  number of points required for computing distributions in comparisons
+  with more traditional Bag-of-Words descriptors.
+\end{description}
 
 \section{Dissertation Organization}
 The remainder of this proposal is organized as follows.

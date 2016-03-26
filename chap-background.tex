@@ -1,4 +1,6 @@
 \chapter{Background Review}
+\label{chap:background}
+
 In this chapter, we first briefly review spectral analysis in the context
 of shape modeling, including the theories and applications of graph Fourier
 transform and spectral graph wavelets. Then we give an overview of the
@@ -14,28 +16,32 @@ functions (i.e., the Fourier basis) of different frequencies. The collection of
 Fourier basis functions $\{\phi_n;n\in \mathbb{Z}\}$ form a complete orthogonal
 basis~\cite{Gomes:1999} of the underlying function space $\mathcal{F}$, and the
 transform coefficients gives a frequency-domain representation of the original
-signal. In generally, this decomposition can be written as
+signal. In general, this decomposition can be written as
 
 \begin{equation}
 f=\sum_{k=-\infty}^\infty \langle f,\phi_k\rangle\phi_k
 \end{equation}
 
-We first consider the classical Fourier analysis in $\mathbb{R}^1$. From the
+Consider the classical Fourier analysis in $\mathbb{R}^1$. From the
 perspective of differential equations, the $k$th Fourier basis function
-$\phi_k(x)$ satisfies the following Helmholtz equation in $\mathbb{R}^1$
+$\phi_k(x)=e^{-i\omega_k x}$ satisfies the following equation:
 
 \begin{equation}\label{eq:Helmholtz1D}
 -\frac{\partial^2 \phi_k(x)}{\partial x^2}=\omega_k^2 \phi_k(x).
 \end{equation}
 
-This is to say, in 1D Euclidean space, the Fourier basis functions are actually
-the eigenfunctions of the second order differential operator (i.e. Laplace operator)
-$\frac{\partial^2}{\partial x^2}$.
+That is, in 1D Euclidean space, the Fourier basis functions are
+actually the eigenfunctions of the second-order derivative operator
+$\frac{\partial^2}{\partial x^2}$, which can be regarded as 1D Laplace operator.
+The eigenvalue $\omega_k^2$ is the square of the frequency of associated
+eigenfunction $\phi_k$.
+
+The concept of Fourier transform and Fourier basis can be generalized to the
+manifold and mesh/graph domains, as will be described in this section.
 
 \subsection{Manifold Fourier Transform}
-The concept of Fourier transform can be generalized to the manifold domain.
-Given a manifold $\mathcal{M}$ with Riemannian metric $g$. The goal is to find a
-family of functions $\{\phi_k(x)\}$ that form a orthonormal and complete
+Given a manifold $\mathcal{M}$ with Riemannian metric $g$. The goal is to find a family
+of functions $\{\phi_k(x)\}$ that form a orthonormal and complete
 basis of the Hilbert space $\L^2(\mathcal{M,g}):\mathcal{M}\to\mathbb{R}$ with
 properties similar to the classical Fourier basis. In manifold space, the equivalent
 to the Laplace operator is the \emph{Laplace-Beltrami operator} which acts on
@@ -62,7 +68,7 @@ diverging sequence
 \end{equation*}
 
 and the eigenfunctions $\{\phi_k\}_{k=0}^\infty$ form a complete and orthonormal basis of the Hilbert
-space $L^2(\mathcal{M})$~\cite{Levy2006}.
+space $L^2(\mathcal{M})$~\cite{Levy2006}, i.e., the space of integrable functions defined on $\mathcal{M}$.
 
 The eigenvalues $\{\lambda_k\}_{k=0}^\infty$ are sometimes referred to as the Laplace-Beltrami
 spectra~\cite{Reuter:2006:CAD}, which are analogous to $\{\omega_n^2\}$ in Eq.~\ref{eq:Helmholtz1D}
@@ -86,8 +92,9 @@ where
 We may call $\{\hat{f}(k)\}$ the \emph{manifold harmonics transform} of function $f(x)$.
 
 \subsection{Mesh Laplacian and Spectral Mesh Processing}
-In practical geometry processing, we often represent or approximate shapes with discrete meshes.
-Consider a manifold $\mathcal{M}$ approximated by triangular mesh $M$ with vertex
+Now we consider the discretization of Laplacian-Beltrami operator and MHB.
+In geometry processing, we often represent or approximate surfaces with discrete
+meshes. Consider a manifold $\mathcal{M}$ approximated by triangular mesh $M$ with vertex
 set $V:=\{v_i, i=1,\ldots,N\}$, edge set $E$, and face set $F$. $|V|=N$ is the size
 of $M$. In addition, we define $N(i)=\{j|(v_i,v_j)\in E\}$ and $d_i=|N(i)|$. $N(i)$
 denotes the index set of the 1-ring neighborhood of the vertex $v_i$, and $d_i$ is
@@ -100,16 +107,31 @@ component, i.e., the vertex coordinate function $\mathbf{P}$ which maps each ver
 $v_i$ of the graph to a position in the 3D Euclidean space $p_i\in\mathbb{R}^3$.
 
 The discrete Laplace-Beltrami operator of $M$ is a $N\times N$ matrix
-$\Delta=(\delta_{ij})$, defined by its linear action
-on vertex-based functions defined on $V$:
+$\Delta_M=(\delta_{ij})$, i.e., the Laplace matrix, defined by the result of
+applying it to a function $f$ defined on $V$:
 
 \begin{equation}
-\Delta f(v_i)=\sum_{j=0}^{N-1}\delta_{ij}f(v_j).
+\Delta_M f(v_i)=\sum_{j=0}^{N-1}\delta_{ij}f(v_j).
 \end{equation}
+
+The Laplacian is a local operator and its effect only impacts each vertex's immediate
+neighbors. Hence, the Laplacian matrix has the general form
+
+\begin{equation}
+  \Delta_M f(v_i)=\frac{1}{a_i}\sum_{j\in N(i)} w_{ij}(f(v_i)-f(v_j)),
+\end{equation}
+
+where $N(i)$ denotes the index set of the 1-ring neighbors of $v_i$,
+and $a_i$ are the masses associated with each vertex and $w_{ij}$
+represents the weight of each edge.
+
+Depending on the choice of $a_i$ and $w_{ij}$, mesh Laplacian may have
+many different forms and can be classified as either
+\emph{combinatorial} or \emph{geometric}~\cite{Zhang:2010:CGF}.
 
 One simple discretization of the smooth Laplace-Beltrami operator is to
 define $\Delta f(p_i)$ as the average difference between the function
-values at $v_i$ and its 1-ring neighborhood:
+values at $v_i$ and its 1-ring neighborhood
 
 \begin{equation}
 \Delta f(v_i)=\frac{1}{d_i}\sum_{j\in N(i)} [f(v_i)-f(v_j)].
@@ -237,18 +259,45 @@ under isometric deformations up to a change in sign~\cite{Rustamov:2007:LEF,Sun:
 This lends to the popularity of spectral methods in the area of geometry processing
 and analysis.
 
-Directly employing the eigenstructures of mesh Laplacian, a great diversity of spectral
-methods have been developed for shape modeling problems including compression~\cite{Karni2000},
+There has been a great number of methods in literature directly employing the Laplacian eigenstructures
+to tackle various shape modeling problems, including compression~\cite{Karni2000},
 segmentation~\cite{Liu2007}, deformation~\cite{Rong2008}, remeshing~\cite{dong2006spectral},
 paramterization~\cite{Zhou2004}, shape indexing~\cite{Reuter:2006:CAD, Rustamov:2007:LEF},
 and retrieval~\cite{Lavoue:2012}. We refer readers to \cite{Zhang:2010:CGF} for a more thorough
-review of the theories and applications of mesh Laplacian spectra.
+review of the theories and applications of spectral methods for shape analysis and processing.
 
 \section{Kernels and Spectral Graph Wavelets}
 
 \subsection{Kernel Functions}
 
-The concept of manifold/graph Fourier transform can be extended to the 
+On manifold $\mathcal{M}$, consider a bivariate kernel $\Theta=\{\theta(x,y)\}$
+which shares the same eigenvectors, $\{\phi_i\}_{i=0}^\infty$, with the Laplace-Beltrami
+operator $\Delta_\mathcal{M}$. Suppose $\Theta$ admits an eigendecomposition
+$\Theta\phi_i = \alpha_i \phi_i$ with the eigenvalues $\{\alpha_i\}_{i=0}^\infty$,
+then the kernel function can be represented as
+\begin{equation}
+\theta(x,y)=\sum_{i=0}^\infty \alpha_i \phi_i(x) \phi_i(y),
+\end{equation}
+or
+\begin{equation}
+\Theta=\Phi diag(\{\alpha_i\}) \Phi^t.
+\end{equation}
+
+This is to say, $\Theta$ can be diagonalized by the eigenbasis of $\Delta_\mathcal{M}$.
+
+Suppose the eigenvalues of $\Theta$ is some functions of the eigenvalues of $\Delta_\mathcal{M}$,
+i.e., there is some function $g(\cdot)$ such that $\alpha_i=g(\lambda_i)$, then the kernel
+can be expressed as
+\begin{equation}
+\theta(x,y)=\sum_{i=0}^\infty g(\lambda_i) \phi_i(x) \phi_i(y).
+\end{equation}
+
+Since the Laplacian eigenvalues $\{\lambda_i\}$ can be regarded as the frequency of the shape,
+$g(\cdot)$ is essentially a transfer function and $\Theta$ is a filtered version of
+$\Delta_\mathcal{M}$
+
+
+The concept of manifold/graph Fourier transform can be extended to the
 bivariate case to define kernels. Suppose we have a bivariate kernel
 $\theta:\mathcal{M}\times\mathcal{M}\to\mathbb{R}$ which corresponds to a
 self-adjoint operator $\Theta$. The bivariate kernel $\theta$ can be expanded
@@ -272,14 +321,14 @@ For example, the Laplace-Beltrami operator itself can be expanded as
 \Delta_\mathcal{M}(x,y)=\sum_{i=0}^\infty \lambda_k\phi_k(x)\phi_k(y).
 \end{equation}
 
-Hence, its Fourier transform is $\widehat{\Delta_\mathcal{M}}(k)=\lambda_k$.
+Its Fourier transform therefore is $\widehat{\Delta_\mathcal{M}}(k)=\lambda_k$.
 
 The kernel function $\theta(x,y)$ describes the relations between each pair of
-points on the manifold, and its diagonal $\theta(x,x)$ affords a
+points on the manifold, and its diagonal $\theta(x,x)$ amounts to a
 signature function for the characterization of individual points.
 
 One well known kernel function is the heat kernel $K(t,x,y)$, which is
-the fundamental solution to the heat equation with appropriate boundary condition. 
+the fundamental solution to the heat equation with appropriate boundary condition.
 For example, the heat kernel for the Dirichlet problem is solution to the equation
 
 \begin{equation}
@@ -296,7 +345,7 @@ Expanded on the manifold harmonic functions, the heat kernel with time parameter
 $t$ has the following expression:
 
 \begin{equation}
-K(t,x,y)=\sum_{k=0}^{\infty} e^(-\lambda_k t) \phi_k(x)\phi_k(y).
+K(t,x,y)=\sum_{k=0}^{\infty} e^{-\lambda_k t} \phi_k(x)\phi_k(y).
 \end{equation}
 
 On the mesh domain, the heat kernel affords a multi-scale, stable and intrinsic
@@ -527,8 +576,10 @@ and the zero-mean condition $g(0)=0$.
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{MexicanHatWavelet}\\
-  \caption[Color plots of the spectral Mexican-hat wavelets.]
-  {Color plots of the spectral Mexican-hat wavelet with scales of 10 and 30. The reference point is denoted by the orange ball. We can easily spot the function values oscillate around the reference point. When t is larger, the period of oscillation also increases.}
+  \caption[Visualizations of the spectral Mexican-hat wavelets.]
+  {Color plots of the spectral Mexican-hat wavelet with scales of 10 and 30. The reference point is denoted by the orange ball.
+  We can see that the function values oscillate around the reference point.
+  When $t$ is larger, the spread of oscillation also increases.}
   \label{fg:MexicanHatWavelet}
 \end{figure}
 
@@ -539,11 +590,19 @@ and the zero-mean condition $g(0)=0$.
   {The Mexican-hat wavelet transfer function in the frequency domain. }\label{fg:WaveletFrequency}
 \end{figure}
 
-In classical wavelets defined on real line, the space localization is apparent. If the mother wavelet $\psi(x)$ is localized in the interval $[-\epsilon,\epsilon]$, then the wavelet $\psi_{a,b}(x)$ will be localized with $[b-a\epsilon,b+a\epsilon]$. in the limit as $b\to 0$, $\psi_{a,b}(x)\to 0$ for $x\neq b$.
+In classical wavelets defined on real line, the space localization is apparent.
+If the mother wavelet $\psi(x)$ is localized in the interval $[-\epsilon,\epsilon]$,
+then the wavelet $\psi_{a,b}(x)$ will be localized with $[b-a\epsilon,b+a\epsilon]$.
+in the limit as $b\to 0$, $\psi_{a,b}(x)\to 0$ for $x\neq b$.
 
-For spectral wavelets, the localization property is less straightforward since the scaling is defined implicitly in the Fourier domain. For $g$ sufficiently regular, the normalized spectral wavelet $\psi_{t,x}/\|\psi_{t,x}\|$ will vanish on vertices sufficiently far from $x$ in the limit of fine scales, i.e. as $t\to 0$. We should expect $\psi_{t,x}(y)$ to be small if $x$ and $y$ are separated and $t$ is small.
+For spectral wavelets, the localization property is less straightforward since the scaling is
+defined implicitly in the Fourier domain. For $g$ sufficiently regular, the normalized spectral
+wavelet $\psi_{t,x}/\|\psi_{t,x}\|$ will vanish on vertices sufficiently far from $x$ in the
+limit of fine scales, i.e. as $t\to 0$. We should expect $\psi_{t,x}(y)$ to be small if $x$
+and $y$ are separated and $t$ is small.
 
-If two transfer functions $g$ and $g'$ are close to each other, then the derived spectral wavelets should be close to each other in the manifold domain.
+If two transfer functions $g$ and $g'$ are close to each other, then the derived spectral
+wavelets should be close to each other in the manifold domain.
 
 As an example, we consider the Mexican hat wavelet. In 1D Euclidean space, the Mexican hat wavelet is defined as
 \begin{equation}
@@ -558,20 +617,32 @@ with the transfer function $g(t\lambda)=t^2\lambda^2 e^{-t^2\lambda^2}$.
 Fig.~\ref{fg:MexicanHatWavelet} visualizes the value of the wavelet functions over the surface, with the scale $t=10$ and $t=30$. Fig.~\ref{fg:WaveletFrequency} shows the Fourier transform of the wavelet functions in frequency domain. It is easy to see that
 
 \begin{itemize}
-\item The spectral wavelet function is localized both in manifold and frequency domain.
+\item The spectral wavelet function is localized in both manifold and frequency domains.
 \item On manifold, the values of the spectral wavelet functions attenuate and oscillate as the distance from the reference point increases.
-\item For a larger scale, the Mexican hat wavelet has a wider windows in space, but a narrower window in frequency.
+\item For a larger scale, the spectral wavelet has a wider windows in space, but a narrower window in frequency.
 \end{itemize}
 
 By construction, the spectral wavelets $\psi_{t,x}$ are all orthogonal to the the null eigenvector $\phi_0$,
-and nearly orthogonal to $\phi_l$ for $\lambda_l$ near zero \cite{Hammond2011}.
+and nearly orthogonal to $\phi_l$ for $\lambda_l$ near zero~\cite{Hammond2011}. For more effective representation
+of low-frequency signals, it is necessary to introduce the spectral scaling functions, which are also defined 
+as a bivariate kernel by a single real-valued generator function $h:\mathbb{R}^+\to\mathbb{R}$,
+which acts as a low-pass filter and satisfies
 
-Spectral scaling functions are determined by a single real valued function $h:\mathbb{R}^+\to\mathbb{R}$,
-which acts as a low-pass filter and satisfies $h(0)>0$ and $\lim_{x\to\infty}h(x)\to 0$.
-Introducing the scaling functions helps ensure stable recovery of the original signal $f$ from the wavelet
-coefficients when the scale parameter $t$ is sampled at discrete values ${t_j}$.
-Stable recovery will be assured if $G(\lambda)=h(\lambda)^2+\sum_{j=1}^J g(t_j\lambda)^2$ is
-bounded away from zero. The design of the scaling function generator $h$ is uncoupled from the choice $g$.
+\begin{equation}
+  \left\{
+  \begin{array}{l}
+    h(0)> 0 \\
+    h(x)\rightarrow 0|_{x\rightarrow\infty}.
+  \end{array}
+  \right.
+\end{equation}
+
+Introducing the scaling functions helps ensure stable recovery of the original
+signal $f$ from the wavelet coefficients when the scale parameter $t$ is sampled at
+discrete values ${t_j}$. Stable recovery will be assured if
+$G(\lambda)=h(\lambda)^2+\sum_{j=1}^J g(t_j\lambda)^2$ is
+bounded away from zero. The design of the scaling function generator $h$ is uncoupled
+from the choice $g$.
 
 The spectral wavelets depend on the continuous scale parameter $t$. For practical computation,
 $t$ must be sampled at a finite number of scales $\{t_j\}_{j=1}^J$, which generates
@@ -585,10 +656,14 @@ and
 \begin{equation*}
 B=\max_{\lambda\in[0,\lambda_{N-1}]}G(\lambda),
 \end{equation*}
-where $G(\lambda)=h^2(\lambda)+\sum_j g(t_j\lambda)^2$. That is to say, for all $f$ defined on the manifold, the following inequality holds
+
+where $G(\lambda)=h^2(\lambda)+\sum_j g(t_j\lambda)^2$. That is to say,
+for all $f$ defined on the manifold, the following inequality holds:
+
 \begin{equation}
 A\|f\|^2\leq\sum_k|\langle f,\Gamma_k\rangle|^2\leq B\|f\|^2,
 \end{equation}
+
 where $\Gamma=\{\Gamma_k\}$.
 
 The spectral wavelet transform is an overcomplete transform, mapping
@@ -625,10 +700,9 @@ elementary vectors, also called \emph{atoms}, constitute a set called the
 coefficients w.r.t. the selected atoms and can be easily reconstructed. The
 rationale of sparse modeling is that most meaningful high-dimensional signals probably
 have some intrinsic structures or patterns, which can be exploited for
-efficient representation in a subspace of much lower dimension. Because of
-the versatility of the input signals, it is often desirable for dictionaries to
-be redundant or overcomplete, allowing greater freedom and flexibility in
-design to accommodate a sparse set of atoms that can better capture
+efficient representation in a subspace of much lower dimension.
+It is often desirable for the dictionary to be redundant or overcomplete such that
+it can accommodate a sparse set of atoms that can better capture
 an input signal's intrinsic characteristics.
 
 \subsection{Sparse Modeling Problems}
@@ -636,15 +710,15 @@ an input signal's intrinsic characteristics.
 Consider signal $\mathbf{b}\in\mathbb{R}^n$ and dictionary matrix
 $\mathbf{D}\in\mathbb{R}^{n\times m}$ with $n<m$. If the dictionary constitutes an
 overcomplete basis of $\mathbb{R}^n$, the linear systems of
-equations $A\mathbf{x}=\mathbf{b}$ is underdetermined and has infinite solutions.
+equations $\mathbf{D}\mathbf{x}=\mathbf{b}$ is underdetermined and has infinite solutions.
 
-To make the solution $\mathbf{x}$ unique, we could introduce an objective function
+To make the solution $\mathbf{x}$ unique, we can introduce an objective function
 $J(\mathbf{x})$ to govern the desired properties of the solution vector $\mathbf{x}$.
 The general optimization problem subject to linear equality constraints is as follows:
 
 \begin{equation}
 \label{eq:constrained-inverse}
-\min_\mathbf{x} J(\mathbf{x}) \quad \mathrm{subject\,to} \quad \mathbf{b}=\mathbf{D}\mathbf{x}.
+\min_\mathbf{x} J(\mathbf{x}) \quad \text{subject\,to} \quad \mathbf{b}=\mathbf{D}\mathbf{x}.
 \end{equation}
 
 Alternatively, the objective function can be used as a regularization term, giving rise to
@@ -657,20 +731,22 @@ the following regularized least square problem:
 
 The regularization term can be viewed as imposing certain priors distributions on
 the solution $\mathbf{x}$. Comparing with Eq.~\ref{eq:constrained-inverse}, regularization
-allows users to control the tradeoff between the reconstruction fidelity and the
-desired property (e.g., smoothness) of the solution and avoids overfitting.
+allows users to make a tradeoff between the reconstruction fidelity and the
+desired property (e.g., smoothness) of the solution.
 
 Eq.~\ref{eq:constrained-inverse} and Eq.~\ref{eq:regularized-ls} are commonly encountered in different
-areas, including signal processing, machine learning, and statistics. One common choice for $J(\mathbf{x})$
-is the function of squared $l_2$-norm $\|\mathbf{x}\|_2^2$, which aims to minimize the ``energy'', or Euclidean
-norm of the solution vector. Eq.~\ref{eq:constrained-inverse} then has the closed-form
+areas, including signal processing, machine learning and statistics. One common choice for $J(\mathbf{x})$
+is the function of squared $l_2$-norm $\|\mathbf{x}\|_2^2$, which aims to minimize the ``energy'',
+i.e., the Euclidean norm of the solution vector. Eq.~\ref{eq:constrained-inverse} then has the closed-form solution
 
 \begin{equation}
 \hat{\mathbf{x}}=\mathbf{D}^T(\mathbf{D}\mathbf{D}^T)^{-1}\mathbf{b}=\mathbf{D}^{+}\mathbf{b},
 \end{equation}
-where $\mathbf{D}^{+}=\mathbf{D}^T(\mathbf{D}\mathbf{D}^T)^{-1}$ is the pseudo-inverse
-of $\mathbf{D}$. Let $J(\mathbf{x})=\mathbf{\Gamma}\mathbf{x}$, where $\mathbf{\Gamma}\in\mathbb{R}^{m\times m}$,
-Eq.~\ref{eq:regularized-ls} then becomes the famous Tikhonov regularization~\cite{Golub1999}, which has the
+
+where $\mathbf{D}^{+}=\mathbf{D}^T(\mathbf{D}\mathbf{D}^T)^{-1}$ is the
+pseudo-inverse of $\mathbf{D}$. Let $J(\mathbf{x})=\mathbf{\Gamma}\mathbf{x}$,
+where $\mathbf{\Gamma}\in\mathbb{R}^{m\times m}$, Eq.~\ref{eq:regularized-ls}
+then becomes the famous Tikhonov regularization~\cite{Golub1999}, which has the
 explicit solution
 \begin{equation}
 \hat{\mathbf{x}} = (\mathbf{D}\mathbf{D}^T + \lambda \mathbf{\Gamma}\mathbf{\Gamma}^T)^{+}\mathbf{D}^T\mathbf{b}.
@@ -719,10 +795,11 @@ new design parameters such as directions, these new shape basis afford more effe
 dominated with different features.
 
 \subsection{Computational Methods}
-The $l_0$ optimization problems (Eq.~\ref{eq:sparse-decompose} and Eq.~\ref{eq:sparse-approx}) are NP-hard,
-so searching through all possible support sets by brute force is intractable except for problems of very small
-sizes. A variety of methods have been developed for finding near-optimal solution to $l_0$ optimization, and
-the most important two classes are \emph{greedy pursuit} and \emph{convex relaxation}~\cite{Tropp2010}.
+The $l_0$ optimization problems (Eq.~\ref{eq:sparse-decompose} and Eq.~\ref{eq:sparse-approx})
+are NP-hard, so searching through all possible support sets by brute force is intractable except
+for problems of very small sizes. A variety of methods have been developed for finding near-optimal
+solution to $l_0$ optimization, and the most important two classes are \emph{greedy pursuit}
+and \emph{convex relaxation}~\cite{Tropp2010}.
 
 \subsubsection*{Greedy Pursuit Methods}
 One of the most commonly-used approaches to sparse approximation is
